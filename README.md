@@ -1,1 +1,1 @@
-# IsraParlTweetPro
+# IsraPolitics
