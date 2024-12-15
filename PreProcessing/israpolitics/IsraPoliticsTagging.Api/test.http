@@ -1,0 +1,25 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+# API Endpoint
+@base_url = http://localhost:7166
+
+### קבלת רשומה לא מתוייגת
+GET {{base_url}}/api/GetUnlabeledItem
+Accept: application/json
+
+###
+
+### תיוג רשומה
+POST {{base_url}}/api/PostLabel
+Content-Type: application/json
+
+{
+  "RowId": 2,
+  "Text": "some text",
+  "Labeled": true,
+  "AssociationLevel": 10,
+  "Positive": 1,
+  "PartitionKey": "DataForTagging",
+  "RowKey": "1",
+  "Timestamp": null,
+  "ETag": null
+}
