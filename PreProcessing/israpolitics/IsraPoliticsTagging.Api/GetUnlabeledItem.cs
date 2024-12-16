@@ -12,17 +12,17 @@ public class GetUnlabeledItem(ILoggerFactory loggerFactory)
     [Function("GetUnlabeledItem")]
     public async Task<HttpResponseData> Run(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
-        HttpRequestData req,
-        [TableInput("DataForTagging", "DataForTagging",
-                    Take = 1,
+        HttpRequestData request,
+        [TableInput("DataForTagging", "TaggingData",
                     Filter = "Labeled eq false",
+                    Take = 1,
                     Connection = "AzureWebJobsStorage")]
-        IEnumerable<DataForTagging> items
+        IEnumerable<UnlabeledEntry> items
         )
     {
         _logger.LogInformation("Processing a request to get an unlabeled item.");
 
-        var response = req.CreateResponse();
+        var response = request.CreateResponse();
         response.Headers.Add("Access-Control-Allow-Origin", "*");
 
 

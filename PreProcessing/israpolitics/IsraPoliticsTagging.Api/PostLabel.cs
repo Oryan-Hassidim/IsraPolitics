@@ -14,14 +14,14 @@ public class PostLabel(ILoggerFactory loggerFactory)
     [Function("PostLabel")]
     public async Task<HttpResponseData> Run(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
-        HttpRequestData req)
+        HttpRequestData request)
     {
         _logger.LogInformation("Processing a request to post a label.");
 
-        var response = req.CreateResponse();
+        var response = request.CreateResponse();
         response.Headers.Add("Access-Control-Allow-Origin", "*");
 
-        DataForTagging? data = await req.ReadFromJsonAsync<DataForTagging>();
+        UpdateLabels? data = await request.ReadFromJsonAsync<UpdateLabels>();
         if (data is null)
         {
             _logger.LogInformation("Invalid request body.");
@@ -29,8 +29,10 @@ public class PostLabel(ILoggerFactory loggerFactory)
             return response;
         }
 
-        TableClient tableClient = new("UseDevelopmentStorage=true", "DataForTagging");
-        await tableClient.UpdateEntityAsync(data, ETag.All, TableUpdateMode.Replace);
+        // get connection string from settings
+        string? connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+        TableClient tableClient = new(connectionString, "DataForTagging");
+        await tableClient.UpdateEntityAsync(data, ETag.All, TableUpdateMode.Merge);
 
         _logger.LogInformation("Item updated. RowId: {RowId}", data.RowId);
         response.StatusCode = HttpStatusCode.OK;

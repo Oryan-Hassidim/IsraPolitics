@@ -2,24 +2,23 @@
 # API Endpoint
 @base_url = http://localhost:7166
 
-### קבלת רשומה לא מתוייגת
+### Get unlabeled item
 GET {{base_url}}/api/GetUnlabeledItem
 Accept: application/json
 
 ###
 
-### תיוג רשומה
+### save label
 POST {{base_url}}/api/PostLabel
 Content-Type: application/json
 
 {
-  "RowId": 2,
-  "Text": "some text",
-  "Labeled": true,
-  "AssociationLevel": 10,
-  "Positive": 1,
-  "PartitionKey": "DataForTagging",
-  "RowKey": "1",
-  "Timestamp": null,
-  "ETag": null
+    "RowId": 4017864,
+    "AssociationLevel": 0,
+    "Positive": 0,
+    "Labeled": true,
+    "PartitionKey": "TaggingData",
+    "RowKey": "1d34d239-d585-4467-82f0-fca542d92b88",
+    "Timestamp": null,
+    "ETag": null
 }
