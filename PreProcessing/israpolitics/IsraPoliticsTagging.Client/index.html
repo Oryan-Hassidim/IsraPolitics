@@ -125,14 +125,15 @@
     </div>
 
     <script>
-        const apiBaseUrl = 'http://localhost:7166';
+        const apiBaseUrl = '';
+        var data = null;
 
         async function fetchRow() {
             try {
                 const response = await fetch(`${apiBaseUrl}/api/GetUnlabeledItem`);
 
                 if (response.ok) {
-                    const data = await response.json();
+                    data = await response.json();
                     document.getElementById('Text').textContent = data.Text;
                     document.getElementById('RowId').dataset.RowId = data.RowId;
                 } else {
@@ -150,6 +151,10 @@
                 const AssociationLevel = document.getElementById('AssociationLevel').value;
                 const Positive = document.getElementById('Positive').value;
 
+                data.AssociationLevel = parseInt(AssociationLevel, 10);
+                data.Positive = parseInt(Positive, 10);
+                data.Labeled = true;
+
                 const payload = {
                     RowId: parseInt(RowId, 10),
                     AssociationLevel: parseInt(AssociationLevel, 10),
@@ -161,7 +166,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(data)
                 });
 
                 if (response.ok) {
