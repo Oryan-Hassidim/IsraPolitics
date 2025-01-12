@@ -11,7 +11,7 @@ public class GetUnlabeledItem(ILoggerFactory loggerFactory)
 
     [Function("GetUnlabeledItem")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "api/GetUnlabeledItem")]
         HttpRequestData request,
         [TableInput("DataForTagging", "TaggingData",
                     Filter = "Labeled eq false",
