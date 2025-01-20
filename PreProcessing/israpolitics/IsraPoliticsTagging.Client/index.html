@@ -130,7 +130,7 @@
 
         async function fetchRow() {
             try {
-                const response = await fetch(`${apiBaseUrl}/api/GetUnlabeledItem`);
+                const response = await fetch(`${apiBaseUrl}/GetUnlabeledItem`);
 
                 if (response.ok) {
                     data = await response.json();
@@ -161,7 +161,7 @@
                     Positive: parseInt(Positive, 10)
                 };
 
-                const response = await fetch(`${apiBaseUrl}/api/PostLabel`, {
+                const response = await fetch(`${apiBaseUrl}/PostLabel`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
