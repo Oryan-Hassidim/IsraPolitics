@@ -13,7 +13,7 @@ public class PostLabel(ILoggerFactory loggerFactory)
 
     [Function("PostLabel")]
     public async Task<HttpResponseData> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
+        [HttpTrigger(AuthorizationLevel.Function, "post")]
         HttpRequestData request)
     {
         _logger.LogInformation("Processing a request to post a label.");
