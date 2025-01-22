@@ -30,7 +30,7 @@ public class PostLabel(ILoggerFactory loggerFactory)
         }
 
         // get connection string from settings
-        string? connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+        string? connectionString = Environment.GetEnvironmentVariable("MyAzureWebJobsStorage");
         TableClient tableClient = new(connectionString, "DataForTagging");
         await tableClient.UpdateEntityAsync(data, ETag.All, TableUpdateMode.Merge);
 

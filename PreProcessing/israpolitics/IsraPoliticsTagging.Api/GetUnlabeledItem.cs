@@ -16,7 +16,7 @@ public class GetUnlabeledItem(ILoggerFactory loggerFactory)
         [TableInput("DataForTagging", "TaggingData",
                     Filter = "Labeled eq false",
                     Take = 1,
-                    Connection = "AzureWebJobsStorage")]
+                    Connection = "MyAzureWebJobsStorage")]
         IEnumerable<UnlabeledEntry> items
         )
     {
