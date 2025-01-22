@@ -134,8 +134,8 @@
 
                 if (response.ok) {
                     data = await response.json();
-                    document.getElementById('Text').textContent = data.Text;
-                    document.getElementById('RowId').dataset.RowId = data.RowId;
+                    //document.getElementById('Text').textContent = data.Text;
+                    //document.getElementById('RowId').dataset.RowId = data.RowId;
                 } else {
                     alert('Failed to fetch data');
                 }
@@ -147,7 +147,7 @@
 
         async function submitTagging() {
             try {
-                const RowId = document.getElementById('content').dataset.RowId;
+                //const RowId = document.getElementById('content').dataset.RowId;
                 const AssociationLevel = document.getElementById('AssociationLevel').value;
                 const Positive = document.getElementById('Positive').value;
 
