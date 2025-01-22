@@ -155,11 +155,11 @@
                 data.Positive = parseInt(Positive, 10);
                 data.Labeled = true;
 
-                const payload = {
-                    RowId: parseInt(RowId, 10),
-                    AssociationLevel: parseInt(AssociationLevel, 10),
-                    Positive: parseInt(Positive, 10)
-                };
+                //const payload = {
+                //    RowId: parseInt(RowId, 10),
+                //    AssociationLevel: parseInt(AssociationLevel, 10),
+                //    Positive: parseInt(Positive, 10)
+                //};
 
                 const response = await fetch(`${apiBaseUrl}/PostLabel`, {
                     method: 'POST',
