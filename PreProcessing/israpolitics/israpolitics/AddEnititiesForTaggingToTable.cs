@@ -3,6 +3,7 @@
 using Azure;
 using Azure.Data.Tables;
 using israpolitics.Model;
+using System.Linq;
 
 namespace israpolitics;
 
@@ -29,7 +30,9 @@ public static class AddEnititiesForTaggingToTable
         TableClient tableClient = new(connectionString, tableName);
         await tableClient.CreateIfNotExistsAsync();
 
-        HashSet<int> indexes = [];
+        var indexes = tableClient.QueryAsync<UnlabeledEntry>().ToBlockingEnumerable().Select(x => x.RowId).ToHashSet();
+
+        //HashSet<int> indexes = [];
         Random rand = new(1234);
         var N = 4_484_726;
         using var context = new Context();
@@ -49,6 +52,11 @@ public static class AddEnititiesForTaggingToTable
                 continue;
             }
             indexes.Add(id);
+            if (entry.Text?.Length < 50)
+            {
+                i--;
+                continue;
+            }
             var unlabeledEntry = new UnlabeledEntry()
             {
                 RowId = id,
