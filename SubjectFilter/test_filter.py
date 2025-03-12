@@ -5,6 +5,8 @@ def main(sentences: str, rank: str, output: str):
     """
     pass
 
+# some note
+
 if __name__ == "__main__":
     # usage: py test_filter.py sentences.txt rank.txt output.txt
     pass
