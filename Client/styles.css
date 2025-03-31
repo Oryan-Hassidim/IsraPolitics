@@ -1,0 +1,65 @@
+@property --background-opacity {
+    syntax: '<number>';
+    initial-value: 1;
+    inherits: false;
+}
+
+#chart2 {
+    --animation-time: 0.5s;
+
+    margin-top: 10px;
+    height: 20px;
+    position: relative;
+    transition: all var(--animation-time) ease-in-out;
+
+
+
+    & .bar {
+        border: 2px solid black;
+        border-radius: 5px;
+        width: 100%;
+        height: 40%;
+        --background-opacity: 1;
+        background: linear-gradient(to right,
+                rgba(255, 0, 0, calc(var(--background-opacity))),
+                rgba(255, 255, 0, calc(var(--background-opacity))),
+                rgba(0, 255, 0, calc(var(--background-opacity))));
+        transition: all var(--animation-time) ease-in-out,
+            --background-opacity var(--animation-time) ease-in-out;
+    }
+
+    & svg {
+        position: absolute;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+    }
+
+    &:hover {
+        height: 100px;
+
+        & .bar {
+            height: 100%;
+            --background-opacity: 0;
+        }
+    }
+}
+
+@property --i {
+    syntax: '<number>';
+    initial-value: 0;
+    inherits: false;
+}
+
+#my-p {
+
+    --i: 0;
+    font-weight: bold;
+    padding-left: calc(var(--i) * 1px);
+    transition: --i 1s ease-in-out;
+
+    &:hover {
+        --i: 200;
+    }
+}
