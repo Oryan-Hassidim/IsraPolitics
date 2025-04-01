@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Animation</title>
+    <style>
+        @property --gradient-angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 90deg;
+        }
+
+        .element {
+            --gradient-angle: 90deg;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(var(--gradient-angle), red, blue);
+            transition: --gradient-angle 0.5s ease;
+        }
+
+        .element:hover {
+            --gradient-angle: 180deg;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="element"></div>
+</body>
+
+</html>

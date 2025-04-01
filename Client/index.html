@@ -2,100 +2,23 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>selected Mk</title>
+    <script type="module">
+        import '/src/my-element.ts';
+    </script>
+    <style>
+        @property --gradient-angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 90deg;
+        }
+    </style>
 </head>
 
 <body>
-    <header>
-        <h1>Welcome to the Sample Page</h1>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="#home">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </nav>
-    <main>
-        <section id="home">
-            <h2>Home</h2>
-            <p>This is the home section.</p>
-        </section>
-        <section id="about">
-            <h2>About</h2>
-            <p>This is the about section.</p>
-            <p id="my-p">hi</p>
-        </section>
-        <section id="contact">
-            <h2>Contact</h2>
-            <p>This is the contact section.</p>
-
-            <div id="chart2" onmouseenter="anim1()" onmouseleave="anim2()">
-                <div class="bar"></div>
-                <svg>
-                    <line x1="40%" y1="0%" x2="calc(40% - 7px)" y2="100%" stroke="black" stroke-width="2">
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="x1" to="0%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="y1" to="80%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="x2" to="20%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="y2" to="20%" />
-
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="x1" to="40%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="y1" to="0%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="x2"
-                            to="calc(40% - 7px)" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="y2" to="100%" />
-                    </line>
-                    <line x1="calc(40% - 7px)" y1="100%" x2="calc(40% + 7px)" y2="100%" stroke="black"
-                        stroke-width="2">
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="x1" to="20%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="y1" to="20%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="x2" to="80%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="y2" to="50%" />
-
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="x1"
-                            to="calc(40% - 7px)" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="y1" to="100%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="x2"
-                            to="calc(40% + 7px)" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="y2" to="100%" />
-                    </line>
-                    <line x1="calc(40% + 7px)" y1="100%" x2="40%" y2="0%" stroke="black" stroke-width="2">
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="x1" to="80%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="y1" to="50%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="x2" to="100%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="in" attributeName="y2" to="0%" />
-
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="x1"
-                            to="calc(40% + 7px)" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="y1" to="100%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="x2" to="40%" />
-                        <animate dur="0.5s" fill="freeze" begin="indefinite" class="out" attributeName="y2" to="0%" />
-                    </line>
-                </svg>
-            </div>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2023 Sample Page. All rights reserved.</p>
-    </footer>
-    <!-- import chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        let svg = document.querySelector("#chart2 svg");
-        let in_animations = svg.querySelectorAll("animate.in");
-        let out_animations = svg.querySelectorAll("animate.out");
-
-        function anim1() {
-            in_animations.forEach(anim => anim.beginElement());
-        }
-
-        function anim2() {
-            out_animations.forEach(anim => anim.beginElement());
-        }
-    </script>
+    <my-element></my-element>
 </body>
 
 </html>
