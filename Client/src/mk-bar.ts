@@ -1,6 +1,7 @@
 import { LitElement, TemplateResult, css, html, svg, unsafeCSS } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { Lazy } from './Lazy';
+import { Lazy } from './helpers/Lazy';
+import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
 export class SpeechPoint {
     constructor(
@@ -24,11 +25,11 @@ export class MkBar extends LitElement {
     @property({ type: Number })
     average: number = 0;
 
-    @property({ type: Array })
     private _list: SpeechPoint[] = [];
     public get list(): SpeechPoint[] {
         return this._list;
     }
+    @property({ type: Array })
     public set list(value: SpeechPoint[]) {
         this._list = value.sort(this.compare_speeches_by_date);
         const min_date = this._list[0].date;
@@ -46,7 +47,7 @@ export class MkBar extends LitElement {
     private _points_list: Point[] = [];
 
     @state()
-    private _tooltip: TemplateResult | string | null = null;
+    private _tooltip_content: TemplateResult | string | null = null;
 
     static animation_time = '0.5s';
 
@@ -58,7 +59,7 @@ export class MkBar extends LitElement {
             position: relative;
             transition: all var(--animation-time) ease-in-out;
 
-            & .scale {
+            .scale {
                 position: absolute;
                 top: 0%;
                 left: 0%;
@@ -75,20 +76,31 @@ export class MkBar extends LitElement {
                 transition: all var(--animation-time) ease-in-out,
                     --gradient-angle var(--animation-time) ease-in-out;
             }
-            & svg.chart {
+            svg.chart {
                 position: absolute;
-                top: 20%;
+                top: 30%;
                 left: 0%;
                 width: 100%;
                 height: 80%;
                 overflow: visible;
                 transition: all var(--animation-time) ease-in-out;
-                & .triangle-fill {
-                    fill: black;
-                    transition: opacity var(--animation-time) ease-in-out;
+                line {
+                    stroke: black;
+                    stroke-width: 6px;
+                    transition: stroke-width var(--animation-time);
+                    stroke-linecap: round;
                 }
-                & circle {
+                .triangle-fill {
+                    fill: black;
+                    opacity: 1;
+                    transition: opacity var(--animation-time),
+                        fill var(--animation-time);
+                }
+                circle {
+                    r: 0px;
                     fill: transparent;
+                    stroke: black;
+                    stroke-width: 0px;
                     transition: all var(--animation-time) ease-in-out;
                 }
             }
@@ -106,7 +118,6 @@ export class MkBar extends LitElement {
                     list-style-type: none;
                     padding: 0;
                     margin: 0;
-                    /* position: relative; */
                     & li {
                         position: absolute;
                         bottom: 0%;
@@ -116,18 +127,18 @@ export class MkBar extends LitElement {
                         transform: rotate(30deg);
                     }
                 }
-                & svg {
+                svg {
                     position: absolute;
                     top: 0%;
                     left: 0%;
                     width: 100%;
                     height: 30%;
-                    & .axis {
+                    .axis {
                         stroke: black;
                         stroke-width: 2;
                         fill: none;
                     }
-                    & .tick {
+                    .tick {
                         stroke: black;
                         stroke-width: 1;
                         fill: none;
@@ -144,22 +155,27 @@ export class MkBar extends LitElement {
                     height: 60%;
                     --gradient-angle: 0deg;
                 }
-                & .dates-axis {
+                .dates-axis {
                     opacity: 1;
                 }
-                & svg.chart {
+                svg.chart {
                     top: 0%;
                     left: 30px;
                     right: 10px;
                     width: calc(100% - 40px);
                     height: 60%;
-                    & .triangle-fill {
-                        opacity: 0;
+                    line {
+                        stroke-width: 1px;
                     }
-                    & circle {
-                        fill: red;
+                    .triangle-fill {
+                        opacity: 0;
+                        fill: transparent;
+                    }
+                    circle {
+                        r: 3px;
+                        fill: black;
                         &:hover {
-                            fill: blue;
+                            stroke-width: 1px;
                         }
                         title {
                             color: red;
@@ -167,9 +183,23 @@ export class MkBar extends LitElement {
                     }
                 }
             }
+
+            .tooltip-anchor {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                width: 2px;
+                height: 2px;
+                opacity: 1;
+                transition: top var(--animation-time) ease-in-out,
+                    left var(--animation-time) ease-in-out;
+                anchor-name: --tooltip-anchor;
+                position: absolute;
+            }
             .tooltip {
                 display: block;
                 position: absolute;
+                position-anchor: --tooltip-anchor;
                 background-color: white;
                 border: 1px solid black;
                 padding: 5px;
@@ -177,9 +207,10 @@ export class MkBar extends LitElement {
                 font-size: 12px;
                 pointer-events: visible;
                 opacity: 0;
-                transition: opacity var(--animation-time) ease-in-out,
-                    left var(--animation-time) ease-in-out,
-                    top var(--animation-time) ease-in-out;
+                transition: opacity var(--animation-time) ease-in-out;
+                position: absolute;
+                position-area: bottom;
+                width: 100px;
             }
         }
 
@@ -193,6 +224,7 @@ export class MkBar extends LitElement {
     private static getTime(date?: Date): number {
         return date != null ? date.getTime() : 0;
     }
+
     private compare_speeches_by_date(a: SpeechPoint, b: SpeechPoint) {
         return MkBar.getTime(a.date) - MkBar.getTime(b.date);
     }
@@ -237,8 +269,7 @@ export class MkBar extends LitElement {
                 )
             );
         triangle_points.push(triangle_points[0]); // close the triangle
-        console.log(triangle_points);
-        console.log(this._points_list);
+
         var lines = [];
         for (var i = 0; i < this._points_list.length - 1; i++) {
             lines.push(
@@ -248,8 +279,6 @@ export class MkBar extends LitElement {
                         y1="${triangle_points[i].y}"
                         x2="${triangle_points[i + 1].x}"
                         y2="${triangle_points[i + 1].y}"
-                        stroke="black"
-                        stroke-width="2"
                     >
                         <animate
                             dur="${MkBar.animation_time}"
@@ -329,7 +358,6 @@ export class MkBar extends LitElement {
                     @focusin=${this.show_tooltip}
                     cx="${point.x * 100.0}%"
                     cy="${100 - point.y * 100.0}%"
-                    r="5px"
                     data-index="${i}"
                     tabindex="0"
                 >
@@ -345,7 +373,7 @@ export class MkBar extends LitElement {
 
         const dates_axis = this.calculate_dates_axis();
 
-        return html`<div
+        return html` <div
             class="my-bar-chart"
             @mouseenter=${this.mouse_enter}
             @mouseleave=${this.mouse_leave}
@@ -356,7 +384,13 @@ export class MkBar extends LitElement {
             <div class="scale"></div>
             <svg class="chart">${triangle_fill} ${lines} ${circles}</svg>
             ${dates_axis}
-            <div class="tooltip">${this._tooltip}</div>
+            <div
+                ${ref(this._tooltip_anchor_element)}
+                class="tooltip-anchor"
+            ></div>
+            <div ${ref(this._tooltip_element)} class="tooltip">
+                ${this._tooltip_content}
+            </div>
         </div>`;
     }
 
@@ -437,20 +471,26 @@ export class MkBar extends LitElement {
         });
     }
 
+    private _tooltip_element: Ref<HTMLDivElement> = createRef();
+    private _tooltip_anchor_element: Ref<HTMLDivElement> = createRef();
     private async show_tooltip(e: MouseEvent) {
         const target = e.target as SVGCircleElement;
-        const tooltip = this.shadowRoot?.querySelector(
-            '.tooltip'
-        ) as HTMLElement;
+        const tooltip = this._tooltip_element.value;
         const index = parseInt(target.getAttribute('data-index') || '0');
         const point = this.list[index];
         const formattedDate = point.date.toLocaleDateString('en-GB'); // Formats as DD/MM/YYYY
-        this._tooltip = html`<div>${formattedDate}, ${point.value.toFixed(2)}</div>`;
-        tooltip.style.left = `${target.cx.baseVal.value}px`;
-        tooltip.style.top = `${target.cy.baseVal.value}px`;
+        this._tooltip_content = html`<div>
+            ${formattedDate}, ${point.value.toFixed(2)}
+        </div>`;
+        if (this._tooltip_anchor_element.value) {
+            this._tooltip_anchor_element.value.style.left = `${
+                30 + target.cx.baseVal.value
+            }px`;
+            this._tooltip_anchor_element.value.style.top = `${target.cy.baseVal.value}px`;
+        }
         // now await for the tooltip of the point
         if (point.tooltip) {
-            this._tooltip = await point.tooltip.get_value();
+            this._tooltip_content = await point.tooltip.get_value();
         }
     }
 }

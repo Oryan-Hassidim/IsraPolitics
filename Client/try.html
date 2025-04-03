@@ -4,30 +4,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gradient Animation</title>
+    <title>Anchor</title>
     <style>
-        @property --gradient-angle {
-            syntax: '<angle>';
-            inherits: false;
-            initial-value: 90deg;
+        @position-try --custom-left {
+            margin: 0 10px 0 0;
+            position-area: left;
+        }
+
+        @position-try --custom-bottom {
+            top: anchor(bottom);
+            justify-self: anchor-center;
+            margin: 10px 0 0 0;
+            position-area: none;
+        }
+
+        @position-try --custom-right {
+            left: calc(anchor(right) + 10px);
+            align-self: anchor-center;
+            width: 100px;
+            position-area: none;
+        }
+
+        @position-try --custom-bottom-right {
+            position-area: bottom right;
+            margin: 10px 0 0 10px;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            position: relative;
         }
 
         .element {
-            --gradient-angle: 90deg;
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(var(--gradient-angle), red, blue);
-            transition: --gradient-angle 0.5s ease;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            position: absolute;
+            position-anchor: --my-anchor;
+            position-area: top center;
+            margin: 0 0 10px 0;
+            position-try-fallbacks:
+                --custom-left, --custom-bottom,
+                --custom-right, --custom-bottom-right;
+            transition: margin 0.5s ease-in-out;
         }
 
-        .element:hover {
-            --gradient-angle: 180deg;
+        .anchor {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            anchor-name: --my-anchor;
         }
     </style>
 </head>
 
 <body>
-    <div class="element"></div>
+    <div class="anchor">anchor</div>
+    <div class="element">element</div>
 </body>
 
 </html>
