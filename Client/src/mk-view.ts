@@ -44,10 +44,6 @@ export class MkView extends LitElement {
                 display: flex;
                 flex-direction: column;
                 gap: 30px;
-
-                .topic {
-                    /* margin-bottom: 30px; */
-                }
             }
         }
     `;

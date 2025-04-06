@@ -658,15 +658,15 @@ export class MkBar extends LitElement {
     // method for mouse enter
     private mouse_enter(e: MouseEvent): void {
         if (this.focus_within) return;
-        this.first_in_animation.value.beginElement();
+        this.first_in_animation.value?.beginElement();
     }
     private mouse_leave(e: MouseEvent): void {
         if (this.focus_within) return;
-        this.first_out_animation.value.beginElement();
+        this.first_out_animation.value?.beginElement();
     }
     private focus_in(e: FocusEvent): void {
         if (this.focus_within) return;
-        this.first_in_animation.value.beginElement();
+        this.first_in_animation.value?.beginElement();
         this.focus_within = true;
     }
     private focus_out(e: FocusEvent) {
@@ -679,7 +679,7 @@ export class MkBar extends LitElement {
                 return;
         }
         this.focus_within = false;
-        this.first_out_animation.value.beginElement();
+        this.first_out_animation.value?.beginElement();
     }
 
     private _tooltip_element: Ref<HTMLDivElement> = createRef();
