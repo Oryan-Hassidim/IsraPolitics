@@ -6,7 +6,7 @@ import { SpeechPoint } from './mk-bar';
 @customElement('mk-view')
 export class MkView extends LitElement {
     @property({ type: Number })
-    public mkId: number;
+    public mkId: number = -1;
 
     @state()
     private _mkData: MkData = new MkData(0, 0, '', '', '', []);
@@ -43,10 +43,10 @@ export class MkView extends LitElement {
                 grid-area: topics;
                 display: flex;
                 flex-direction: column;
-                /* gap: 30px; */
+                gap: 30px;
 
-                mk-bar {
-                    margin-bottom: 30px;
+                .topic {
+                    /* margin-bottom: 30px; */
                 }
             }
         }
@@ -70,17 +70,19 @@ export class MkView extends LitElement {
                     ${this._mkData.Topics.map(
                         (topic) =>
                             html`
-                                <h3>${topic.topicName}</h3>
-                                <mk-bar
-                                    .average=${topic.average}
-                                    .list=${topic.dates.map(
-                                        (date, index) =>
-                                            new SpeechPoint(
-                                                date,
-                                                topic.ranks[index]
-                                            )
-                                    )}
-                                ></mk-bar>
+                                <div class="topic">
+                                    <h3>${topic.topicName}</h3>
+                                    <mk-bar
+                                        .average=${topic.average}
+                                        .list=${topic.dates.map(
+                                            (date, index) =>
+                                                new SpeechPoint(
+                                                    date,
+                                                    topic.ranks[index]
+                                                )
+                                        )}
+                                    ></mk-bar>
+                                </div>
                             `
                     )}
                 </div>

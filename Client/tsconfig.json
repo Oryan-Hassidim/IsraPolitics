@@ -3,6 +3,8 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "moduleResolution": "bundler",
-    "target": "esnext"
+    "target": "esnext",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true
   }
 }

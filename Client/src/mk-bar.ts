@@ -2,26 +2,26 @@ import { LitElement, TemplateResult, css, html, svg, unsafeCSS } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Lazy } from './helpers/Lazy';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
+import { DatesHelpers, DateType } from './helpers/DatesHelpers';
 
 export class SpeechPoint {
     constructor(
         public date: Date,
         public value: number,
         public tooltip: Lazy<TemplateResult | string> | null = null
-    ) { }
+    ) {}
 }
 
 class Point {
-    constructor(public x: number, public y: number) { }
+    constructor(public x: number, public y: number) {}
 }
 
 class PointString {
-    constructor(public x: string, public y: string) { }
+    constructor(public x: string, public y: string) {}
 }
 
 @customElement('mk-bar')
 export class MkBar extends LitElement {
-    //#region Properties
     @property({ type: Number })
     average: number = 0;
 
@@ -42,18 +42,17 @@ export class MkBar extends LitElement {
         });
         this.requestUpdate();
     }
-    //#endregion
 
     private _points_list: Point[] = [];
 
     @state()
     private _tooltip_content: TemplateResult | string | null = null;
 
-    static animation_time = '0.5s';
+    static animation_time_in_s = 0.5;
 
     static styles = css`
         .my-bar-chart {
-            --animation-time: ${unsafeCSS(MkBar.animation_time)};
+            --animation-time: ${MkBar.animation_time_in_s}s;
             height: 30px;
             /* background-color: rgba(0, 0, 0, 0.1); */
             position: relative;
@@ -88,6 +87,9 @@ export class MkBar extends LitElement {
                     stroke: black;
                     stroke-width: 6px;
                     transition: stroke-width var(--animation-time);
+                    transition-delay: calc(
+                        var(--date-ratio) * var(--animation-time)
+                    );
                     stroke-linecap: round;
                 }
                 .triangle-fill {
@@ -102,29 +104,38 @@ export class MkBar extends LitElement {
                     stroke: black;
                     stroke-width: 0px;
                     transition: all var(--animation-time) ease-in-out;
+                    transition-delay: calc(
+                        var(--date-ratio) * var(--animation-time)
+                    );
                 }
             }
-            & .dates-axis {
-                opacity: 0;
+            .dates-axis {
                 position: absolute;
                 bottom: 0%;
                 left: 30px;
                 right: 10px;
                 height: 20%;
-                transition: opacity var(--animation-time) ease-in-out;
-                & ul {
+                /* transition: opacity var(--animation-time) ease-in-out; */
+                ul {
                     justify-content: space-between;
                     width: 100%;
                     list-style-type: none;
                     padding: 0;
                     margin: 0;
-                    & li {
+                    li {
                         position: absolute;
                         bottom: 0%;
-                        left: calc(var(--index) * 10%);
+                        left: calc(var(--date-ratio) * 100%);
                         display: block;
                         transform-origin: 0px 50%;
-                        transform: rotate(30deg);
+                        opacity: 0;
+                        transform: rotate(30deg) translateY(100%);
+                        transition: opacity var(--animation-time) ease-in-out,
+                            transform var(--animation-time) ease-in-out;
+                        transition-delay: calc(
+                                var(--date-ratio) * var(--animation-time)
+                            ),
+                            calc(var(--date-ratio) * var(--animation-time));
                     }
                 }
                 svg {
@@ -133,6 +144,9 @@ export class MkBar extends LitElement {
                     left: 0%;
                     width: 100%;
                     height: 30%;
+                    overflow: visible;
+                    opacity: 0;
+                    transition: opacity var(--animation-time) ease-in-out;
                     .axis {
                         stroke: black;
                         stroke-width: 2;
@@ -140,8 +154,21 @@ export class MkBar extends LitElement {
                     }
                     .tick {
                         stroke: black;
-                        stroke-width: 1;
                         fill: none;
+                        &.tick-type-0 {
+                            stroke-width: 2px;
+                        }
+                        &.tick-type-1 {
+                            stroke-width: 1px;
+                        }
+                        &.tick-type-2 {
+                            stroke-width: 0.5px;
+                        }
+                    }
+                }
+                &.biggest-tick-0 {
+                    li.tick-type-1 {
+                        display: none;
                     }
                 }
             }
@@ -156,7 +183,13 @@ export class MkBar extends LitElement {
                     --gradient-angle: 0deg;
                 }
                 .dates-axis {
-                    opacity: 1;
+                    ul li {
+                        opacity: 1;
+                        transform: rotate(30deg) translateY(0%);
+                    }
+                    svg {
+                        opacity: 1;
+                    }
                 }
                 svg.chart {
                     top: 0%;
@@ -166,6 +199,7 @@ export class MkBar extends LitElement {
                     height: 60%;
                     line {
                         stroke-width: 1px;
+                        transition-delay: 0s;
                     }
                     .triangle-fill {
                         opacity: 0;
@@ -249,7 +283,8 @@ export class MkBar extends LitElement {
                     { length: tri2_size },
                     (_, i) =>
                         new PointString(
-                            `calc(${avg_percent}% + ${-7.0 + (i * 14.0) / tri2_size
+                            `calc(${avg_percent}% + ${
+                                -7.0 + (i * 14.0) / tri2_size
                             }px)`,
                             `100%`
                         )
@@ -260,7 +295,8 @@ export class MkBar extends LitElement {
                     { length: tri3_size },
                     (_, i) =>
                         new PointString(
-                            `calc(${avg_percent}% + ${7 - (i * 7.0) / tri3_size
+                            `calc(${avg_percent}% + ${
+                                7 - (i * 7.0) / tri3_size
                             }px)`,
                             `${100.0 - (i * 100.0) / tri3_size}%`
                         )
@@ -271,43 +307,53 @@ export class MkBar extends LitElement {
         var lines = [];
         for (var i = 0; i < this._points_list.length - 1; i++) {
             lines.push(
-                i == 0 ?
-                    svg`
+                i == 0
+                    ? svg`
                 <line
                     x1="${triangle_points[i].x}"
                     y1="${triangle_points[i].y}"
                     x2="${triangle_points[i + 1].x}"
                     y2="${triangle_points[i + 1].y}"
+                    style="--date-ratio: ${this._points_list[i].x};"
                 >
                     <animate
                         ${ref(this.first_in_animation)}
                         id="firstInAnimation"
-                        dur="${MkBar.animation_time}"
+                        dur="${MkBar.animation_time_in_s}s"
                         fill="freeze"
                         begin="indefinite"
                         attributeName="x1"
                         to="${this._points_list[i].x * 100.0}%"
                     ></animate>
                     <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstInAnimation.begin+${0.7 * this._points_list[i].x}s"
+                            begin="firstInAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i].x
+                            }s"
                             class="in"
                             attributeName="y1"
                             to="${100 - this._points_list[i].y * 100.0}%"
                         ></animate>
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstInAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            begin="firstInAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i + 1].x
+                            }s"
                             class="in"
                             attributeName="x2"
                             to="${this._points_list[i + 1].x * 100.0}%"
                         ></animate>
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstInAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            begin="firstInAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i + 1].x
+                            }s"
                             class="in"
                             attributeName="y2"
                             to="${100 - this._points_list[i + 1].y * 100.0}%"
@@ -316,107 +362,140 @@ export class MkBar extends LitElement {
                     <animate
                         ${ref(this.first_out_animation)}
                         id="firstOutAnimation"
-                        dur="${MkBar.animation_time}"
+                        dur="${MkBar.animation_time_in_s}s"
                         fill="freeze"
                         begin="indefinite"
                         attributeName="x1"
                         to="${triangle_points[i].x}"
                     ></animate>
                     <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i].x}s"
+                            begin="firstOutAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i].x
+                            }s"
                             class="out"
                             attributeName="y1"
                             to="${triangle_points[i].y}"
                         ></animate>
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            begin="firstOutAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i + 1].x
+                            }s"
                             class="out"
                             attributeName="x2"
                             to="${triangle_points[i + 1].x}"
                         ></animate>
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            begin="firstOutAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i + 1].x
+                            }s"
                             class="out"
                             attributeName="y2"
                             to="${triangle_points[i + 1].y}"
                         ></animate>
                 </line>
             `
-                    :
-                    svg`
+                    : svg`
                     <line
                         x1="${triangle_points[i].x}"
                         y1="${triangle_points[i].y}"
                         x2="${triangle_points[i + 1].x}"
                         y2="${triangle_points[i + 1].y}"
+                        style="--date-ratio: ${this._points_list[i].x};"
                     >
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstInAnimation.begin+${0.7 * this._points_list[i].x}s"
+                            begin="firstInAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i].x
+                            }s"
                             class="in"
                             attributeName="x1"
                             to="${this._points_list[i].x * 100.0}%"
                         ></animate>
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstInAnimation.begin+${0.7 * this._points_list[i].x}s"
+                            begin="firstInAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i].x
+                            }s"
                             class="in"
                             attributeName="y1"
                             to="${100 - this._points_list[i].y * 100.0}%"
                         ></animate>
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstInAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            begin="firstInAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i + 1].x
+                            }s"
                             class="in"
                             attributeName="x2"
                             to="${this._points_list[i + 1].x * 100.0}%"
                         ></animate>
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstInAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            begin="firstInAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i + 1].x
+                            }s"
                             class="in"
                             attributeName="y2"
                             to="${100 - this._points_list[i + 1].y * 100.0}%"
                         ></animate>
 
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i].x}s"
+                            begin="firstOutAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i].x
+                            }s"
                             class="out"
                             attributeName="x1"
                             to="${triangle_points[i].x}"
                         ></animate>
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i].x}s"
+                            begin="firstOutAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i].x
+                            }s"
                             class="out"
                             attributeName="y1"
                             to="${triangle_points[i].y}"
                         ></animate>
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            begin="firstOutAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i + 1].x
+                            }s"
                             class="out"
                             attributeName="x2"
                             to="${triangle_points[i + 1].x}"
                         ></animate>
                         <animate
-                            dur="${MkBar.animation_time}"
+                            dur="${MkBar.animation_time_in_s}s"
                             fill="freeze"
-                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            begin="firstOutAnimation.begin+${
+                                MkBar.animation_time_in_s *
+                                this._points_list[i + 1].x
+                            }s"
                             class="out"
                             attributeName="y2"
                             to="${triangle_points[i + 1].y}"
@@ -432,6 +511,7 @@ export class MkBar extends LitElement {
                 svg`
                 <circle @mouseenter=${this.show_tooltip}
                     @focusin=${this.show_tooltip}
+                    style="--date-ratio: ${point.x};"
                     cx="${point.x * 100.0}%"
                     cy="${100 - point.y * 100.0}%"
                     data-index="${i}"
@@ -447,7 +527,7 @@ export class MkBar extends LitElement {
                 >
             </polygon>`;
 
-        const dates_axis = this.calculate_dates_axis();
+        const dates_axis = this.render_dates_axis();
 
         return html` <div
             class="my-bar-chart"
@@ -471,42 +551,102 @@ export class MkBar extends LitElement {
         </div>`;
     }
 
-    private calculate_dates_axis(): TemplateResult<1> {
+    private render_dates_axis(): TemplateResult<1> {
         const min_date = this._list[0].date;
+        const min_date_num = min_date.getTime();
         const max_date = this._list[this._list.length - 1].date;
-        const diff = max_date.getTime() - min_date.getTime();
-        const dates = Array.from(
-            { length: 11 },
-            (_, i) =>
-                html`<li style="--index: ${i}">
-                    ${new Date(
-                    min_date.getTime() + (diff * i) / 10
-                ).toLocaleDateString('he-IL', {
-                    year: '2-digit',
-                    month: '2-digit',
-                    day: '2-digit',
-                })}
-                </li>`
-        );
-        return html`<div class="dates-axis">
+        const diff = max_date.getTime() - min_date_num;
+
+        const dates: [Date, DateType][] = [];
+        var biggest_tick: DateType;
+
+        if (diff > 0.5 * 365 * 24 * 60 * 60 * 1000) {
+            biggest_tick =
+                diff > 3 * 365 * 24 * 60 * 60 * 1000
+                    ? DateType.Year
+                    : DateType.Month;
+            dates.push([min_date, DateType.Year]);
+            var date = new Date(min_date.getFullYear(), min_date.getMonth(), 1);
+            date = DatesHelpers.AddMonths(date, 1);
+            while (date < max_date) {
+                dates.push([
+                    new Date(date),
+                    date.getMonth() == 0 ? DateType.Year : DateType.Month,
+                ]);
+                date = DatesHelpers.AddMonths(date, 1);
+            }
+        } else {
+            biggest_tick = DateType.Week;
+            dates.push([min_date, DateType.Month]);
+            var date = new Date(min_date.getFullYear(), min_date.getMonth(), 1);
+            date = DatesHelpers.AddWeeks(date, 1);
+            while (date < max_date) {
+                dates.push([
+                    new Date(date),
+                    date.getDate() == 1
+                        ? date.getMonth() == 0
+                            ? DateType.Year
+                            : DateType.Month
+                        : DateType.Week,
+                ]);
+                date = DatesHelpers.AddWeeks(date, 1);
+            }
+        }
+        return html`<div class="dates-axis biggest-tick-${biggest_tick}">
             <ul>
-                ${dates}
+                ${dates.map(([date, dateType], _) => {
+                    let dateString = '';
+                    switch (dateType) {
+                        case DateType.Year:
+                            dateString = date.toLocaleDateString('he-IL', {
+                                year: 'numeric',
+                            });
+                            break;
+                        case DateType.Month:
+                            dateString = date.toLocaleDateString('he-IL', {
+                                month: '2-digit',
+                                year: 'numeric',
+                            });
+                            break;
+                        case DateType.Week:
+                            dateString = date.toLocaleDateString('he-IL', {
+                                month: '2-digit',
+                                day: '2-digit',
+                                year: '2-digit',
+                            });
+                            break;
+                        case DateType.Day:
+                            dateString = date.toLocaleDateString('he-IL', {
+                                month: '2-digit',
+                                day: '2-digit',
+                                year: '2-digit',
+                            });
+                            break;
+                    }
+                    const ratio = (date.getTime() - min_date_num) / diff;
+                    return html`<li
+                        class="tick-type-${dateType.toString()}"
+                        style="--date-ratio: ${ratio}"
+                    >
+                        ${dateString}
+                    </li>`;
+                })}
             </ul>
             <svg>
                 <line class="axis" x1="0%" y1="50%" x2="100%" y2="50%"></line>
-                ${Array.from(
-            { length: 11 },
-            (_, i) =>
-                svg`
+                ${dates.map(([date, dateType], _) => {
+                    const x = (date.getTime() - min_date_num) / diff;
+                    return svg`
                         <line
-                            class="tick"
-                            x1="${i * 10}%"
-                            y1="0%"
-                            x2="${i * 10}%"
+                            class="tick tick-type-${dateType.toString()}"
+                            style="--date-ratio: ${x}"
+                            x1="${x * 100}%"
+                            y1="${dateType > 0 ? 5 : 0}0%"
+                            x2="${x * 100}%"
                             y2="100%"
                         ></line>
-                    `
-        )}
+                    `;
+                })}
             </svg>
         </div>`; // TODO: implement the axis
     }
@@ -554,8 +694,9 @@ export class MkBar extends LitElement {
             ${formattedDate}, ${point.value.toFixed(2)}
         </div>`;
         if (this._tooltip_anchor_element.value) {
-            this._tooltip_anchor_element.value.style.left = `${30 + target.cx.baseVal.value
-                }px`;
+            this._tooltip_anchor_element.value.style.left = `${
+                30 + target.cx.baseVal.value
+            }px`;
             this._tooltip_anchor_element.value.style.top = `${target.cy.baseVal.value}px`;
         }
         // now await for the tooltip of the point
