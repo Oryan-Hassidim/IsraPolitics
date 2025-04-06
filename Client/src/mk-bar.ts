@@ -8,15 +8,15 @@ export class SpeechPoint {
         public date: Date,
         public value: number,
         public tooltip: Lazy<TemplateResult | string> | null = null
-    ) {}
+    ) { }
 }
 
 class Point {
-    constructor(public x: number, public y: number) {}
+    constructor(public x: number, public y: number) { }
 }
 
 class PointString {
-    constructor(public x: string, public y: string) {}
+    constructor(public x: string, public y: string) { }
 }
 
 @customElement('mk-bar')
@@ -249,8 +249,7 @@ export class MkBar extends LitElement {
                     { length: tri2_size },
                     (_, i) =>
                         new PointString(
-                            `calc(${avg_percent}% + ${
-                                -7.0 + (i * 14.0) / tri2_size
+                            `calc(${avg_percent}% + ${-7.0 + (i * 14.0) / tri2_size
                             }px)`,
                             `100%`
                         )
@@ -261,8 +260,7 @@ export class MkBar extends LitElement {
                     { length: tri3_size },
                     (_, i) =>
                         new PointString(
-                            `calc(${avg_percent}% + ${
-                                7 - (i * 7.0) / tri3_size
+                            `calc(${avg_percent}% + ${7 - (i * 7.0) / tri3_size
                             }px)`,
                             `${100.0 - (i * 100.0) / tri3_size}%`
                         )
@@ -273,7 +271,85 @@ export class MkBar extends LitElement {
         var lines = [];
         for (var i = 0; i < this._points_list.length - 1; i++) {
             lines.push(
-                svg`
+                i == 0 ?
+                    svg`
+                <line
+                    x1="${triangle_points[i].x}"
+                    y1="${triangle_points[i].y}"
+                    x2="${triangle_points[i + 1].x}"
+                    y2="${triangle_points[i + 1].y}"
+                >
+                    <animate
+                        ${ref(this.first_in_animation)}
+                        id="firstInAnimation"
+                        dur="${MkBar.animation_time}"
+                        fill="freeze"
+                        begin="indefinite"
+                        attributeName="x1"
+                        to="${this._points_list[i].x * 100.0}%"
+                    ></animate>
+                    <animate
+                            dur="${MkBar.animation_time}"
+                            fill="freeze"
+                            begin="firstInAnimation.begin+${0.7 * this._points_list[i].x}s"
+                            class="in"
+                            attributeName="y1"
+                            to="${100 - this._points_list[i].y * 100.0}%"
+                        ></animate>
+                        <animate
+                            dur="${MkBar.animation_time}"
+                            fill="freeze"
+                            begin="firstInAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            class="in"
+                            attributeName="x2"
+                            to="${this._points_list[i + 1].x * 100.0}%"
+                        ></animate>
+                        <animate
+                            dur="${MkBar.animation_time}"
+                            fill="freeze"
+                            begin="firstInAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            class="in"
+                            attributeName="y2"
+                            to="${100 - this._points_list[i + 1].y * 100.0}%"
+                        ></animate>
+
+                    <animate
+                        ${ref(this.first_out_animation)}
+                        id="firstOutAnimation"
+                        dur="${MkBar.animation_time}"
+                        fill="freeze"
+                        begin="indefinite"
+                        attributeName="x1"
+                        to="${triangle_points[i].x}"
+                    ></animate>
+                    <animate
+                            dur="${MkBar.animation_time}"
+                            fill="freeze"
+                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i].x}s"
+                            class="out"
+                            attributeName="y1"
+                            to="${triangle_points[i].y}"
+                        ></animate>
+                        <animate
+                            dur="${MkBar.animation_time}"
+                            fill="freeze"
+                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            class="out"
+                            attributeName="x2"
+                            to="${triangle_points[i + 1].x}"
+                        ></animate>
+                        <animate
+                            dur="${MkBar.animation_time}"
+                            fill="freeze"
+                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
+                            class="out"
+                            attributeName="y2"
+                            to="${triangle_points[i + 1].y}"
+                        ></animate>
+                </line>
+            `
+                    :
+                    svg`
                     <line
                         x1="${triangle_points[i].x}"
                         y1="${triangle_points[i].y}"
@@ -283,7 +359,7 @@ export class MkBar extends LitElement {
                         <animate
                             dur="${MkBar.animation_time}"
                             fill="freeze"
-                            begin="indefinite"
+                            begin="firstInAnimation.begin+${0.7 * this._points_list[i].x}s"
                             class="in"
                             attributeName="x1"
                             to="${this._points_list[i].x * 100.0}%"
@@ -291,7 +367,7 @@ export class MkBar extends LitElement {
                         <animate
                             dur="${MkBar.animation_time}"
                             fill="freeze"
-                            begin="indefinite"
+                            begin="firstInAnimation.begin+${0.7 * this._points_list[i].x}s"
                             class="in"
                             attributeName="y1"
                             to="${100 - this._points_list[i].y * 100.0}%"
@@ -299,7 +375,7 @@ export class MkBar extends LitElement {
                         <animate
                             dur="${MkBar.animation_time}"
                             fill="freeze"
-                            begin="indefinite"
+                            begin="firstInAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
                             class="in"
                             attributeName="x2"
                             to="${this._points_list[i + 1].x * 100.0}%"
@@ -307,7 +383,7 @@ export class MkBar extends LitElement {
                         <animate
                             dur="${MkBar.animation_time}"
                             fill="freeze"
-                            begin="indefinite"
+                            begin="firstInAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
                             class="in"
                             attributeName="y2"
                             to="${100 - this._points_list[i + 1].y * 100.0}%"
@@ -316,7 +392,7 @@ export class MkBar extends LitElement {
                         <animate
                             dur="${MkBar.animation_time}"
                             fill="freeze"
-                            begin="indefinite"
+                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i].x}s"
                             class="out"
                             attributeName="x1"
                             to="${triangle_points[i].x}"
@@ -324,7 +400,7 @@ export class MkBar extends LitElement {
                         <animate
                             dur="${MkBar.animation_time}"
                             fill="freeze"
-                            begin="indefinite"
+                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i].x}s"
                             class="out"
                             attributeName="y1"
                             to="${triangle_points[i].y}"
@@ -332,7 +408,7 @@ export class MkBar extends LitElement {
                         <animate
                             dur="${MkBar.animation_time}"
                             fill="freeze"
-                            begin="indefinite"
+                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
                             class="out"
                             attributeName="x2"
                             to="${triangle_points[i + 1].x}"
@@ -340,7 +416,7 @@ export class MkBar extends LitElement {
                         <animate
                             dur="${MkBar.animation_time}"
                             fill="freeze"
-                            begin="indefinite"
+                            begin="firstOutAnimation.begin+${0.7 * this._points_list[i + 1].x}s"
                             class="out"
                             attributeName="y2"
                             to="${triangle_points[i + 1].y}"
@@ -375,6 +451,7 @@ export class MkBar extends LitElement {
 
         return html` <div
             class="my-bar-chart"
+            id="myBarChart"
             @mouseenter=${this.mouse_enter}
             @mouseleave=${this.mouse_leave}
             @focusin=${this.focus_in}
@@ -403,12 +480,12 @@ export class MkBar extends LitElement {
             (_, i) =>
                 html`<li style="--index: ${i}">
                     ${new Date(
-                        min_date.getTime() + (diff * i) / 10
-                    ).toLocaleDateString('he-IL', {
-                        year: '2-digit',
-                        month: '2-digit',
-                        day: '2-digit',
-                    })}
+                    min_date.getTime() + (diff * i) / 10
+                ).toLocaleDateString('he-IL', {
+                    year: '2-digit',
+                    month: '2-digit',
+                    day: '2-digit',
+                })}
                 </li>`
         );
         return html`<div class="dates-axis">
@@ -418,9 +495,9 @@ export class MkBar extends LitElement {
             <svg>
                 <line class="axis" x1="0%" y1="50%" x2="100%" y2="50%"></line>
                 ${Array.from(
-                    { length: 11 },
-                    (_, i) =>
-                        svg`
+            { length: 11 },
+            (_, i) =>
+                svg`
                         <line
                             class="tick"
                             x1="${i * 10}%"
@@ -429,32 +506,28 @@ export class MkBar extends LitElement {
                             y2="100%"
                         ></line>
                     `
-                )}
+        )}
             </svg>
         </div>`; // TODO: implement the axis
     }
 
+    private first_in_animation: Ref<SVGAnimateElement> = createRef();
+    private first_out_animation: Ref<SVGAnimateElement> = createRef();
     private focus_within: boolean = false;
 
     // method for mouse enter
     private mouse_enter(e: MouseEvent): void {
         if (this.focus_within) return;
-        this.shadowRoot?.querySelectorAll('.in').forEach((el) => {
-            (el as SVGAnimateElement).beginElement();
-        });
+        this.first_in_animation.value.beginElement();
     }
     private mouse_leave(e: MouseEvent): void {
         if (this.focus_within) return;
-        this.shadowRoot?.querySelectorAll('.out').forEach((el) => {
-            (el as SVGAnimateElement).beginElement();
-        });
+        this.first_out_animation.value.beginElement();
     }
     private focus_in(e: FocusEvent): void {
         if (this.focus_within) return;
+        this.first_in_animation.value.beginElement();
         this.focus_within = true;
-        this.shadowRoot?.querySelectorAll('.in').forEach((el) => {
-            (el as SVGAnimateElement).beginElement();
-        });
     }
     private focus_out(e: FocusEvent) {
         if (e.relatedTarget) {
@@ -466,9 +539,7 @@ export class MkBar extends LitElement {
                 return;
         }
         this.focus_within = false;
-        this.shadowRoot?.querySelectorAll('.out').forEach((el) => {
-            (el as SVGAnimateElement).beginElement();
-        });
+        this.first_out_animation.value.beginElement();
     }
 
     private _tooltip_element: Ref<HTMLDivElement> = createRef();
@@ -483,9 +554,8 @@ export class MkBar extends LitElement {
             ${formattedDate}, ${point.value.toFixed(2)}
         </div>`;
         if (this._tooltip_anchor_element.value) {
-            this._tooltip_anchor_element.value.style.left = `${
-                30 + target.cx.baseVal.value
-            }px`;
+            this._tooltip_anchor_element.value.style.left = `${30 + target.cx.baseVal.value
+                }px`;
             this._tooltip_anchor_element.value.style.top = `${target.cy.baseVal.value}px`;
         }
         // now await for the tooltip of the point

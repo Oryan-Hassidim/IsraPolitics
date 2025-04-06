@@ -64,7 +64,7 @@ export class MkView extends LitElement {
                 <a
                     href="https://main.knesset.gov.il/mk/apps/mk/mk-positions/${this
                         ._mkData.knessetSiteId}"
-                    >Knesset Site</a
+                    >אתר הכנסת</a
                 >
                 <div class="topics">
                     ${this._mkData.Topics.map(

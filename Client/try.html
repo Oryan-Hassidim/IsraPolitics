@@ -6,65 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anchor</title>
     <style>
-        @position-try --custom-left {
-            margin: 0 10px 0 0;
-            position-area: left;
-        }
-
-        @position-try --custom-bottom {
-            top: anchor(bottom);
-            justify-self: anchor-center;
-            margin: 10px 0 0 0;
-            position-area: none;
-        }
-
-        @position-try --custom-right {
-            left: calc(anchor(right) + 10px);
-            align-self: anchor-center;
-            width: 100px;
-            position-area: none;
-        }
-
-        @position-try --custom-bottom-right {
-            position-area: bottom right;
-            margin: 10px 0 0 10px;
-        }
-
         body {
             margin: 0;
             height: 100vh;
             position: relative;
-        }
+            display: grid;
+            justify-items: center;
+            align-items: center;
 
-        .element {
-            width: 100px;
-            height: 100px;
-            background-color: red;
-            position: absolute;
-            position-anchor: --my-anchor;
-            position-area: top center;
-            margin: 0 0 10px 0;
-            position-try-fallbacks:
-                --custom-left, --custom-bottom,
-                --custom-right, --custom-bottom-right;
-            transition: margin 0.5s ease-in-out;
-        }
+            >div {
+                width: 100%;
+                height: 100%;
+                display: grid;
+                justify-items: center;
+                align-items: center;
 
-        .anchor {
-            width: 100px;
-            height: 100px;
-            background-color: blue;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            anchor-name: --my-anchor;
+
+                >svg {
+                    width: 50%;
+                    height: 50%;
+                    background-color: bisque;
+
+                    >rect {}
+                }
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="anchor">anchor</div>
-    <div class="element">element</div>
+    <div id="container">
+        <svg>
+            <rect id="myrect" tabindex="0"
+                  height="50px" width="50px" x="100px" y="100px"
+                  fill="blue" />
+            <rect height="50px" width="50px" x="200px" y="200px">
+                <animate attributeName="width" to="0px"
+                         fill="freeze"
+                         begin="container.focusin+2s;container.mouseenter+2s"
+                         dur="3s" />
+            </rect>
+        </svg>
+    </div>
 </body>
 
 </html>

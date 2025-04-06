@@ -1,0 +1,5 @@
+.container-index {
+    >*:nth-child(1) {
+        --container-index: 1;
+    }
+}
