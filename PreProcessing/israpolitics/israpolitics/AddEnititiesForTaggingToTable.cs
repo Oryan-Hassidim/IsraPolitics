@@ -3,6 +3,7 @@
 using Azure;
 using Azure.Data.Tables;
 using israpolitics.Model;
+using System.Collections.Frozen;
 
 namespace israpolitics;
 
@@ -29,30 +30,26 @@ public static class AddEnititiesForTaggingToTable
         TableClient tableClient = new(connectionString, tableName);
         await tableClient.CreateIfNotExistsAsync();
 
-        HashSet<int> indexes = [];
         Random rand = new(1234);
-        var N = 4_484_726;
-        using var context = new Context();
 
-        for (int i = 0; i < 1_000; i++)
+        var ids = (await File.ReadAllLinesAsync("ids.txt")).Select(int.Parse).ToArray();
+        var texts = await File.ReadAllLinesAsync("texts.txt");
+        var N = ids.Length;
+
+        var indexes = new HashSet<int>();
+
+        while (indexes.Count < 2000)
         {
-            var id = rand.Next(1, N + 1);
-            if (indexes.Contains(id))
-            {
-                i--;
-                continue;
-            }
-            var entry = context.KnessetSpeechesEntries.Find(id);
-            if (entry is null)
-            {
-                i--;
-                continue;
-            }
-            indexes.Add(id);
+            int randomIndex = rand.Next(N); // בחירת אינדקס רנדומלי
+            indexes.Add(randomIndex);
+        }
+
+        foreach (var id in indexes)
+        {
             var unlabeledEntry = new UnlabeledEntry()
             {
-                RowId = id,
-                Text = entry.Text,
+                RowId = ids[id],
+                Text = texts[id],
                 RowKey = Guid.NewGuid().ToString()
             };
             await tableClient.AddEntityAsync(unlabeledEntry);
