@@ -4,7 +4,7 @@ def main():
     # prints output to output-YYYY-MM-DD-HH-MM-SS.txt
     import sys
     from datetime import datetime
-    from oryan_gpt_filter import filter
+    from oryan_gpt_filter import filter, create_filter_batch, get_batch_results
     import os
     
     if len(sys.argv) != 3:
@@ -30,9 +30,13 @@ def main():
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
-    filter(system_prompt_path, input_path, output_path)
+    # filter(system_prompt_path, input_path, output_path)
+    # id = create_filter_batch(system_prompt_path, input_path)
+    # print(id)
+    id = 'batch_6817ae857bc881909f441f3b8093af70'
+    print(get_batch_results(id, output_path))
 
-    print(f"Output written to '{output_path}' successfully.")
+    # print(f"Output written to '{output_path}' successfully.")
 
 
 if __name__ == "__main__":
