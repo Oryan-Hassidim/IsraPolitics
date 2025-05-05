@@ -4,6 +4,7 @@ using Azure;
 using Azure.Data.Tables;
 using israpolitics.Model;
 using System.Collections.Frozen;
+using System.Net;
 
 namespace israpolitics;
 
@@ -25,7 +26,7 @@ public static class AddEnititiesForTaggingToTable
         // Define the connection string and table name
         string connectionString = await File.ReadAllTextAsync("TableConnectionString.txt");
         string tableName = "DataForTagging";
-        
+
         // Create a new table client
         TableClient tableClient = new(connectionString, tableName);
         await tableClient.CreateIfNotExistsAsync();
@@ -40,19 +41,19 @@ public static class AddEnititiesForTaggingToTable
 
         while (indexes.Count < 2000)
         {
-            int randomIndex = rand.Next(N); // בחירת אינדקס רנדומלי
+            int randomIndex = rand.Next(N);
             indexes.Add(randomIndex);
         }
 
-        foreach (var id in indexes)
+        var responses = await Task.WhenAll(indexes.Select(s => tableClient.AddEntityAsync(new UnlabeledEntry()
         {
-            var unlabeledEntry = new UnlabeledEntry()
-            {
-                RowId = ids[id],
-                Text = texts[id],
-                RowKey = Guid.NewGuid().ToString()
-            };
-            await tableClient.AddEntityAsync(unlabeledEntry);
-        }
+            RowId = ids[s],
+            Text = texts[s],
+            RowKey = Guid.NewGuid().ToString()
+        })));
+
+        foreach (var response in responses)
+            if (response.Status != 204)
+                Console.WriteLine($"Error: {response.Status}");
     }
 }
