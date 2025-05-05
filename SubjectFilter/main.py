@@ -33,7 +33,7 @@ def main():
     # filter(system_prompt_path, input_path, output_path)
     # id = create_filter_batch(system_prompt_path, input_path)
     # print(id)
-    id = 'batch_6817ae857bc881909f441f3b8093af70'
+    id = 'batch_6818d23397dc8190ae9d59117081ffbb'
     print(get_batch_results(id, output_path))
 
     # print(f"Output written to '{output_path}' successfully.")

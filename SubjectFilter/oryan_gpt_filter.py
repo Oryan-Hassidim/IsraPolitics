@@ -2,7 +2,8 @@ import json
 import os
 from openai import Client, File
 from tqdm import tqdm
-from datetime import datetime 
+from datetime import datetime
+
 
 def filter(system_prompt_path: str, input_path: str, output_path: str) -> None:
     """
@@ -96,9 +97,11 @@ def create_filter_batch(system_prompt_path: str, input_path: str) -> str:
                                 {"role": "user", "content": sentence},
                             ],
                             "max_tokens": 10_000,
+                            "n": 1
                         },
-                    }
-                , ensure_ascii=False)
+                    },
+                    ensure_ascii=False,
+                )
             )
             output_file.write("\n")
         output_file.flush()
@@ -108,7 +111,7 @@ def create_filter_batch(system_prompt_path: str, input_path: str) -> str:
         print(batch_input_file)
 
     batch_input_file_id = batch_input_file.id
-    
+
     now = datetime.now()
     batch = client.batches.create(
         input_file_id=batch_input_file_id,
@@ -147,56 +150,36 @@ def get_batch_results(batch_id: str, output_path: str) -> bool:
         print(f"Batch processing not completed. Status: {batch_results.status}")
         return False
 
-    results: dict[str, int] = {}
-    # Write the results to the output file
-    with open(output_path, "w", encoding="utf-8") as output_file:
-        file_response = client.files.content(batch_results.output_file_id)
-        if file_response.status_code != 200:
-            print(f"Error retrieving file content: {file_response.status_code}")
-            return False
-        # template:
-        # {"id": "batch_req_123", "custom_id": "request-2", "response": {"status_code": 200, "request_id": "req_123", "body": {"id": "chatcmpl-123", "object": "chat.completion", "created": 1711652795, "model": "gpt-3.5-turbo-0125", "choices": [{"index": 0, "message": {"role": "assistant", "content": "Hello."}, "logprobs": null, "finish_reason": "stop"}], "usage": {"prompt_tokens": 22, "completion_tokens": 2, "total_tokens": 24}, "system_fingerprint": "fp_123"}}, "error": null}
-        # {"id": "batch_req_456", "custom_id": "request-1", "response": {"status_code": 200, "request_id": "req_789", "body": {"id": "chatcmpl-abc", "object": "chat.completion", "created": 1711652789, "model": "gpt-3.5-turbo-0125", "choices": [{"index": 0, "message": {"role": "assistant", "content": "Hello! How can I assist you today?"}, "logprobs": null, "finish_reason": "stop"}], "usage": {"prompt_tokens": 20, "completion_tokens": 9, "total_tokens": 29}, "system_fingerprint": "fp_3ba"}}, "error": null}
-        for line in file_response.iter_lines(decode_unicode=True):
-            if line:
-                try:
-                    result = json.loads(line)
-                    custom_id = result["custom_id"]
-                    response = result["response"]
-                    if response["status_code"] == 200:
-                        body = response["body"]
-                        rating = int(body["choices"][0]["message"]["content"].strip())
-                        results[custom_id] = rating
-                        output_file.write(f"{rating}\n")
-                    else:
-                        print(
-                            f"Error in response for {custom_id}: {response['status_code']}"
-                        )
-                except json.JSONDecodeError as e:
-                    print(f"Error decoding JSON: {e}")
-                    continue
-                except KeyError as e:
-                    print(f"Key error: {e}")
-                    continue
-        error_response = client.files.retrieve(batch_results.error_file_id)
-        if error_response.status_code == 200:
-            for line in error_response.iter_lines(decode_unicode=True):
-                if line:
-                    try:
-                        error_result = json.loads(line)
-                        custom_id = error_result["custom_id"]
-                        error_message = error_result["error"]
-                        print(f"Error for {custom_id}: {error_message}")
-                    except json.JSONDecodeError as e:
-                        print(f"Error decoding JSON: {e}")
-                        continue
-                    except KeyError as e:
-                        print(f"Key error: {e}")
-                        continue
-                    results[custom_id] = error_message
-            print("Error file written successfully.")
+    results: dict[int, int | str] = {}
+
+    if batch_results.output_file_id:
+        file_response = client.files.retrieve(batch_results.output_file_id)
+        if file_response.status == "processed":
+            file_content = client.files.content(batch_results.output_file_id)
+            # template:
+            # {"id": "batch_req_123", "custom_id": "request-2", "response": {"status_code": 200, "request_id": "req_123", "body": {"id": "chatcmpl-123", "object": "chat.completion", "created": 1711652795, "model": "gpt-3.5-turbo-0125", "choices": [{"index": 0, "message": {"role": "assistant", "content": "Hello."}, "logprobs": null, "finish_reason": "stop"}], "usage": {"prompt_tokens": 22, "completion_tokens": 2, "total_tokens": 24}, "system_fingerprint": "fp_123"}}, "error": null}
+            # {"id": "batch_req_456", "custom_id": "request-1", "response": {"status_code": 200, "request_id": "req_789", "body": {"id": "chatcmpl-abc", "object": "chat.completion", "created": 1711652789, "model": "gpt-3.5-turbo-0125", "choices": [{"index": 0, "message": {"role": "assistant", "content": "Hello! How can I assist you today?"}, "logprobs": null, "finish_reason": "stop"}], "usage": {"prompt_tokens": 20, "completion_tokens": 9, "total_tokens": 29}, "system_fingerprint": "fp_3ba"}}, "error": null}
+            for line in file_content.iter_lines():
+                data = json.loads(line)
+                custom_id = data["custom_id"]
+                rating = int(
+                    data["response"]["body"]["choices"][0]["message"]["content"]
+                )
+                results[int(custom_id[8:])] = rating
         else:
-            print(f"Error retrieving error file: {error_response.status_code}")
+            print(f"Error retrieving file content: {file_response.status}")
+
+    if batch_results.error_file_id:
+        error_response = client.files.retrieve(batch_results.error_file_id)
+        if error_response.status == "processed":
+            error_file_content = client.files.content(batch_results.error_file_id)
+            for line in error_file_content.iter_lines():
+                error_data = json.loads(line)
+                custom_id = error_data["custom_id"]
+                error_message = error_data["response"]["body"]["error"]["message"]
+                results[int(custom_id[8:])] = error_message
+        else:
+            print(f"Error retrieving error file: {error_response.status}")
 
     # Check if the output file already exists
     if os.path.isfile(output_path):
@@ -207,9 +190,10 @@ def get_batch_results(batch_id: str, output_path: str) -> bool:
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    ordered_results = sorted(
-        results.items(), key=lambda x: int(x[0][8:])
-    )  # Sort by custom_id
+    def fst(item):
+        return item[0]
+
+    ordered_results = sorted(results.items(), key=fst)  # Sort by custom_id
     with open(output_path, "w", encoding="utf-8") as output_file:
         for custom_id, rating in ordered_results:
             output_file.write(f"{rating}\n")
