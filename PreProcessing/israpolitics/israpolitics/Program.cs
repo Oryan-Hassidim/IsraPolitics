@@ -2,6 +2,7 @@
 
 var query = from speech in Context.KnessetSpeechesEntries
             where speech.PersonId == 482 && speech.Text!.Length > 25
+            orderby speech.Id
             select new
             { speech.Id, speech.Text };
 
@@ -19,4 +20,4 @@ using (var texts = new StreamWriter("texts.txt", false, Encoding.UTF8))
     texts.Close();
 }
 
-await AddEnititiesForTaggingToTable.Run();
+//await AddEnititiesForTaggingToTable.Run();
