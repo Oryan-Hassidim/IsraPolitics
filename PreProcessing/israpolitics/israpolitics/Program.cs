@@ -1,23 +1,18 @@
-﻿using var Context = new Context();
+﻿using CsvHelper;
+
+using var Context = new Context();
+
+var ids = (await File.ReadAllLinesAsync(@"C:\Users\oryan\Desktop\filtered_ids.txt", Encoding.UTF8)).Select(int.Parse);
 
 var query = from speech in Context.KnessetSpeechesEntries
-            where speech.PersonId == 482 && speech.Text!.Length > 25
-            orderby speech.Id
+            where ids.Contains(speech.Id)
+            orderby speech.Date
             select new
-            { speech.Id, speech.Text };
+            { speech.Id, speech.Date, Topic = speech.Topic!.String, speech.Text };
 
-using (var ids = new StreamWriter("ids.txt", false, Encoding.UTF8))
-using (var texts = new StreamWriter("texts.txt", false, Encoding.UTF8))
+using (var csv = new CsvWriter(new StreamWriter(@"C:\Users\oryan\Desktop\filtered_speeches.csv", false, Encoding.UTF8), CultureInfo.InvariantCulture))
 {
-    foreach (var speech in query)
-    {
-        ids.WriteLine(speech.Id);
-        texts.WriteLine(speech.Text.ReplaceLineEndings("  "));
-    }
-    ids.Flush();
-    texts.Flush();
-    ids.Close();
-    texts.Close();
+    await csv.WriteRecordsAsync(query);
 }
 
 //await AddEnititiesForTaggingToTable.Run();
