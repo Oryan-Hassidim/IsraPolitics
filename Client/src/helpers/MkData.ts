@@ -1,11 +1,17 @@
+export class SpeechDay {
+    public constructor(
+        public date: Date,
+        public rank: number,
+        public text: string
+    ) {}
+}
+
 export class MkTopicData {
     public constructor(
         public topicName: string,
-        public average: number,
-        public speechesId: number[],
-        public dates: Date[],
-        public ranks: number[]
+        public average: number
     ) {}
+    public records: Array<SpeechDay> = [];
 }
 
 export class MkData {

@@ -33,7 +33,7 @@ export class MyElement extends LitElement {
 
     override render() {
         return html`
-            <mk-view mkId="12956"></mk-view>
+            <mk-view mkId="482"></mk-view>
         `;
     }
 }

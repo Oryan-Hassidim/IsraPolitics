@@ -3,6 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { Lazy } from './helpers/Lazy';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 import { DatesHelpers, DateType } from './helpers/DatesHelpers';
+import { SpeechDay } from './helpers/MkData';
 
 export class SpeechPoint {
     constructor(
@@ -25,19 +26,19 @@ export class MkBar extends LitElement {
     @property({ type: Number })
     average: number = 0;
 
-    private _list: SpeechPoint[] = [];
-    public get list(): SpeechPoint[] {
+    private _list: SpeechDay[] = [];
+    public get list(): SpeechDay[] {
         return this._list;
     }
     @property({ type: Array })
-    public set list(value: SpeechPoint[]) {
+    public set list(value: SpeechDay[]) {
         this._list = value.sort(this.compare_speeches_by_date);
         const min_date = this._list[0].date;
         const max_date = this._list[this._list.length - 1].date;
         const diff = max_date.getTime() - min_date.getTime();
         this._points_list = this._list.map((point) => {
             const x = (point.date.getTime() - min_date.getTime()) / diff;
-            const y = point.value;
+            const y = (point.rank - 1) / 9;
             return new Point(x, y);
         });
         this.requestUpdate();
@@ -56,7 +57,7 @@ export class MkBar extends LitElement {
             height: 30px;
             /* background-color: rgba(0, 0, 0, 0.1); */
             position: relative;
-            transition: all var(--animation-time) ease-in-out;
+            transition: all var(--animation-time) ease;
 
             .scale {
                 position: absolute;
@@ -72,8 +73,8 @@ export class MkBar extends LitElement {
                     green
                 );
                 border-radius: 10px;
-                transition: all var(--animation-time) ease-in-out,
-                    --gradient-angle var(--animation-time) ease-in-out;
+                transition: all var(--animation-time) ease,
+                    --gradient-angle var(--animation-time) ease;
             }
             svg.chart {
                 position: absolute;
@@ -82,7 +83,7 @@ export class MkBar extends LitElement {
                 width: 100%;
                 height: 80%;
                 overflow: visible;
-                transition: all var(--animation-time) ease-in-out;
+                transition: all var(--animation-time) ease;
                 line {
                     stroke: black;
                     stroke-width: 6px;
@@ -103,7 +104,7 @@ export class MkBar extends LitElement {
                     fill: transparent;
                     stroke: black;
                     stroke-width: 0px;
-                    transition: all var(--animation-time) ease-in-out;
+                    transition: all var(--animation-time) ease;
                     transition-delay: calc(
                         var(--date-ratio) * var(--animation-time)
                     );
@@ -115,13 +116,14 @@ export class MkBar extends LitElement {
                 left: 30px;
                 right: 10px;
                 height: 20%;
-                /* transition: opacity var(--animation-time) ease-in-out; */
+                /* transition: opacity var(--animation-time) ease; */
                 ul {
                     justify-content: space-between;
                     width: 100%;
                     list-style-type: none;
                     padding: 0;
                     margin: 0;
+                    font-size: 0.7em;
                     li {
                         position: absolute;
                         bottom: 0%;
@@ -130,8 +132,8 @@ export class MkBar extends LitElement {
                         transform-origin: 0px 50%;
                         opacity: 0;
                         transform: rotate(30deg) translateY(100%);
-                        transition: opacity var(--animation-time) ease-in-out,
-                            transform var(--animation-time) ease-in-out;
+                        transition: opacity var(--animation-time) ease,
+                            transform var(--animation-time) ease;
                         transition-delay: calc(
                                 var(--date-ratio) * var(--animation-time)
                             ),
@@ -146,7 +148,7 @@ export class MkBar extends LitElement {
                     height: 30%;
                     overflow: visible;
                     opacity: 0;
-                    transition: opacity var(--animation-time) ease-in-out;
+                    transition: opacity var(--animation-time) ease;
                     .axis {
                         stroke: black;
                         stroke-width: 2;
@@ -225,13 +227,13 @@ export class MkBar extends LitElement {
                 width: 2px;
                 height: 2px;
                 opacity: 1;
-                transition: top var(--animation-time) ease-in-out,
-                    left var(--animation-time) ease-in-out;
+                transition: top var(--animation-time) ease,
+                    left var(--animation-time) ease;
                 anchor-name: --tooltip-anchor;
                 position: absolute;
             }
             .tooltip {
-                display: block;
+                display: none;
                 position: absolute;
                 position-anchor: --tooltip-anchor;
                 background-color: white;
@@ -241,16 +243,21 @@ export class MkBar extends LitElement {
                 font-size: 12px;
                 pointer-events: visible;
                 opacity: 0;
-                transition: opacity var(--animation-time) ease-in-out;
+                transition: display var(--animation-time) ease allow-discrete,
+                    opacity var(--animation-time) ease;
                 position: absolute;
                 position-area: bottom;
-                width: 100px;
+                width: 200px;
+                max-height: 400px;
+                overflow: auto;
+                font-size: 0.7em;
             }
         }
 
         .tooltip:hover,
         .my-bar-chart:has(circle:hover) .tooltip,
         .my-bar-chart:has(circle:focus-within) .tooltip {
+            display: block;
             opacity: 1;
         }
     `;
@@ -259,12 +266,12 @@ export class MkBar extends LitElement {
         return date != null ? date.getTime() : 0;
     }
 
-    private compare_speeches_by_date(a: SpeechPoint, b: SpeechPoint) {
+    private compare_speeches_by_date(a: SpeechDay, b: SpeechDay): number {
         return MkBar.getTime(a.date) - MkBar.getTime(b.date);
     }
 
     override render(): TemplateResult<1> {
-        const avg_percent = (100.0 * this.average) / 5;
+        const avg_percent = (100.0 * this.average - 1) / 9;
         const tri1_size = Math.floor(this._points_list.length / 3);
         const tri3_size = tri1_size;
         const tri2_size = Math.floor(
@@ -691,7 +698,9 @@ export class MkBar extends LitElement {
         const point = this.list[index];
         const formattedDate = point.date.toLocaleDateString('en-GB'); // Formats as DD/MM/YYYY
         this._tooltip_content = html`<div>
-            ${formattedDate}, ${point.value.toFixed(2)}
+            ${formattedDate}, ${point.rank.toFixed(2)}
+            <br />
+            ${point.text.split('\n').map((line) => html`<div>${line}</div>`)}
         </div>`;
         if (this._tooltip_anchor_element.value) {
             this._tooltip_anchor_element.value.style.left = `${
@@ -700,9 +709,9 @@ export class MkBar extends LitElement {
             this._tooltip_anchor_element.value.style.top = `${target.cy.baseVal.value}px`;
         }
         // now await for the tooltip of the point
-        if (point.tooltip) {
-            this._tooltip_content = await point.tooltip.get_value();
-        }
+        // if (point.tooltip) {
+        //     this._tooltip_content = await point.tooltip.get_value();
+        // }
     }
 }
 
