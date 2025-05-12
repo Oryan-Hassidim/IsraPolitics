@@ -1,14 +1,12 @@
-
 def main():
     # usage: python subjectfilter.py system_prompt.txt input.txt
     # prints output to output-YYYY-MM-DD-HH-MM-SS.txt
+    import os
     import sys
     from datetime import datetime
-    from oryan_gpt_filter import filter, create_filter_batch, get_batch_results
-    import os
-    
-    if len(sys.argv) != 3:
-        print("Usage: python subjectfilter.py system_prompt.txt input.txt")
+
+    if len(sys.argv) not in [3, 4]:
+        print("Usage: python main.py system_prompt.txt input.txt [model]")
         sys.exit(1)
     system_prompt_path = sys.argv[1]
     input_path = sys.argv[2]
@@ -29,14 +27,18 @@ def main():
     output_dir = os.path.dirname(output_path)
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    
-    # filter(system_prompt_path, input_path, output_path)
-    # id = create_filter_batch(system_prompt_path, input_path)
-    # print(id)
-    id = 'batch_6818d23397dc8190ae9d59117081ffbb'
-    print(get_batch_results(id, output_path))
 
-    # print(f"Output written to '{output_path}' successfully.")
+    # Optional parameter to choose model
+    model = ""  # Default model
+    if len(sys.argv) == 4:
+        model = sys.argv[3]
+
+    from gpt_jobs import send_job, start_batch_job, retrieve_batch_results
+    # send_job(system_prompt_path, input_path, output_path)
+    # id = start_batch_job(system_prompt_path, input_path)
+    # print(id)
+    id = 'batch_68220927e07c81909797384f83c48d13'
+    print(retrieve_batch_results(id, output_path))
 
 
 if __name__ == "__main__":
