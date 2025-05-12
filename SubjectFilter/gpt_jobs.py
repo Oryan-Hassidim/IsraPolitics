@@ -5,7 +5,12 @@ from tqdm import tqdm
 from datetime import datetime
 
 
-def send_job(system_prompt_path: str, input_path: str, output_path: str, model:str = "gpt-4.1-mini") -> None:
+def send_job(
+    system_prompt_path: str,
+    input_path: str,
+    output_path: str,
+    model: str = "gpt-4.1-mini",
+) -> None:
     """
     Filters sentences based on their relevance to a given subject using GPT.
     The system prompt is loaded from a file, and the sentences are read from an input file.
@@ -35,11 +40,11 @@ def send_job(system_prompt_path: str, input_path: str, output_path: str, model:s
     ):
         sentences = (line.strip() for line in input_file if line.strip())
 
-        for sentence in tqdm(sentences):  # TODO: tqdm
+        for sentence in tqdm(sentences):
             # prompt = f"{sentence}"
             try:
                 response = client.chat.completions.create(
-                    model="gpt-4.1-mini",
+                    model=model,
                     messages=[system_message, {"role": "user", "content": sentence}],
                 )
                 rating = int(response.choices[0].message.content.strip())
@@ -51,7 +56,9 @@ def send_job(system_prompt_path: str, input_path: str, output_path: str, model:s
                 output_file.write("Error\n")
 
 
-def start_batch_job(system_prompt_path: str, input_path: str) -> str:
+def start_batch_job(
+    system_prompt_path: str, input_path: str, model: str = "gpt-4.1-mini"
+) -> str:
     """
     creates a batch file for filtering sentences using GPT.
     The system prompt is loaded from a file, and the sentences are read from an input file.
@@ -90,13 +97,13 @@ def start_batch_job(system_prompt_path: str, input_path: str) -> str:
                         "method": "POST",
                         "url": "/v1/chat/completions",
                         "body": {
-                            "model": "gpt-4.1",
+                            "model": model,
                             "messages": [
                                 system_message,
                                 {"role": "user", "content": sentence},
                             ],
                             "max_tokens": 10_000,
-                            "n": 1
+                            "n": 1,
                         },
                     },
                     ensure_ascii=False,

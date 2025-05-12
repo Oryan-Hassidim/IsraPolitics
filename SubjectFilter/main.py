@@ -29,15 +29,16 @@ def main():
         os.makedirs(output_dir)
 
     # Optional parameter to choose model
-    model = ""  # Default model
+    model = "gpt-4.1-mini"  # Default model
     if len(sys.argv) == 4:
         model = sys.argv[3]
 
     from gpt_jobs import send_job, start_batch_job, retrieve_batch_results
-    # send_job(system_prompt_path, input_path, output_path)
-    # id = start_batch_job(system_prompt_path, input_path)
+
+    # send_job(system_prompt_path, input_path, output_path, model)
+    # id = start_batch_job(system_prompt_path, input_path, model)
     # print(id)
-    id = 'batch_68220927e07c81909797384f83c48d13'
+    id = "batch_68220927e07c81909797384f83c48d13"
     print(retrieve_batch_results(id, output_path))
 
 
