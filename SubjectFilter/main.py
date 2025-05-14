@@ -36,9 +36,9 @@ def main():
     from gpt_jobs import send_job, start_batch_job, retrieve_batch_results
 
     # send_job(system_prompt_path, input_path, output_path, model)
-    # id = start_batch_job(system_prompt_path, input_path, model)
-    # print(id)
-    id = "batch_68220927e07c81909797384f83c48d13"
+    id = start_batch_job(system_prompt_path, input_path, model)
+    print(id)
+    # id = "batch_68220927e07c81909797384f83c48d13"
     print(retrieve_batch_results(id, output_path))
 
 
