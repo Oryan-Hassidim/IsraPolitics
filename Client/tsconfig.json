@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
