@@ -2,7 +2,23 @@ import json
 import os
 from openai import Client, File
 from tqdm import tqdm
+import sys
 from datetime import datetime
+
+
+##########################################################
+# Constants
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+JOBS_DICT_DIR = os.path.join(BASE_DIR, "Jobs", "Jobs_dict.json")
+PROMPTS_DIR = os.path.join(BASE_DIR, "Prompts")
+# Constants for the database
+DB_DIR = os.path.join(BASE_DIR, "Data", "IsraParlTweet.db")
+DB_QUERY_DIR = os.path.join(BASE_DIR, "Utils", "Mk_sentences_query.sql")
+# Constants for the output directory
+JOBS_DIR = os.path.join(BASE_DIR, "Jobs")
+
+##########################################################
+
 
 
 def send_job(
@@ -207,3 +223,72 @@ def retrieve_batch_results(batch_id: str, output_path: str) -> bool:
     print(f"Batch results written to {output_path}.")
 
     return True
+
+
+def save_job_id(job_id: str, person_id: str, subject: str, type:str) -> None:
+    """
+    Saves the job ID to a JSON file.
+
+    :param job_id: The job ID to save.
+    :param person_id: The person ID associated with the job.
+    :param subject: The subject associated with the job.
+    """
+    if os.path.exists(JOBS_DICT_DIR):
+        with open(JOBS_DICT_DIR, "r", encoding="utf-8") as f:
+            jobs_dict = json.load(f)
+    else:
+        jobs_dict = {}
+    job_entry = {
+        "job_id": job_id,
+        "person_id": person_id,
+        "subject": subject,
+        "type": type,
+    }
+    jobs_dict[job_id] = job_entry
+    with open(JOBS_DICT_DIR, "w", encoding="utf-8") as f:
+        json.dump(jobs_dict, f, ensure_ascii=False, indent=4)
+
+
+
+def gpt_activation(system_prompt_path: str, input_path: str, model:str="gpt-4.1-mini")-> str:
+    output_path = f"outputs/output-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"
+    # Check if the input file exists
+    if not os.path.isfile(input_path):
+        print(f"Input file '{input_path}' does not exist.")
+        sys.exit(1)
+    # Check if the system prompt file exists
+    if not os.path.isfile(system_prompt_path):
+        print(f"System prompt file '{system_prompt_path}' does not exist.")
+        sys.exit(1)
+    # Check if the output file already exists
+    if os.path.isfile(output_path):
+        print(f"Output file '{output_path}' already exists. Deleting it.")
+        os.remove(output_path)
+    # Check if the output directory exists
+    output_dir = os.path.dirname(output_path)
+    if output_dir and not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # send_job(system_prompt_path, input_path, output_path, model)
+    batch_id = start_batch_job(system_prompt_path, input_path, model)
+    print(f"[GPT JOB STARTED] Batch ID: {batch_id}")
+    # id = "batch_68220927e07c81909797384f83c48d13"
+    # print(retrieve_batch_results(batch_id, output_path))
+    return batch_id
+
+
+if __name__ == "__main__":
+    # usage: python gpt_jobs.py system_prompt.txt input.txt [model]
+    # prints output to output-YYYY-MM-DD-HH-MM-SS.txt
+    if len(sys.argv) not in [3, 4]:
+        print("Usage: python gpt_jobs.py system_prompt.txt input.txt [model]")
+        sys.exit(1)
+    system_prompt_path = sys.argv[1]
+    input_path = sys.argv[2]
+    # Optional parameter to choose model
+    model = "gpt-4.1-mini"  # Default model
+    if len(sys.argv) == 4:
+        model = sys.argv[3]
+
+
+    gpt_activation(system_prompt_path, input_path,model)

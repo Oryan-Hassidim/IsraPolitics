@@ -2,7 +2,7 @@ import os
 from typing import Generator
 
 
-def filter(filter_output_path: str, file_to_filter: str, output_path: str) -> None:
+def apply_filter(filter_output_path: str, file_to_filter: str, output_path: str) -> None:
     """ """
 
     # Check if the input file exists
@@ -51,4 +51,4 @@ if __name__ == "__main__":
     file_to_filter = sys.argv[2]
     output_path = sys.argv[3]
 
-    filter(filter_output_path, file_to_filter, output_path)
+    apply_filter(filter_output_path, file_to_filter, output_path)
