@@ -4,7 +4,7 @@
 from typing import List, Tuple
 import os
 import sys
-from gpt_jobs import gpt_activation,DB_DIR, DB_QUERY_DIR, JOBS_DIR, PROMPTS_DIR, save_job_id
+from gpt_jobs import safe_batch_start,DB_DIR, DB_QUERY_DIR, JOBS_DIR, PROMPTS_DIR, save_job_id
 import sqlite3
 
 
@@ -63,7 +63,7 @@ def create_filter_job(person_id: str, subject: str) -> None:
     prompt_path = os.path.join(PROMPTS_DIR, subject, "Filter.txt")
     # activate one gpt job
     input_path = os.path.join(output_dir, "texts.txt")
-    batch_id = gpt_activation(prompt_path, input_path, "gpt-4.1-mini")
+    batch_id = safe_batch_start(prompt_path, input_path, "gpt-4.1-mini")
     save_job_id(batch_id, person_id, subject, "filter")
 
 

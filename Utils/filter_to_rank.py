@@ -1,19 +1,13 @@
 """
-בודק אם GPT JOB של פילטר הסתיים, ואם כן מריץ את הפקודה FILTER ויוצר GPT JOB של RANK
-פר חכ ונושא
+This script is used to filter the results of a previous gpt job and then create a new gpt job for ranking.
+It loads the jobs from a JSON file, checks for completed filter jobs, applies the filter to the results, and then creates a new ranking job.
 """
-import json
 import os
+
+from Utils.gpt_jobs import load_jobs
 from filter import apply_filter
-from gpt_jobs import gpt_activation, retrieve_batch_results
-from gpt_jobs import JOBS_DIR, JOBS_DICT_DIR,PROMPTS_DIR,save_job_id
-
-
-def load_jobs() -> dict:
-    if os.path.exists(JOBS_DICT_DIR):
-        with open(JOBS_DICT_DIR, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {}
+from gpt_jobs import safe_batch_start, retrieve_batch_results,delete_job_id
+from gpt_jobs import JOBS_DIR, PROMPTS_DIR,save_job_id
 
 
 def find_completed_filter_jobs(jobs_dict: dict) -> list[tuple]:
@@ -31,8 +25,9 @@ def create_rank_job(person_id: str, subject: str) -> None:
     prompt_path = os.path.join(PROMPTS_DIR, subject, "Rank.txt")
     # activate one gpt job
     input_path = os.path.join(JOBS_DIR,person_id, "texts.txt")
-    batch_id = gpt_activation(prompt_path, input_path, "gpt-4.1")
+    batch_id = safe_batch_start(prompt_path, input_path, "gpt-4.1")
     save_job_id(batch_id, person_id, subject, "rank")
+
 
 
 def filter_to_rank():
@@ -48,8 +43,12 @@ def filter_to_rank():
                 str(os.path.join(output_path, file))
             )
         create_rank_job(job_entry["person_id"], job_entry["subject"])
+    delete_job_id([job_entry["job_id"] for job_entry, _ in completed_filtered_jobs])
 
 
+if __name__ == "__main__":
+    # usage: python filter_to_rank.py
+    filter_to_rank()
 
 
 

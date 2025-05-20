@@ -249,9 +249,26 @@ def save_job_id(job_id: str, person_id: str, subject: str, type:str) -> None:
         json.dump(jobs_dict, f, ensure_ascii=False, indent=4)
 
 
+def delete_job_id(job_ids: list[str]) -> None:
+    """
+    Deletes the job ID from the JSON file.
 
-def gpt_activation(system_prompt_path: str, input_path: str, model:str="gpt-4.1-mini")-> str:
-    output_path = f"outputs/output-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.txt"
+    :param job_ids: The job IDs to delete.
+    """
+    if os.path.exists(JOBS_DICT_DIR):
+        with open(JOBS_DICT_DIR, "r", encoding="utf-8") as f:
+            jobs_dict = json.load(f)
+        for job_id in job_ids:
+            if job_id in jobs_dict:
+                del jobs_dict[job_id]
+        with open(JOBS_DICT_DIR, "w", encoding="utf-8") as f:
+            json.dump(jobs_dict, f, ensure_ascii=False, indent=4)
+    else:
+        print("No jobs found to delete.")
+
+
+
+def safe_batch_start(system_prompt_path: str, input_path: str, model:str= "gpt-4.1-mini")-> str:
     # Check if the input file exists
     if not os.path.isfile(input_path):
         print(f"Input file '{input_path}' does not exist.")
@@ -260,22 +277,19 @@ def gpt_activation(system_prompt_path: str, input_path: str, model:str="gpt-4.1-
     if not os.path.isfile(system_prompt_path):
         print(f"System prompt file '{system_prompt_path}' does not exist.")
         sys.exit(1)
-    # Check if the output file already exists
-    if os.path.isfile(output_path):
-        print(f"Output file '{output_path}' already exists. Deleting it.")
-        os.remove(output_path)
-    # Check if the output directory exists
-    output_dir = os.path.dirname(output_path)
-    if output_dir and not os.path.exists(output_dir):
-        os.makedirs(output_dir)
 
     # send_job(system_prompt_path, input_path, output_path, model)
     batch_id = start_batch_job(system_prompt_path, input_path, model)
     print(f"[GPT JOB STARTED] Batch ID: {batch_id}")
-    # id = "batch_68220927e07c81909797384f83c48d13"
-    # print(retrieve_batch_results(batch_id, output_path))
+
     return batch_id
 
+
+def load_jobs() -> dict:
+    if os.path.exists(JOBS_DICT_DIR):
+        with open(JOBS_DICT_DIR, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
 
 if __name__ == "__main__":
     # usage: python gpt_jobs.py system_prompt.txt input.txt [model]
@@ -291,4 +305,7 @@ if __name__ == "__main__":
         model = sys.argv[3]
 
 
-    gpt_activation(system_prompt_path, input_path,model)
+    safe_batch_start(system_prompt_path, input_path, model)
+
+
+
