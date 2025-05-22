@@ -12,8 +12,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JOBS_DICT_DIR = os.path.join(BASE_DIR, "Jobs", "Jobs_dict.json")
 PROMPTS_DIR = os.path.join(BASE_DIR, "Prompts")
 # Constants for the database
-DB_DIR = os.path.join(BASE_DIR, "Data", "IsraParlTweet.db")
-DB_QUERY_DIR = os.path.join(BASE_DIR, "Utils", "Mk_sentences_query.sql")
 # Constants for the output directory
 JOBS_DIR = os.path.join(BASE_DIR, "Jobs")
 

@@ -4,8 +4,13 @@
 from typing import List, Tuple
 import os
 import sys
-from gpt_jobs import safe_batch_start,DB_DIR, DB_QUERY_DIR, JOBS_DIR, PROMPTS_DIR, save_job_id
+from db_jobs import run_query
+from gpt_jobs import safe_batch_start, BASE_DIR, JOBS_DIR, PROMPTS_DIR, save_job_id
 import sqlite3
+####################################################
+#constants
+SENTENCES_PER_MK_DIR = os.path.join(BASE_DIR, "Utils", "Mk_sentences_query.sql")
+########################################
 
 
 def get_mk_sentences_from_db(mk_id: int) -> List[Tuple[int, str]]:
@@ -15,21 +20,7 @@ def get_mk_sentences_from_db(mk_id: int) -> List[Tuple[int, str]]:
     :param mk_id: ID of the MK.
     :return: List of tuples containing sentence ID and text.
     """
-
-    with open(DB_QUERY_DIR, "r", encoding="utf-8") as f:
-        query = f.read()
-    conn = None
-    try:
-        conn = sqlite3.connect(DB_DIR)
-        cursor = conn.cursor()
-        cursor.execute(query, (mk_id,))
-        rows = cursor.fetchall()
-    except sqlite3.Error as e:
-        print(f"SQLite error: {e}")
-        rows = []
-    finally:
-        if conn:
-            conn.close()
+    rows = run_query(SENTENCES_PER_MK_DIR,(mk_id,))
     # Filter out sentences that are too short
     filtered_rows = [(sentence_id, text) for sentence_id, text in rows if len(text) > 10]
     print(filtered_rows)
