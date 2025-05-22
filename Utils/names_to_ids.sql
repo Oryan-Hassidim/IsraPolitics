@@ -1,3 +1,4 @@
-SELECT id
-FROM names
-WHERE name = ?;
+SELECT DISTINCT person_id
+FROM people
+WHERE first_name = ? and
+    surname = ?;
