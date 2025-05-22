@@ -11,7 +11,7 @@ using israpolitics.Model;
 namespace israpolitics.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20241209164251_InitialCreate")]
+    [Migration("20250521151040_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

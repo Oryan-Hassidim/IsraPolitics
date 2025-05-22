@@ -1,11 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using israpolitics.Model.KnessetSpeeches;
+﻿using israpolitics.Model.KnessetSpeeches;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace israpolitics.Model;
 
 public class Context : DbContext
 {
+    private string _sqlitePath;
+
     // private readonly string _sqlitePath;
 
     public DbSet<Person> People { get; set; }
@@ -14,20 +16,28 @@ public class Context : DbContext
     public DbSet<Topic> Topics { get; set; }
     public DbSet<TopicExtra> TopicExtras { get; set; }
 
+    public Context(string sqlitePath) : base()
+    {
+        _sqlitePath = sqlitePath;
+    }
+
     public Context() : base()
     {
+        _sqlitePath = @"C:\Projects\Oryan-Hassidim\IsraPolitics\Data\IsraParlTweet.db";
     }
 
     public Context(DbContextOptions<Context> options) : base(options)
     {
+        _sqlitePath = @"C:\Projects\Oryan-Hassidim\IsraPolitics\Data\IsraParlTweet.db";
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlite("Data Source=\"C:\\Projects\\Oryan-Hassidim\\IsraPolitics\\Data\\IsraParlTweet.db\"");
-            optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder.UseSqlite($"Data Source=\"{_sqlitePath}\"")
+                .EnableSensitiveDataLogging()
+                .LogTo(WriteLine, LogLevel.Information);
         }
     }
 
