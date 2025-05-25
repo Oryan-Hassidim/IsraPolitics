@@ -19,30 +19,48 @@
         }
 
         .container {
-            transform: scale(2);
-            width: 841px;
-            height: 1189px;
+            width: 84.1em;
+            height: 118.9em;
             background-color: #fff;
-            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
             display: grid;
+            grid-template-areas:
+                "header"
+                "why"
+                "what"
+                "how"
+                "notes";
+            grid-template-rows: auto auto;
             justify-items: stretch;
             align-content: start;
 
             background: linear-gradient(-30deg, #cccccc 0%, #eeeeee 100%);
 
             >* {
-                margin: 15px;
-                padding: 10px;
+                margin: .8em 1.5em .8em 1.5em;
+                padding: 1.0em;
                 z-index: 0;
                 background: linear-gradient(-110deg,
                         #ffffff55 0%,
                         #ffffff44 70%,
                         #ffffff00 100%);
-                filter: drop-shadow(7px -7px 3px #adadad);
+                /* filter: drop-shadow(.7em -.7em .3em #adadad); */
                 height: min-content;
+
+                .section-icon {
+                    float: left;
+                    margin-inline-end: 0.7em;
+                    height: 3em;
+                    margin-top: 0.1em;
+                }
+
+                p {
+                    margin: 0 0 .6em 0;
+                }
             }
 
             .header {
+                grid-area: header;
+
                 display: grid;
                 grid-template-columns: 1fr auto;
                 align-items: center;
@@ -55,30 +73,30 @@
                     h1 {
                         font-style: demi;
                         font-size: 3em;
-                        margin-bottom: 5px;
+                        margin-bottom: 0.5em;
                     }
 
                     h2 {
                         font-weight: normal;
                         font-size: 2em;
-                        margin-bottom: 4px;
+                        margin-bottom: 0.4em;
                     }
 
                     h4 {
                         font-weight: normal;
                         font-size: 1.2em;
-                        margin-bottom: 4px;
+                        margin-bottom: 0.4em;
                     }
 
                     table {
-                        margin-bottom: 6px;
+                        margin-bottom: 0.6em;
 
                         td::before {
                             content: "| ";
                         }
 
                         td:last-child::before {
-                            margin-inline-start: 10px;
+                            margin-inline-start: 1em;
                             content: "@ ";
                         }
                     }
@@ -90,11 +108,14 @@
                 }
 
                 .logos>img {
-                    height: 135px;
+                    height: 13.5em;
+                    margin-left: 2em;
                 }
             }
 
             .why {
+                grid-area: why;
+
                 display: grid;
                 grid-template-areas:
                     "text image"
@@ -106,7 +127,7 @@
 
                 .image {
                     grid-area: image;
-                    margin: 0 0 0 16px;
+                    margin: 0 0 0 1.6em;
 
                     img {
                         max-width: 100%;
@@ -120,20 +141,8 @@
                     }
                 }
 
-
-                p {
-                    margin: 0px 0 6px 0;
-                }
-
                 .text {
                     grid-area: text;
-
-                    .why-icon {
-                        float: inline-start;
-                        margin-inline-end: 0.7em;
-                        height: 3.2em;
-                        margin-top: 0.1em;
-                    }
                 }
 
                 .examples {
@@ -153,8 +162,53 @@
 
                         >img {
                             grid-row: 1;
-                            max-height: 4em;
+                            height: 4em;
                         }
+                    }
+                }
+            }
+
+            .what {
+                grid-area: what;
+
+                display: grid;
+                grid-template-areas: "text";
+                grid-template-columns: 1fr;
+                align-items: center;
+
+                .text {
+                    grid-area: text;
+                }
+            }
+
+            .how {
+                grid-area: how;
+
+                display: grid;
+                grid-template-areas: "text";
+                grid-template-columns: 1fr;
+                align-items: center;
+
+                .text {
+                    grid-area: text;
+                }
+            }
+
+            .notes {
+                grid-area: notes;
+
+                .list {
+                    padding-inline-start: inherit;
+                    font-size: 0.8em;
+
+                    a {
+                        text-decoration: none;
+                        color: inherit;
+                    }
+
+                    .qr {
+                        height: 5em;
+                        vertical-align: middle;
                     }
                 }
             }
@@ -198,14 +252,15 @@
         </div>
         <div class="why">
             <figure class="image">
-                <img src="./צילום מסך 2025-05-23 102308.png" alt="צילום מסך של בסיס הנתונים המקורי" />
+                <img src="./screenshot db.png" alt="צילום מסך של בסיס הנתונים המקורי" />
                 <figcaption>row data of IsraParlTweet dataset. Pay attention to the records' count</figcaption>
             </figure>
             <div class="text">
-                <img src="./why.svg" alt="WHY" class="why-icon">
+                <img src="./why.svg" alt="why icon" class="section-icon">
                 <p>
                     Knesset’s data used to be a complete mess.
-                    IsraParlTweet is a vast database of Knesset quotes and MKs’
+                    IsraParlTweet<sup><a href="#note1" class="note-link">1</a></sup> is a vast database of Knesset
+                    quotes and MKs’
                     tweets from the past ~30 years.
                     Accessing the data through a database doesn’t necessarily
                     reveal trends, consistent opinions, or meaningful insights
@@ -214,7 +269,6 @@
                 </p>
             </div>
             <div class="examples">
-
                 <p>
                     Example questions we want to answer include:
                 </p>
@@ -245,7 +299,62 @@
                 </div>
             </div>
         </div>
+        <div class="what">
+            <div class="text">
+                <img src="./what.svg" alt="what icon" class="section-icon">
+                <p>
+                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Blanditiis tempora ratione fugit
+                    facere repellat officiis alias, voluptatem rem eaque non accusantium, soluta corrupti, autem
+                    consectetur! Nisi aperiam facilis cumque nulla!
+                    Distinctio, nam. Sit doloremque ipsum saepe nihil sapiente tempora blanditiis obcaecati ipsa.
+                    Asperiores ullam inventore maiores fuga facere officia laboriosam voluptates suscipit delectus
+                    sapiente, numquam rerum rem repellendus vero voluptate?
+                    Eaque, perspiciatis veritatis? Temporibus necessitatibus voluptatem facilis officia? Fugiat
+                    quasi rem quia dignissimos voluptatem quos sapiente autem expedita sed fugit dolorem illum
+                    molestias vel ipsam, possimus itaque beatae, velit nam!
+                </p>
+            </div>
+        </div>
+        <div class="how">
+            <div class="text">
+                <img src="./how.svg" alt="how icon" class="section-icon">
+                <p>
+                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Blanditiis tempora ratione fugit
+                    facere repellat officiis alias, voluptatem rem eaque non accusantium, soluta corrupti, autem
+                    consectetur! Nisi aperiam facilis cumque nulla!
+                    Distinctio, nam. Sit doloremque ipsum saepe nihil sapiente tempora blanditiis obcaecati ipsa.
+                    Asperiores ullam inventore maiores fuga facere officia laboriosam voluptates suscipit delectus
+                    sapiente, numquam rerum rem repellendus vero voluptate?
+                    Eaque, perspiciatis veritatis? Temporibus necessitatibus voluptatem facilis officia? Fugiat
+                    quasi rem quia dignissimos voluptatem quos sapiente autem expedita sed fugit dolorem illum
+                    molestias vel ipsam, possimus itaque beatae, velit nam!
+                </p>
+            </div>
+        </div>
+        <div class="notes">
+            <ol class="list">
+                <li id="note1">
+                    <a href="https://huggingface.co/datasets/guymorlan/IsraParlTweet" target="_blank" rel="noopener">
+                        huggingface.co/datasets/guymorlan/IsraParlTweet
+                    </a>
+                    <img src="./israparltweet_qr.svg" alt="QR code" class="qr" />
+                </li>
+            </ol>
+        </div>
     </div>
 </body>
+
+<script>
+    // foreach child of container, copy it and add it before that element
+    const container = document.querySelector('.container');
+    const children = Array.from(container.children);
+    children.forEach(child => {
+        const clone = child.cloneNode(true);
+        clone.style.filter = 'blur(.5em) brightness(0)';
+        clone.style.opacity = '0.3';
+        clone.style.transform = 'translate(.7em, -.7em)';
+        container.insertBefore(clone, child);
+    });
+</script>
 
 </html>
