@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.Buffers;
+using System.Diagnostics;
 using System.Text;
 using ZLinq;
 
@@ -127,11 +128,15 @@ static class TransformDb
     public static void Run()
     {
         var old_model = new Context(@"C:\Projects\Oryan-Hassidim\IsraPolitics\Data\OldIsraParlTweet.db");
-        var model = new Context();
-        //model.Database.EnsureDeleted();
-        //model.Database.EnsureCreated();
+        var model = new Context();// @"C:\Projects\Oryan-Hassidim\IsraPolitics\Data\IsraParlTweet2.db");
+
+        WriteLine("Deleting old database...");
+        model.Database.EnsureDeleted();
+        WriteLine("Creating new database...");
+        model.Database.EnsureCreated();
 
         #region Topics
+        WriteLine("Transforming Topics...");
         var sortedTopics = old_model.KnessetSpeechesEntries
                                     .Where(s => s.Topic != null)
                                     .Select(s => new { Topic = s.Topic!, Date = s.Date })
@@ -149,13 +154,14 @@ static class TransformDb
                          .SelectMany(g => g.g.Select(s => (s.Id, g.Max.Id)))
                          .ToDictionary();
 
-        //model.Topics.AddRange(sortedTopics.Select(s => s.Max));
-        //model.SaveChanges();
-        //model.Dispose();
-        //model = new Context();
+        model.Topics.AddRange(sortedTopics.Select(s => s.Max));
+        model.SaveChanges();
+        model.Dispose();
+        model = new Context();
         #endregion
 
         #region TopicExtras
+        WriteLine("Transforming TopicExtras...");
         var sortedTopicsExtra = old_model.KnessetSpeechesEntries
                                      .Where(s => s.TopicExtra != null)
                                      .Select(s => new { TopicExtra = s.TopicExtra!, Date = s.Date })
@@ -174,24 +180,28 @@ static class TransformDb
                               .SelectMany((g, i) => g.g.Select(s => (s.Id, g.Max.Id)))
                               .ToDictionary();
 
-        //model.TopicExtras.AddRange(sortedTopicsExtra.Select(s => s.Max));
-        //model.SaveChanges();
-        //model.Dispose();
-        //model = new Context();
+        model.TopicExtras.AddRange(sortedTopicsExtra.Select(s => s.Max));
+        model.SaveChanges();
+        model.Dispose();
+        model = new Context();
         #endregion
 
         #region Pepole, Names
-        //model.People.AddRange(old_model.People);
-        //model.Names.AddRange(old_model.Names);
-        //model.SaveChanges();
-        //model.Dispose();
-        //model = new Context();
+        WriteLine("Transforming People and Names...");
+        model.People.AddRange(old_model.People);
+        model.Names.AddRange(old_model.Names);
+        model.SaveChanges();
+        model.Dispose();
+        model = new Context();
         #endregion
 
         #region speeches
+        WriteLine("Transforming Speeches...");
         var total = (double)4484726;
         var speeches = old_model.KnessetSpeechesEntries
                                 .OrderBy(x => x.Date)
+                                .ThenBy(x => x.Knesset)
+                                .ThenBy(x => x.SessionNumber)
                                 .ThenBy(x => x.Id)
                                 .Include(x => x.Topic)
                                 .Include(x => x.TopicExtra);
@@ -199,15 +209,18 @@ static class TransformDb
         var speechComparer = new SpeechesComparer();
         var sets = new Dictionary<int, Dictionary<int, HashSet<KnessetSpeech>>>();
         var empty = new HashSet<KnessetSpeech>();
-        int newId = 0;
+        int newId = 0, counter = 0;
         DateOnly lastDate = default;
         foreach (var speech in speeches)
         {
+            counter++;
+            if (speech.PersonId == null || speech.Text!.Length < 25) continue;
             if (lastDate != speech.Date)
             {
                 sets.Clear();
                 lastDate = speech.Date;
             }
+            speech.Text = speech.Text.ReplaceLineEndings(" ");
 
             if (speech.Topic != null)
                 speech.TopicId = topicsDict[speech.TopicId!.Value];
@@ -221,9 +234,19 @@ static class TransformDb
             if (!sets.TryGetValue(key, out var set))
                 sets.Add(key, set = []);
             int len = speech.Text!.Length;
-            if (Enumerable.Range(len - 3, 6)
-                .Any(l => set.GetValueOrDefault(l, empty).Contains(speech)))
+            KnessetSpeech? copy = null;
+            if (Enumerable.Range(len - 3, 7)
+                          .Select(l => set.GetValueOrDefault(l, empty))
+                          .Any(s => s.TryGetValue(speech, out copy)))
+            {
+                //if (Random.Shared.Next(5000) == 0)
+                //{
+                //    WriteLine($"Duplicate speech (counter={counter})");
+                //    WriteLine($"{speech.Id,10} {Concat(speech.Text.Take(70).Reverse())}");
+                //    WriteLine($"{copy!.Id,10} {Concat(copy!.Text!.Take(70).Reverse())}");
+                //}
                 continue;
+            }
 
             if (!set.TryGetValue(len, out var speechesSet))
                 set.Add(len, speechesSet = new HashSet<KnessetSpeech>(speechComparer));
@@ -231,12 +254,14 @@ static class TransformDb
             speechesSet.Add(speech);
             speech.Id = ++newId;
             model.KnessetSpeechesEntries.Add(speech);
-            model.SaveChanges();
-            if (newId % 1000 == 0)
+            //model.SaveChanges();
+            if (newId % 10000 == 0)
             {
+                model.SaveChanges();
                 model.Dispose();
                 model = new Context();
-                WriteLine($"Saved {newId} speeches ({newId / total:.3%})");
+                // SetCursorPosition(0, CursorTop);
+                WriteLine($"Saved {newId} speeches ({counter / total:P3})");
             }
         }
         model.SaveChanges();

@@ -3,7 +3,6 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { MkData, MkTopicData, SpeechDay } from './helpers/MkData';
 import './mk-bar';
 import groupBy from './helpers/GroupBy';
-// import Papa from 'papaparse';
 
 // TODO: https://knesset.gov.il/WebSiteApi/knessetapi/MKs/GetMkdetailsHeader?mkId=125&languageKey=he
 // TODO: https://knesset.gov.il/WebSiteApi/knessetapi/MKs/GetGovrnmentActivity?mkId=125&lnaguageKey=he

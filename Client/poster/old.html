@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poster 107</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Berlin Sans FB;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-size: 10px;
+        }
+
+        .container {
+            transform: scale(2);
+            width: 841px;
+            height: 1189px;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            background: linear-gradient(-30deg, #cccccc 0%, #eeeeee 100%);
+        }
+
+        .container-item {
+            margin: 15px;
+            padding: 10px;
+            z-index: 0;
+            background: linear-gradient(-110deg, #ffffff55 0%, #ffffff44 70%, #ffffff00 100%);
+            filter: drop-shadow(7px -7px 3px #adadad);
+            height: min-content;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        .header-logos {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logos-img {
+            height: 135px;
+        }
+
+        .why {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            text-align: justify;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .why-image {
+            margin: 0 0 0 16px;
+            flex: 1 1 30%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .why-image-img {
+            max-width: 100%;
+        }
+
+        .why-image-caption {
+            text-align: center;
+            font-size: 0.7em;
+            color: #606060;
+            font-weight: 100;
+        }
+
+        .why-text {
+            flex: 2 1 50%;
+            min-width: 200px;
+        }
+
+        .why-icon {
+            float: left;
+            margin-right: 0.7em;
+            height: 3.2em;
+            margin-top: 0.1em;
+        }
+
+        .why-examples {
+            flex: 1 1 100%;
+            margin-top: 10px;
+        }
+
+        .examples-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: 0.2em;
+        }
+
+        .examples-img {
+            max-height: 4em;
+            flex: 0 0 auto;
+        }
+
+        .examples-p {
+            flex: 1 1 100%;
+            min-width: 180px;
+            margin-top: 0.5em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header container-item">
+            <div class="header-text">
+                <h1>KNESSIGHT</h1>
+                <h2>Trends Analyzer In The Israeli Politics</h2>
+                <h4>
+                    <table class="names">
+                        <tr>
+                            <td>Oryan Hassidim</td>
+                            <td>Avi Sommer</td>
+                            <td>Betzalel Yanir</td>
+                            <td>HUJI</td>
+                        </tr>
+                        <tr>
+                            <td>Mr. Effi Levi</td>
+                            <td colspan="2">Prof. Shaul Shenhav</td>
+                            <td>HUJI</td>
+                        </tr>
+                    </table>
+                </h4>
+                <p class="note">
+                    67547 Engineering Project Workshop<br />
+                    The Rachel and Selim Benin School of Computer Science and Engineering<br />
+                    The Hebrew University of Jerusalem
+                </p>
+            </div>
+            <div class="header-logos">
+                <img src="./knessight.svg" alt="" class="header-logos-img">
+                <img src="./huji.svg" alt="" class="header-logos-img">
+            </div>
+        </div>
+        <div class="why container-item">
+            <figure class="why-image">
+                <img src="./צילום מסך 2025-05-23 102308.png" alt="צילום מסך של בסיס הנתונים המקורי"
+                    class="why-image-img" />
+                <figcaption class="why-image-caption">row data of IsraParlTweet dataset. Pay attention to the records'
+                    count</figcaption>
+            </figure>
+            <div class="why-text">
+                <img src="./why.svg" alt="WHY" class="why-icon">
+                <p>
+                    Knesset’s data used to be a complete mess.
+                    IsraParlTweet is a vast database of Knesset quotes and MKs’
+                    tweets from the past ~30 years.
+                    Accessing the data through a database doesn’t necessarily
+                    reveal trends, consistent opinions, or meaningful insights
+                    – you must sift through an enormous amount of textual
+                    information that isn’t easy to analyze.
+                </p>
+            </div>
+            <div class="why-examples">
+                <p>
+                    Example questions we want to answer include:
+                </p>
+                <div class="examples-container">
+                    <img src="./examples/11.svg" alt="" class="examples-img">
+                    <img src="./examples/12.svg" alt="" class="examples-img">
+                    <img src="./examples/13.svg" alt="" class="examples-img">
+                    <img src="./examples/21.svg" alt="" class="examples-img">
+                    <img src="./examples/22.svg" alt="" class="examples-img">
+                    <img src="./examples/23.svg" alt="" class="examples-img">
+                    <img src="./examples/24.svg" alt="" class="examples-img">
+                    <img src="./examples/31.svg" alt="" class="examples-img">
+                    <img src="./examples/32.svg" alt="" class="examples-img">
+                    <p class="examples-p">
+                        Has an individual MK’s stance remained stable,<br />
+                        shifted over time,<br />
+                        or never been consistent to begin with?
+                    </p>
+                    <p class="examples-p">
+                        Have political blocs maintained their rhetoric over time?<br />
+                        Have they actually become more extreme, as commonly believed?<br />
+                        Have they all shifted “rightward”?<br />
+                        Or have we simply become more pluralistic?
+                    </p>
+                    <p class="examples-p">
+                        Is there a correlation between two given topics?
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -36,8 +36,9 @@ public class Context : DbContext
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseSqlite($"Data Source=\"{_sqlitePath}\"")
-                .EnableSensitiveDataLogging()
-                .LogTo(WriteLine, LogLevel.Information);
+                //.EnableSensitiveDataLogging()
+                //.LogTo(WriteLine, LogLevel.Information)
+                ;
         }
     }
 
