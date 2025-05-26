@@ -58,7 +58,7 @@
                 .section-icon {
                     float: left;
                     margin-inline-end: 0.7em;
-                    height: 3em;
+                    height: 4em;
                     margin-top: 0.1em;
                 }
 
@@ -67,6 +67,9 @@
                     line-height: 1.5em;
                     text-align: justify;
 
+                    sup {
+                        line-height: 0;
+                    }
                 }
 
                 .note-link {
@@ -275,6 +278,62 @@
                 .text {
                     grid-area: text;
                 }
+
+                .flow-chart {
+                    display: grid;
+
+                    svg {
+                        width: 180px;
+                        height: auto;
+
+                        path:nth-child(1) {
+                            d: path("M 0 0 L 100 0 L 140 48 L 100 96 L 28 96 A 14 14 0 0 1 0 96 L 0 72 L 20 48 L 0 24 Z");
+                            fill: var(--color-1);
+                        }
+
+                        path:nth-child(2) {
+                            d: path("M 0 0 L 100 0 L 140 48 20 48 L 0 24 Z");
+                            fill: var(--color-2);
+                        }
+
+                        image {
+                            width: 50px;
+                            height: auto;
+                            position: absolute;
+                            x: 45px;
+                            y: 23px;
+                        }
+
+                        text {
+                            font-family: 'Berlin Sans FB', sans-serif;
+                            font-size: 1.5em;
+                            fill: #fff;
+                            font-weight: bold;
+                            text-anchor: middle;
+                            dominant-baseline: middle;
+                        }
+
+                        &:nth-child(1) {
+                            --color-1: #2d364a;
+                            --color-2: #222837;
+                        }
+
+                        &:nth-child(2) {
+                            --color-1: #324c8a;
+                            --color-2: #253967;
+                        }
+
+                        &:nth-child(3) {
+                            --color-1: #b0c8ff;
+                            --color-2: #8cafff;
+                        }
+
+                        &:nth-child(4) {
+                            --color-1: #dbe6ff;
+                            --color-2: #bdd1ff;
+                        }
+                    }
+                }
             }
 
             .notes {
@@ -361,7 +420,8 @@
                 <img src="./why.svg" alt="why icon" class="section-icon">
                 <p>
                     Knesset’s data used to be a complete mess.
-                    IsraParlTweet<sup><a href="#note1" class="note-link">1</a></sup> is a vast database of Knesset
+                    IsraParlTweet<sup><a href="#note1" class="note-link">1</a></sup>
+                    is a vast database of Knesset
                     quotes and MKs’
                     tweets from the past ~30 years.
                     Accessing the data through a database doesn’t necessarily
@@ -423,8 +483,8 @@
                                 <img src="./examples/31.svg" alt="">
                                 <img src="./examples/32.svg" alt="">
                             </div>
-                            <span class="y-axis">positivity</span>
-                            <span class="x-axis">time</span>
+                            <span class="y-axis">topic A</span>
+                            <span class="x-axis">topic B</span>
                         </div>
                         <p>
                             Do MKs’ overall scores on Topic A correlate with their scores on Topic B?
@@ -500,6 +560,32 @@
                     inviting and interactive
                     UI for viewing the analysis.
                 </p>
+            </div>
+            <div class="flow-chart" style="display: grid; grid-auto-flow: column; place-items: center;">
+                <svg viewBox="0 0 140 110">
+                    <path />
+                    <path />
+                    <image href="./proccess/1.svg" alt="Discussion Text" />
+                    <text x="14" y="96">1</text>
+                </svg>
+                <svg viewBox="0 0 140 110">
+                    <path />
+                    <path />
+                    <image href="./proccess/2.svg" alt="Discussion Text" />
+                    <text x="14" y="96">2</text>
+                </svg>
+                <svg viewBox="0 0 140 110">
+                    <path />
+                    <path />
+                    <image href="./proccess/3.svg" alt="Discussion Text" />
+                    <text x="14" y="96">3</text>
+                </svg>
+                <svg viewBox="0 0 140 110">
+                    <path />
+                    <path />
+                    <image href="./proccess/4.svg" alt="Discussion Text" />
+                    <text x="14" y="96">4</text>
+                </svg>
             </div>
         </div>
         <div class="notes">

@@ -1,0 +1,10 @@
+<svg width="576" height="277" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" overflow="hidden">
+    <defs>
+        <clipPath id="clip0">
+            <rect x="360" y="909" width="576" height="277"/>
+        </clipPath>
+    </defs>
+    <g clip-path="url(#clip0)" transform="translate(-360 -909)">
+        <path d="M0 277 0 138.559 114.516 0.0847547 114.446 0 575.93 0 576 0.0847547 346.995 277Z" fill="#222837" fill-rule="evenodd" transform="matrix(1 -1.22465e-16 -1.22465e-16 -1 360 1186)"/>
+    </g>
+</svg>
