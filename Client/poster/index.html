@@ -186,30 +186,34 @@
                             grid-template-rows: subgrid;
 
                             >div:nth-child(1) {
+                                grid-row: span 2;
                                 display: grid;
-                                grid-auto-flow: column;
-                                justify-content: space-between;
-                                align-items: center;
+                                grid-template-areas: "y-axis charts"
+                                    "none x-axis";
+                                grid-template-columns: auto 1fr;
+                                grid-template-rows: subgrid;
 
                                 >div {
+                                    grid-area: charts;
                                     display: grid;
+                                    justify-content: space-between;
+                                    align-items: center;
                                     grid-auto-flow: column;
                                 }
-
                             }
 
                             .x-axis {
+                                grid-area: x-axis;
                                 color: var(--gray-font);
                                 font-size: 0.6em;
                                 text-align: center;
                             }
 
                             .y-axis {
+                                grid-area: y-axis;
                                 color: var(--gray-font);
                                 font-size: 0.6em;
                                 text-align: center;
-
-
                                 writing-mode: sideways-lr;
                                 text-orientation: mixed;
                             }
@@ -373,13 +377,13 @@
                     <div>
                         <div>
                             <div>
-                                <span class="y-axis">positivity</span>
                                 <img src="./examples/11.svg" alt="">
+                                <img src="./examples/12.svg" alt="">
+                                <img src="./examples/13.svg" alt="">
                             </div>
-                            <img src="./examples/12.svg" alt="">
-                            <img src="./examples/13.svg" alt="">
+                            <span class="y-axis">positivity</span>
+                            <span class="x-axis">time</span>
                         </div>
-                        <span class="x-axis">time</span>
                         <p>
                             Has an individual MK’s stance remained stable,
                             shifted over time,
@@ -388,10 +392,14 @@
                     </div>
                     <div>
                         <div>
-                            <img src="./examples/21.svg" alt="">
-                            <img src="./examples/22.svg" alt="">
-                            <img src="./examples/23.svg" alt="">
-                            <img src="./examples/24.svg" alt="">
+                            <div>
+                                <img src="./examples/21.svg" alt="">
+                                <img src="./examples/22.svg" alt="">
+                                <img src="./examples/23.svg" alt="">
+                                <img src="./examples/24.svg" alt="">
+                            </div>
+                            <span class="y-axis">positivity</span>
+                            <span class="x-axis">time</span>
                         </div>
                         <p>
                             Have political blocs maintained their rhetoric over time?
@@ -402,8 +410,12 @@
                     </div>
                     <div>
                         <div>
-                            <img src="./examples/31.svg" alt="">
-                            <img src="./examples/32.svg" alt="">
+                            <div>
+                                <img src="./examples/31.svg" alt="">
+                                <img src="./examples/32.svg" alt="">
+                            </div>
+                            <span class="y-axis">positivity</span>
+                            <span class="x-axis">time</span>
                         </div>
                         <div>time</div>
                         <p>
