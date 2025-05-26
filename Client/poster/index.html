@@ -65,6 +65,8 @@
                 p {
                     margin: 0 0 .6em 0;
                     line-height: 1.5em;
+                    text-align: justify;
+
                 }
 
                 .note-link {
@@ -156,7 +158,6 @@
                 grid-template-columns: 3fr 3fr;
                 grid-template-rows: auto auto;
                 align-items: center;
-                text-align: justify;
 
                 figure {
                     grid-area: image;
@@ -402,7 +403,11 @@
                                 <img src="./examples/23.svg" alt="">
                                 <img src="./examples/24.svg" alt="">
                             </div>
-                            <span class="y-axis">positivity</span>
+                            <div class="y-axis"
+                                style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+                                <span style="text-align: start;">&nbsp;&nbsp;strongly<br />&nbsp;&nbsp;con</span>
+                                <span style="text-align: end;">strongly<br />pro</span>
+                            </div>
                             <span class="x-axis">time</span>
                         </div>
                         <p>
@@ -422,7 +427,7 @@
                             <span class="x-axis">time</span>
                         </div>
                         <p>
-                            Is there a correlation between two given topics?
+                            Do MKs’ overall scores on Topic A correlate with their scores on Topic B?
                         </p>
                     </div>
                 </div>
@@ -432,37 +437,31 @@
             <div class="text">
                 <img src="./what.svg" alt="what icon" class="section-icon">
                 <p>
-                    Knessight uses advanced AI tools,
-                    analyzes trends and opinions for you,
-                    and provides you with easy access to them.
+                    Knessight uses advanced AI tools to extract and analyze political positions from speeches and tweets
+                    of Israeli MKs.
+                    It assigns stance scores on key topics and visualizes trends, correlations, and changes over time,
+                    and provides you with
+                    easy access to them.
                 </p>
             </div>
             <figure>
                 <img src="./sharon1.png" alt="Screenshot Of Ariel Sharon Knessight page - brief mode" />
                 <figcaption>
-                    Knessight Page of Ariel Sharon - Compact View:
+                    Knessight Mk page for Ariel Sharon -
                     <br />
-                    The page displays his positions on various political issues using sliders.
+                    See where the MK stands on major political topics — at a glance
                 </figcaption>
             </figure>
             <figure>
                 <img src="./sharon2.png" alt="Screenshot Of Ariel Sharon Knessight page - Settlement expanded" />
                 <figcaption>
-                    Knessight Page of Ariel Sharon - Settlement Expanded:
-                    <br />
-                    Here, one can see his support for Settlement based on statements
-                    throughout his career in the Knesset. For each point on the
-                    timeline, the statements it refers to are available for viewing.
+                    Topic Timeline - Dive into a specific topic to track how the Mk's stance changed over time
                 </figcaption>
             </figure>
             <figure>
                 <img src="./sharon3.png" alt="Screenshot Of Ariel Sharon Knessight page - expanded mode" />
                 <figcaption>
-                    Knessight Page of Ariel Sharon - Expanded View:
-                    <br />
-                    Here, one can see his support for an issue based on statements
-                    throughout his career in the Knesset. For each point on the
-                    timeline, the statements it refers to are available for viewing.
+                    Statement View - Click any point to read the full statement behind the data
                 </figcaption>
             </figure>
         </div>
