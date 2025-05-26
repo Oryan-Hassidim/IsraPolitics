@@ -193,7 +193,7 @@
                                 grid-template-columns: auto 1fr;
                                 grid-template-rows: subgrid;
 
-                                >div {
+                                >div:nth-child(1) {
                                     grid-area: charts;
                                     display: grid;
                                     justify-content: space-between;
@@ -233,7 +233,7 @@
                         }
 
                         img {
-                            height: 4em;
+                            height: 5em;
                         }
                     }
                 }
@@ -381,7 +381,11 @@
                                 <img src="./examples/12.svg" alt="">
                                 <img src="./examples/13.svg" alt="">
                             </div>
-                            <span class="y-axis">positivity</span>
+                            <div class="y-axis"
+                                style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+                                <span style="text-align: start;">&nbsp;&nbsp;strongly<br />&nbsp;&nbsp;con</span>
+                                <span style="text-align: end;">strongly<br />pro</span>
+                            </div>
                             <span class="x-axis">time</span>
                         </div>
                         <p>
@@ -417,7 +421,6 @@
                             <span class="y-axis">positivity</span>
                             <span class="x-axis">time</span>
                         </div>
-                        <div>time</div>
                         <p>
                             Is there a correlation between two given topics?
                         </p>
