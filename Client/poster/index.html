@@ -5,10 +5,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Poster 107</title>
+    <link rel="icon" href="./knessight.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../fonts/fonts.css">
     <style>
         body {
             background-color: #f0f0f0;
-            font-family: Berlin Sans FB;
+            font-family: 'Berlin Sans FB', sans-serif;
             color: #333;
             display: grid;
             place-items: center;
@@ -16,11 +18,18 @@
             font-size: 10px;
 
             --gray-font: #606060;
+
+            --blue-1: #2D364A;
+            --blue-2: #324C8A;
+            --blue-3: #B0C8FF;
+            --blue-4: #DBE6FF;
+
+            --primary-color: var(--blue-2);
         }
 
         .container {
-            width: 84.1em;
-            height: 118.9em;
+            width: 841px;
+            height: 1189px;
             background-color: #fff;
             display: grid;
             grid-template-areas:
@@ -55,6 +64,7 @@
 
                 p {
                     margin: 0 0 .6em 0;
+                    line-height: 1.5em;
                 }
 
                 .note-link {
@@ -143,7 +153,7 @@
                 grid-template-areas:
                     "text image"
                     "examples image";
-                grid-template-columns: 3fr 1fr;
+                grid-template-columns: 3fr 3fr;
                 grid-template-rows: auto auto;
                 align-items: center;
                 text-align: justify;
@@ -166,18 +176,59 @@
 
                     .examples-container {
                         display: grid;
-                        grid-template: repeat(2, auto) / auto auto auto 2em auto auto auto auto 2em auto auto;
+                        grid-template: auto auto auto 1em auto auto auto / auto 2em auto;
                         grid-auto-flow: row;
                         align-items: start;
                         justify-items: center;
-                        column-gap: 0.2em;
 
-                        >p {
-                            grid-row: 2;
+                        >div {
+                            display: grid;
+                            grid-template-rows: subgrid;
+
+                            >div:nth-child(1) {
+                                display: grid;
+                                grid-auto-flow: column;
+                                justify-content: space-between;
+                                align-items: center;
+
+                                >div {
+                                    display: grid;
+                                    grid-auto-flow: column;
+                                }
+
+                            }
+
+                            .x-axis {
+                                color: var(--gray-font);
+                                font-size: 0.6em;
+                                text-align: center;
+                            }
+
+                            .y-axis {
+                                color: var(--gray-font);
+                                font-size: 0.6em;
+                                text-align: center;
+
+
+                                writing-mode: sideways-lr;
+                                text-orientation: mixed;
+                            }
                         }
 
-                        >img {
-                            grid-row: 1;
+                        >div:nth-child(1) {
+                            grid-area: 1 / 1 / 4 / 2;
+
+                        }
+
+                        >div:nth-child(3) {
+                            grid-area: 1 / -2 / 4 / -1;
+                        }
+
+                        >div:nth-child(2) {
+                            grid-area: 5 / 1 / -1 / -1;
+                        }
+
+                        img {
                             height: 4em;
                         }
                     }
@@ -188,7 +239,7 @@
                 grid-area: what;
                 display: grid;
                 /* grid-template-areas: "text"; */
-                grid-template-columns: 2fr 1fr 1fr;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
                 grid-template-rows: auto auto;
                 align-items: center;
 
@@ -319,29 +370,46 @@
                     Example questions we want to answer include:
                 </p>
                 <div class="examples-container">
-                    <img src="./examples/11.svg" alt="" style="grid-column: 1;">
-                    <img src="./examples/12.svg" alt="" style="grid-column: 2;">
-                    <img src="./examples/13.svg" alt="" style="grid-column: 3;">
-                    <img src="./examples/21.svg" alt="" style="grid-column: 5;">
-                    <img src="./examples/22.svg" alt="" style="grid-column: 6;">
-                    <img src="./examples/23.svg" alt="" style="grid-column: 7;">
-                    <img src="./examples/24.svg" alt="" style="grid-column: 8;">
-                    <img src="./examples/31.svg" alt="" style="grid-column: 10;">
-                    <img src="./examples/32.svg" alt="" style="grid-column: 11;">
-                    <p style="grid-column: 1/4;">
-                        Has an individual MK’s stance remained stable,
-                        shifted over time,
-                        or never been consistent to begin with?
-                    </p>
-                    <p style="grid-column: 5/9;">
-                        Have political blocs maintained their rhetoric over time?
-                        Have they actually become more extreme, as commonly believed?
-                        Have they all shifted “rightward”?
-                        Or have we simply become more pluralistic?
-                    </p>
-                    <p style="grid-column: 10/12;">
-                        Is there a correlation between two given topics?
-                    </p>
+                    <div>
+                        <div>
+                            <div>
+                                <span class="y-axis">positivity</span>
+                                <img src="./examples/11.svg" alt="">
+                            </div>
+                            <img src="./examples/12.svg" alt="">
+                            <img src="./examples/13.svg" alt="">
+                        </div>
+                        <span class="x-axis">time</span>
+                        <p>
+                            Has an individual MK’s stance remained stable,
+                            shifted over time,
+                            or never been consistent to begin with?
+                        </p>
+                    </div>
+                    <div>
+                        <div>
+                            <img src="./examples/21.svg" alt="">
+                            <img src="./examples/22.svg" alt="">
+                            <img src="./examples/23.svg" alt="">
+                            <img src="./examples/24.svg" alt="">
+                        </div>
+                        <p>
+                            Have political blocs maintained their rhetoric over time?
+                            Have they actually become more extreme, as commonly believed?
+                            Have they all shifted “rightward”?
+                            Or have we simply become more pluralistic?
+                        </p>
+                    </div>
+                    <div>
+                        <div>
+                            <img src="./examples/31.svg" alt="">
+                            <img src="./examples/32.svg" alt="">
+                        </div>
+                        <div>time</div>
+                        <p>
+                            Is there a correlation between two given topics?
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -363,7 +431,17 @@
                 </figcaption>
             </figure>
             <figure>
-                <img src="./sharon2.png" alt="Screenshot Of Ariel Sharon Knessight page - expanded mode" />
+                <img src="./sharon2.png" alt="Screenshot Of Ariel Sharon Knessight page - Settlement expanded" />
+                <figcaption>
+                    Knessight Page of Ariel Sharon - Settlement Expanded:
+                    <br />
+                    Here, one can see his support for Settlement based on statements
+                    throughout his career in the Knesset. For each point on the
+                    timeline, the statements it refers to are available for viewing.
+                </figcaption>
+            </figure>
+            <figure>
+                <img src="./sharon3.png" alt="Screenshot Of Ariel Sharon Knessight page - expanded mode" />
                 <figcaption>
                     Knessight Page of Ariel Sharon - Expanded View:
                     <br />
@@ -377,15 +455,36 @@
             <div class="text">
                 <img src="./how.svg" alt="how icon" class="section-icon">
                 <p>
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Blanditiis tempora ratione fugit
-                    facere repellat officiis alias, voluptatem rem eaque non accusantium, soluta corrupti, autem
-                    consectetur! Nisi aperiam facilis cumque nulla!
-                    Distinctio, nam. Sit doloremque ipsum saepe nihil sapiente tempora blanditiis obcaecati ipsa.
-                    Asperiores ullam inventore maiores fuga facere officia laboriosam voluptates suscipit delectus
-                    sapiente, numquam rerum rem repellendus vero voluptate?
-                    Eaque, perspiciatis veritatis? Temporibus necessitatibus voluptatem facilis officia? Fugiat
-                    quasi rem quia dignissimos voluptatem quos sapiente autem expedita sed fugit dolorem illum
-                    molestias vel ipsam, possimus itaque beatae, velit nam!
+                    To extract relevant data for a specific topic concerning
+                    an individual Member of Knesset from quotations, we follow this
+                    4-stage approach:
+                </p>
+                <p>
+                    <strong style="color: var(--blue-1);">Discussion Text </strong> – Retrieving all records from the
+                    IsraParlTweet database that were
+                    spoken by the MK.
+                </p>
+                <p>
+
+                    <strong style="color: var(--blue-2);">Filtering </strong> – Using a lightweight LLM model that
+                    assigns a score between 1 and 5
+                    based on how relevant
+                    each quote is to
+                    the topic, and filtering out sentences that scored below 4.
+                </p>
+                <p>
+                    <strong style="color: var(--blue-3);">Scoring </strong> – Applying a more advanced LLM model to
+                    assign a score between 1 and 10,
+                    indicating how
+                    positive each relevant
+                    quote is toward the topic.
+                </p>
+                <p>
+                    <strong style="color: var(--blue-4);">Presentation for Review </strong> – Storing the results in an
+                    accessible user database and
+                    providing an
+                    inviting and interactive
+                    UI for viewing the analysis.
                 </p>
             </div>
         </div>
