@@ -89,6 +89,27 @@ export class MkView extends LitElement {
                                         .list=${topic.records}
                                     ></mk-bar>
                                 </div>
+                                <div class="topic">
+                                    <h3>פתרון שתי המדינות</h3>
+                                    <mk-bar
+                                        average="6.5"
+                                        .list=${topic.records}
+                                    ></mk-bar>
+                                </div>
+                                <div class="topic">
+                                    <h3>הפרדת דת ממדינה</h3>
+                                    <mk-bar
+                                        average="5.5"
+                                        .list=${topic.records}
+                                    ></mk-bar>
+                                </div>
+                                <div class="topic">
+                                    <h3>הגבלות על ייבוא</h3>
+                                    <mk-bar
+                                        average="7"
+                                        .list=${topic.records}
+                                    ></mk-bar>
+                                </div>
                             `
                     )}
                 </div>
@@ -135,18 +156,23 @@ export class MkView extends LitElement {
                     const records: Array<CsvRecord> = Papa.parse(text, {
                         header: true,
                         skipEmptyLines: true,
-                        dynamicTyping: true
+                        dynamicTyping: true,
                     }).data;
                     topic.records = groupBy(records, (r) => r.Date).map(
                         (group) => {
                             const date = new Date(group.key);
                             const ranks = group.items.map((item) => item.Rank);
                             const average =
-                            ranks.reduce((a, b) => a + b, 0) / ranks.length;
+                                ranks.reduce((a, b) => a + b, 0) / ranks.length;
                             return new SpeechDay(
                                 date,
                                 average,
-                                group.items.map((item) => `${item.Topic}: ${item.Text} (${item.Rank})`).join('\n')
+                                group.items
+                                    .map(
+                                        (item) =>
+                                            `${item.Topic}: ${item.Text} (${item.Rank})`
+                                    )
+                                    .join('\n')
                             );
                         }
                     );
