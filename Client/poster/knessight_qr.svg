@@ -6,7 +6,7 @@
 	<defs>
 		<rect id="p" width="8" height="8"/>
 	</defs>
-	<g fill="#000000">
+	<g fill="#324C8A">
 		<use xlink:href="#p" x="32" y="32"/>
 		<use xlink:href="#p" x="32" y="40"/>
 		<use xlink:href="#p" x="32" y="48"/>

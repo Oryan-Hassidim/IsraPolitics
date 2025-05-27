@@ -14,7 +14,7 @@
             color: #333;
             display: grid;
             place-items: center;
-            height: 100vh;
+            max-height: 100vh;
             font-size: 10px;
 
             --gray-font: #606060;
@@ -35,7 +35,6 @@
         .container {
             width: 841px;
             height: 1189px;
-            background-color: #ffffff;
             display: grid;
             grid-template-areas: "header"
                 "why"
@@ -48,11 +47,13 @@
             align-items: start;
             align-content: start;
 
-            background: linear-gradient(-30deg, #cccccc 0%, #eeeeee 100%);
-
             @media print {
                 scale: 3.8;
             }
+
+            background: linear-gradient(to bottom left,
+                #e2ebff 0%,
+                #f1f5ff 100%);
 
             >* {
                 margin: 1.2em 2em 1.2em 2em;
@@ -87,6 +88,11 @@
                     margin-inline-end: 0.7em;
                     height: 4em;
                     margin-top: 0.1em;
+                }
+
+                a {
+                    color: inherit;
+                    text-decoration: none;
                 }
 
                 p {
@@ -400,6 +406,12 @@
                         height: 10em;
                         width: auto;
                     }
+
+                    a {
+                        color: var(--primary-color);
+                        font-weight: bold;
+                        font-size: 2em;
+                    }
                 }
 
                 .notes {
@@ -584,7 +596,7 @@
                 </p>
             </div>
             <figure>
-                <img src="./sharon1.png" alt="Screenshot Of Ariel Sharon Knessight page - brief mode" />
+                <img src="./sharon/1.png" alt="Screenshot Of Ariel Sharon Knessight page - brief mode" />
                 <figcaption>
                     Knessight Mk page for Ariel Sharon -
                     <br />
@@ -592,13 +604,13 @@
                 </figcaption>
             </figure>
             <figure>
-                <img src="./sharon2.png" alt="Screenshot Of Ariel Sharon Knessight page - Settlement expanded" />
+                <img src="./sharon/2.png" alt="Screenshot Of Ariel Sharon Knessight page - Settlement expanded" />
                 <figcaption>
                     Topic Timeline - Dive into a specific topic to track how the Mk's stance changed over time
                 </figcaption>
             </figure>
             <figure>
-                <img src="./sharon3.png" alt="Screenshot Of Ariel Sharon Knessight page - expanded mode" />
+                <img src="./sharon/3.png" alt="Screenshot Of Ariel Sharon Knessight page - expanded mode" />
                 <figcaption>
                     Statement View - Click any point to read the full statement behind the data
                 </figcaption>
