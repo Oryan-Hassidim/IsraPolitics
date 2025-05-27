@@ -388,12 +388,32 @@
                 grid-template-areas:
                     "text qr"
                     "notes qr";
-
-                grid-template-columns: 3fr 1fr;
+                grid-template-columns: 4fr 1fr;
                 grid-template-rows: auto auto;
+                place-items: start stretch;
+                column-gap: 2em;
 
                 .text {
                     grid-area: text;
+
+                    p:nth-child(3) strong {
+
+                        &:nth-of-type(1) {
+                            color: #2d364a;
+                        }
+
+                        &:nth-of-type(2) {
+                            color: #3e6cd6;
+                        }
+
+                        &:nth-of-type(3) {
+                            color: #82a8ff;
+                        }
+                    }
+
+                    p:nth-child(4) strong {
+                        color: #324C8A;
+                    }
                 }
 
                 figure {
@@ -691,21 +711,27 @@
             <div class="text">
                 <img src="./and.svg" alt="and icon" class="section-icon">
                 <p>
-                    What's next? There's still a lot of work ahead: analyzing more and more Members of Knesset, diving
-                    into new topics,
-                    improving the model to make it as efficient, fast, and accurate as possible, evaluating its
-                    precision to refine it,
-                    creating more insightful data-driven graphs, and presenting users with valuable insights—both
-                    reinforcing existing
-                    knowledge and uncovering new perspectives they may not have considered.
+                    What's next? There's still a lot of work ahead:
+                    analyzing more and more MKs,
+                    diving into new topics,
+                    improving the model to make it as efficient, fast, and accurate as possible,
+                    evaluating its precision to refine it,
+                    creating more insightful data-driven graphs,
+                    and presenting users with valuable insights —
+                    both reinforcing existing knowledge
+                    and uncovering new perspectives they may not have considered.
                 </p>
                 <p>
-                    And for all of that, you're invited! Do you have ideas for topics you'd like us to analyze? Visit
-                    our website and let us
-                    know! Have some free time and want to help improve the model? You’re welcome to assist with tagging.
-                    Want to explore
-                    insights we've already uncovered and stay updated on new discoveries? Feel free to browse the
-                    website!
+                    And for all of that, you're invited!
+                    Do you have ideas for topics you'd like us to analyze?
+                    <strong>Visit our website</strong> and let us know!
+                    Have some free time and want to help improve the model?
+                    <strong>Visit our website</strong> and assist with tagging!
+                    Want to explore insights we've already uncovered and stay updated on new discoveries?
+                    <strong>Visit our website</strong> and browse!
+                </p>
+                <p>
+                    <strong>Visit the website</strong> and be part of the journey!
                 </p>
             </div>
             <figure>
