@@ -97,7 +97,7 @@
 
                 p {
                     margin: 0 0 .6em 0;
-                    line-height: 1.5em;
+                    line-height: 1.4em;
                     text-align: justify;
 
                     sup {
@@ -114,7 +114,7 @@
                 figcaption {
                     text-align: center;
                     text-wrap-style: balance;
-                    font-size: 0.7em;
+                    font-size: 0.9em;
                     color: var(--gray-font);
                     font-weight: 100;
                 }
@@ -133,9 +133,8 @@
                     }
 
                     h1 {
-                        font-style: demi;
                         font-size: 3em;
-                        margin-bottom: 0.5em;
+                        margin-bottom: 0.2em;
                     }
 
                     h2 {
@@ -157,7 +156,7 @@
                             padding-inline-end: .6em;
                         }
 
-                        td::before {
+                        td:not(:first-child)::before {
                             content: "| ";
                         }
 
@@ -209,7 +208,7 @@
 
                     .examples-container {
                         display: grid;
-                        grid-template: auto auto auto 1em auto auto auto / 3fr 2em 2fr;
+                        grid-template: auto auto auto auto 1em auto auto auto auto / 3fr 2em 2fr;
                         grid-auto-flow: row;
                         align-items: start;
                         justify-items: center;
@@ -217,6 +216,13 @@
                         >div {
                             display: grid;
                             grid-template-rows: subgrid;
+
+                            h5 {
+                                margin: 0;
+                                margin-block-end: 0.1em;
+                                margin-block-start: 0.1em;
+                                text-align: center;
+                            }
 
                             >div:nth-child(1) {
                                 grid-row: span 2;
@@ -240,6 +246,12 @@
                                 color: var(--gray-font);
                                 font-size: 0.6em;
                                 text-align: center;
+                                display: grid;
+                                align-items: center;
+
+                                >* {
+                                    grid-area: 1/-1/1/-1;
+                                }
                             }
 
                             .y-axis {
@@ -253,16 +265,15 @@
                         }
 
                         >div:nth-child(1) {
-                            grid-area: 1 / 1 / 4 / 2;
-
+                            grid-area: 1 / 1 / 5 / 2;
                         }
 
                         >div:nth-child(3) {
-                            grid-area: 1 / -2 / 4 / -1;
+                            grid-area: 1 / -2 / 5 / -1;
                         }
 
                         >div:nth-child(2) {
-                            grid-area: 5 / 1 / -1 / -1;
+                            grid-area: 6 / 1 / -1 / -1;
                         }
 
                         img {
@@ -276,17 +287,27 @@
                 grid-area: what;
                 display: grid;
                 grid-template-columns: 13em 1fr 1fr 1fr;
-                grid-template-rows: auto 1fr;
+                grid-template-rows: auto auto 1fr;
+                grid-template-areas:
+                    "text caption caption caption"
+                    "text fig1 fig2 fig3"
+                    "text fig1 fig2 fig3";
                 place-items: start center;
                 column-gap: 2em;
                 row-gap: 1em;
 
-                >* {
-                    grid-row: 1/3;
+                .text {
+                    grid-area: text;
+                }
+
+                .caption {
+                    grid-area: caption;
+                    margin: 0;
                 }
 
                 figure {
                     display: grid;
+                    grid-row: 2/4;
                     grid-template-rows: subgrid;
                     max-width: 100%;
                     margin: 0 0 0 0;
@@ -388,7 +409,7 @@
                 grid-template-areas:
                     "text qr"
                     "notes qr";
-                grid-template-columns: 4fr 1fr;
+                grid-template-columns: 5fr 3fr;
                 grid-template-rows: auto auto;
                 place-items: start stretch;
                 column-gap: 2em;
@@ -396,10 +417,9 @@
                 .text {
                     grid-area: text;
 
-                    p:nth-child(3) strong {
-
+                    p strong {
                         &:nth-of-type(1) {
-                            color: #2d364a;
+                            color: #324c8a;
                         }
 
                         &:nth-of-type(2) {
@@ -409,16 +429,17 @@
                         &:nth-of-type(3) {
                             color: #82a8ff;
                         }
-                    }
 
-                    p:nth-child(4) strong {
-                        color: #324C8A;
+                        &:nth-of-type(4) {
+                            color: #2d364a;
+                        }
                     }
                 }
 
                 figure {
                     grid-area: qr;
                     display: grid;
+                    grid-auto-flow: column;
                     place-items: center;
                     margin: 0;
 
@@ -427,7 +448,7 @@
                         width: auto;
                     }
 
-                    a {
+                    figcaption a {
                         color: var(--primary-color);
                         font-weight: bold;
                         font-size: 2em;
@@ -481,16 +502,18 @@
         <div class="header">
             <div class="text">
                 <h1>KNESSIGHT</h1>
-                <h2>Trends Analyzer In The Israeli Politics</h2>
+                <h2>Trends Analyzer for Israeli Politics</h2>
                 <h4>
                     <table class="names">
                         <tr>
+                            <td><strong>Team:</strong></td>
                             <td>Oryan Hassidim</td>
                             <td>Avi Sommer</td>
                             <td>Betzalel Yanir</td>
                             <td>HUJI</td>
                         </tr>
                         <tr>
+                            <td><strong>Advisors:</strong></td>
                             <td>Mr. Effi Levi</td>
                             <td colspan="2">Prof. Shaul Shenhav</td>
                             <td>HUJI</td>
@@ -517,8 +540,8 @@
             </figure>
             <div class="text">
                 <img src="./why.svg" alt="why icon" class="section-icon">
-                <p>
-                    Knesset’s data used to be a complete mess.
+                <p style=" letter-spacing: -0.09px;">
+                    <!-- Knesset’s data used to be a complete mess.
                     IsraParlTweet<sup><a href="#note1" class="note-link">1</a></sup>
                     is a vast database of Knesset
                     quotes and MKs’
@@ -526,12 +549,22 @@
                     Accessing the data through a database doesn’t necessarily
                     reveal trends, consistent opinions, or meaningful insights
                     – you must sift through an enormous amount of textual
-                    information that isn’t easy to analyze.
+                    information that isn’t easy to analyze. -->
+                    Since the establishment of the State of Israel,
+                    the Knesset has made sure to make plenary debates accessible
+                    to the general public through "Divrei HaKnesset".
+                    However, the format of these records and the lack of
+                    computational tools have made it difficult to extract meaningful insights.
+                    IsraParlTweet<sup><a href="#note1" class="note-link">1</a></sup>
+                    is a vast database of Knesset quotes from the past up to ~30 years
+                    and Members of Knesset (MKs) tweets.
+                    But merely having access to this data doesn't mean we can easily identify
+                    trends, shifts, or consistent opinions in parliamentary discourse.
                 </p>
             </div>
             <div class="examples">
                 <p>
-                    Example questions we want to answer include:
+                    Example trends we can uncover include:
                 </p>
                 <div class="examples-container">
                     <div>
@@ -548,6 +581,7 @@
                             </div>
                             <span class="x-axis">time</span>
                         </div>
+                        <h5>Stability or change in an MK's stance</h5>
                         <p>
                             Has an individual MK’s stance remained stable,
                             shifted over time,
@@ -568,7 +602,7 @@
                                 <span style="text-align: end;">strongly<br />pro</span>
                             </div>
                             <div class="x-axis">
-                                <span style="float: right;">
+                                <span style="place-self: end;">
                                     <span style="color: #3b7d23;">●</span> Block A
                                     &ensp;
                                     <span style="color: #0041d8;">●</span> Block B
@@ -576,6 +610,7 @@
                                 <span>time</span>
                             </div>
                         </div>
+                        <h5>Bloc rhetoric and polarization</h5>
                         <p>
                             Have political blocs maintained their rhetoric over time?
                             Have they actually become more extreme, as commonly believed?
@@ -590,15 +625,16 @@
                                 <img src="./examples/32.svg" alt="">
                             </div>
                             <span class="y-axis">topic A</span>
-                            <div class="x-axis" style="display: grid; place-items:  end stretch;">
-                                <span style="grid-area: 1 / -1 / 1 / -1; text-align: end;">
-                                    <span style="color: black;">●</span> single Mk's overall score
+                            <div class="x-axis">
+                                <span style="place-self: end;">
+                                    <span style="color: black;">●</span> single MK's overall score
                                 </span>
-                                <span style="grid-area: 1 / -1 / 1 / -1;"> topic B</span>
+                                <span> topic B</span>
                             </div>
                         </div>
+                        <h5>Correlations between topics</h5>
                         <p>
-                            Do MKs’ overall scores on Topic A correlate with their scores on Topic B?
+                            Do MKs' overall scores on Topic A correlate with their scores on Topic B?
                         </p>
                     </div>
                 </div>
@@ -612,21 +648,22 @@
                     of Israeli MKs.
                     It assigns stance scores on key topics and visualizes trends, correlations, and changes over time,
                     and provides you with
-                    easy access to them.
+                    easy access to them.
                 </p>
             </div>
+            <h4 class="caption">Usage Example - Ariel Sharon</h4>
             <figure>
                 <img src="./sharon/1.png" alt="Screenshot Of Ariel Sharon Knessight page - brief mode" />
                 <figcaption>
-                    Knessight Mk page for Ariel Sharon -
+                    Knessight MK page for Ariel Sharon -
                     <br />
-                    See where the MK stands on major political topics — at a glance
+                    positions of MKs on key issues — at a glance
                 </figcaption>
             </figure>
             <figure>
                 <img src="./sharon/2.png" alt="Screenshot Of Ariel Sharon Knessight page - Settlement expanded" />
                 <figcaption>
-                    Topic Timeline - Dive into a specific topic to track how the Mk's stance changed over time
+                    Topic Timeline - Dive into a specific topic to track how the MK's stance changed over time
                 </figcaption>
             </figure>
             <figure>
@@ -712,35 +749,24 @@
                 <img src="./and.svg" alt="and icon" class="section-icon">
                 <p>
                     What's next? There's still a lot of work ahead:
-                    analyzing more and more MKs,
-                    diving into new topics,
-                    improving the model to make it as efficient, fast, and accurate as possible,
-                    evaluating its precision to refine it,
-                    creating more insightful data-driven graphs,
-                    and presenting users with valuable insights —
-                    both reinforcing existing knowledge
-                    and uncovering new perspectives they may not have considered.
+                    <strong>analyzing</strong> more MKs,
+                    <strong>examining</strong> new topics,
+                    <strong>evaluating</strong> our models,
+                    and <strong>creating</strong> more insightful data-driven graphs.
                 </p>
                 <p>
-                    And for all of that, you're invited!
-                    Do you have ideas for topics you'd like us to analyze?
-                    <strong>Visit our website</strong> and let us know!
-                    Have some free time and want to help improve the model?
-                    <strong>Visit our website</strong> and assist with tagging!
-                    Want to explore insights we've already uncovered and stay updated on new discoveries?
-                    <strong>Visit our website</strong> and browse!
-                </p>
-                <p>
-                    <strong>Visit the website</strong> and be part of the journey!
+                    <strong>Join us</strong> to suggest topics, help tag data, or explore new insights!
                 </p>
             </div>
             <figure>
-                <img src="./knessight_qr.svg" alt="QR code to Knessight website" class="qr" />
                 <figcaption>
                     Scan the QR code to visit our website
                     <br />
                     <a href="https://did.li/knessight" target="_blank" rel="noopener">did.li/knessight</a>
                 </figcaption>
+                <a href="https://did.li/knessight" target="_blank" rel="noopener">
+                    <img src="./knessight_qr.svg" alt="QR code to Knessight website" class="qr" />
+                </a>
             </figure>
             <div class="notes">
                 <ol class="list">
@@ -751,11 +777,6 @@
                         </a>
                     </li>
                 </ol>
-                <!-- <ol class="list">
-                    <li>
-                        <img src="./israparltweet_qr.svg" alt="QR code" class="qr" />
-                    </li>
-                </ol> -->
             </div>
         </div>
     </div>
@@ -763,6 +784,7 @@
 
 <script>
     // foreach child of container, copy it and add it before that element
+
     const container = document.querySelector('.container');
     const children = Array.from(container.children);
     children.forEach(child => {
