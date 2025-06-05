@@ -240,7 +240,6 @@ export class MkBar extends LitElement {
                 border: 1px solid black;
                 padding: 5px;
                 border-radius: 5px;
-                font-size: 12px;
                 pointer-events: visible;
                 opacity: 0;
                 transition: display var(--animation-time) ease allow-discrete,
@@ -251,6 +250,7 @@ export class MkBar extends LitElement {
                 max-height: 400px;
                 overflow: auto;
                 font-size: 0.7em;
+                z-index: 3;
             }
         }
 
@@ -271,7 +271,7 @@ export class MkBar extends LitElement {
     }
 
     override render(): TemplateResult<1> {
-        const avg_percent = (100.0 * this.average - 1) / 9;
+        const avg_percent = (100.0 * (this.average - 1)) / 9;
         const tri1_size = Math.floor(this._points_list.length / 3);
         const tri3_size = tri1_size;
         const tri2_size = Math.floor(
