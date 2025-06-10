@@ -209,14 +209,20 @@
 
                     .examples-container {
                         display: grid;
-                        grid-template: auto auto auto auto 1em auto auto auto auto / 3fr 2em 2fr;
+                        grid-template: auto auto auto auto 1em auto auto auto auto / 3.3fr 1.5em 2fr;
                         grid-auto-flow: row;
                         align-items: start;
                         justify-items: center;
 
+                        p {
+                            margin: 0;
+                        }
+
                         >div {
                             display: grid;
                             grid-template-rows: subgrid;
+                            grid-template-columns: 1fr auto;
+                            column-gap: .5em;
 
                             h5 {
                                 margin: 0;
@@ -239,7 +245,16 @@
                                     justify-content: space-between;
                                     align-items: center;
                                     grid-auto-flow: column;
+                                    column-gap: .6em;
                                 }
+                            }
+
+                            >div:nth-child(2) {
+                                grid-row: span 2;
+                                /* display: grid;
+                                align-items: center;
+                                justify-content: center;
+                                text-align: center; */
                             }
 
                             .x-axis {
@@ -249,6 +264,7 @@
                                 text-align: center;
                                 display: grid;
                                 align-items: center;
+                                place-self: start stretch;
 
                                 >* {
                                     grid-area: 1/-1/1/-1;
@@ -323,13 +339,20 @@
             .how {
                 grid-area: how;
 
-                display: grid;
-                grid-template-columns: 13em 1fr;
+                /* display: grid; */
+                /* grid-template-columns: 13em 1fr; */
                 place-items: start center;
                 justify-content: space-between;
-                column-gap: 1.6em;
+                /* column-gap: 1.6em; */
+
+                p {
+                    margin-bottom: .3em;
+                }
 
                 .flow-chart {
+                    float: right;
+                    width: calc(100% - 13em - 1.6em);
+                    margin-left: 1.6em;
                     display: grid;
                     grid-template-columns: repeat(4, 1fr);
                     column-gap: 2em;
@@ -359,7 +382,7 @@
                     }
 
                     svg {
-                        height: 120px;
+                        height: 112px;
                         width: auto;
 
                         path:nth-child(1) {
@@ -395,10 +418,6 @@
                         }
 
 
-                    }
-
-                    strong {
-                        color: var(--color-1);
                     }
                 }
             }
@@ -445,7 +464,7 @@
                     margin: 0;
 
                     img {
-                        height: 10em;
+                        height: 8em;
                         width: auto;
                     }
 
@@ -491,6 +510,11 @@
                             }
                         }
                     } */
+                }
+
+                ol {
+                    margin: 0;
+                    list-style-position: inside;
                 }
             }
 
@@ -542,7 +566,8 @@
             </figure> -->
             <div class="text">
                 <img src="./why.svg" alt="why icon" class="section-icon">
-                <p style=" letter-spacing: 0.3px; word-spacing: 3px;">
+                <!-- <p style="letter-spacing: 0.3px; word-spacing: 3px;"> -->
+                <p>
                     <!-- Knesset’s data used to be a complete mess.
                     IsraParlTweet<sup><a href="#note1" class="note-link">1</a></sup>
                     is a vast database of Knesset
@@ -583,12 +608,14 @@
                             </div>
                             <span class="x-axis">time</span>
                         </div>
-                        <h5>Stability or change in an MK's stance</h5>
-                        <p>
-                            Has an individual MK’s stance remained stable,
-                            shifted over time,
-                            or never been consistent to begin with?
-                        </p>
+                        <div>
+                            <h5>Stability vs. change in MK stance</h5>
+                            <p>
+                                Has an individual MK’s stance remained stable,
+                                shifted over time,
+                                or never been consistent to begin with?
+                            </p>
+                        </div>
                     </div>
                     <div>
                         <div>
@@ -612,13 +639,15 @@
                                 <span>time</span>
                             </div>
                         </div>
-                        <h5>Bloc rhetoric and polarization</h5>
-                        <p>
-                            Have political blocs maintained their rhetoric over time?
-                            Have they actually become more extreme, as commonly believed?
-                            Have they all shifted “rightward”?
-                            Or have we simply become more pluralistic?
-                        </p>
+                        <div>
+                            <h5>Bloc rhetoric and polarization</h5>
+                            <p>
+                                Have political blocs maintained their rhetoric over time?
+                                Have they actually become more extreme, as commonly believed?
+                                Have they all shifted “rightward”?
+                                Or have we simply become more pluralistic?
+                            </p>
+                        </div>
                     </div>
                     <div>
                         <div>
@@ -627,17 +656,19 @@
                                 <img src="./examples/32.svg" alt="">
                             </div>
                             <span class="y-axis">topic A</span>
-                            <div class="x-axis">
+                            <div class="x-axis" style="display: block;">
+                                <span> topic B</span>
                                 <span style="place-self: end;">
                                     <span style="color: black;">●</span> single MK's overall score
                                 </span>
-                                <span> topic B</span>
                             </div>
                         </div>
-                        <h5>Correlations between topics</h5>
-                        <p>
-                            Do MKs' overall scores on Topic A correlate with their scores on Topic B?
-                        </p>
+                        <div>
+                            <h5>Correlations between topics</h5>
+                            <p>
+                                Do MKs' overall scores on Topic A correlate with their scores on Topic B?
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -677,6 +708,40 @@
         </div>
         <div class="how">
             <div class="text">
+                <div class="flow-chart">
+                    <svg viewBox="0 0 160 110">
+                        <path />
+                        <path />
+                        <path />
+                        <image href="./process/1.svg" alt="Raw Text" />
+                        <text class="number" x="14" y="96">1</text>
+                        <text class="label" x="70" y="80">Raw Text</text>
+                    </svg>
+                    <svg viewBox="0 0 160 110">
+                        <path />
+                        <path />
+                        <path />
+                        <image href="./process/2.svg" alt="Filter" />
+                        <text class="number" x="14" y="96">2</text>
+                        <text class="label" x="70" y="80">Filter</text>
+                    </svg>
+                    <svg viewBox="0 0 160 110">
+                        <path />
+                        <path />
+                        <path />
+                        <image href="./process/3.svg" alt="Score" />
+                        <text class="number" x="14" y="96">3</text>
+                        <text class="label" x="70" y="80">Score</text>
+                    </svg>
+                    <svg viewBox="0 0 160 110">
+                        <path />
+                        <path />
+                        <path />
+                        <image href="./process/4.svg" alt="UI" />
+                        <text class="number" x="14" y="96">4</text>
+                        <text class="label" x="70" y="80">UI</text>
+                    </svg>
+                </div>
                 <img src="./how.svg" alt="how icon" class="section-icon">
                 <p>
                     In order to extract the relevant
@@ -684,61 +749,27 @@
                     an individual Member of Knesset from quotations, we follow this
                     4-stage approach:
                 </p>
-            </div>
-            <div class="flow-chart">
-                <svg viewBox="0 0 160 110">
-                    <path />
-                    <path />
-                    <path />
-                    <image href="./process/1.svg" alt="Raw Text" />
-                    <text class="number" x="14" y="96">1</text>
-                    <text class="label" x="70" y="80">Raw Text</text>
-                </svg>
-                <svg viewBox="0 0 160 110">
-                    <path />
-                    <path />
-                    <path />
-                    <image href="./process/2.svg" alt="Filter" />
-                    <text class="number" x="14" y="96">2</text>
-                    <text class="label" x="70" y="80">Filter</text>
-                </svg>
-                <svg viewBox="0 0 160 110">
-                    <path />
-                    <path />
-                    <path />
-                    <image href="./process/3.svg" alt="Score" />
-                    <text class="number" x="14" y="96">3</text>
-                    <text class="label" x="70" y="80">Score</text>
-                </svg>
-                <svg viewBox="0 0 160 110">
-                    <path />
-                    <path />
-                    <path />
-                    <image href="./process/4.svg" alt="UI" />
-                    <text class="number" x="14" y="96">4</text>
-                    <text class="label" x="70" y="80">UI</text>
-                </svg>
                 <p>
-                    <strong>Raw Text </strong> – Retrieving all records from the
+                    <strong style="color:#2d364a">Raw Text </strong> – Retrieving all records from the
                     IsraParlTweet database that were
                     spoken by the MK.
                 </p>
                 <p>
-                    <strong>Filter </strong> – Using a lightweight LLM model that
+                    <strong style="color:#324c8a">Filter </strong> – Using a lightweight LLM model that
                     assigns a score between 1 and 5
                     based on how relevant
                     each quote is to
                     the topic, and filtering out sentences that scored below 4.
                 </p>
                 <p>
-                    <strong>Score </strong> – Applying a more advanced LLM model to
+                    <strong style="color: #3e6cd6;">Score </strong> – Applying a more advanced LLM model to
                     assign a score between 1 and 10,
                     indicating how
                     positive each relevant
                     quote is toward the topic.
                 </p>
                 <p>
-                    <strong>UI </strong> – Storing the results in an
+                    <strong style="color: #82a8ff;">UI </strong> – Storing the results in an
                     accessible user database and
                     providing an
                     inviting and interactive
