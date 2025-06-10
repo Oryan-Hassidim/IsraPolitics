@@ -4,50 +4,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anchor</title>
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            position: relative;
-            display: grid;
-            justify-items: center;
-            align-items: center;
-
-            >div {
-                width: 100%;
-                height: 100%;
-                display: grid;
-                justify-items: center;
-                align-items: center;
-
-
-                >svg {
-                    width: 50%;
-                    height: 50%;
-                    background-color: bisque;
-
-                    >rect {}
-                }
-            }
-        }
-    </style>
+    <title>Knessight</title>
+    <link rel="stylesheet" href="try.css">
 </head>
 
 <body>
-    <div id="container">
-        <svg>
-            <rect id="myrect" tabindex="0"
-                  height="50px" width="50px" x="100px" y="100px"
-                  fill="blue" />
-            <rect height="50px" width="50px" x="200px" y="200px">
-                <animate attributeName="width" to="0px"
-                         fill="freeze"
-                         begin="container.focusin+2s;container.mouseenter+2s"
-                         dur="3s" />
-            </rect>
-        </svg>
+    <div class="search-container">
+        <input type="text" class="search-box" placeholder="חפש כאן..." id="searchInput">
+    </div>
+    <div class="results-container">
+        <ul id="resultsList">
+        </ul>
     </div>
 </body>
+
+<script>
+    function shuffle(array) {
+        let currentIndex = array.length;
+
+        // While there remain elements to shuffle...
+        while (currentIndex != 0) {
+
+            // Pick a remaining element...
+            let randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] =
+                [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    const container = document.getElementById('resultsList');
+    const searchInput = document.getElementById('searchInput');
+    const layers = [
+        { name: '1', cols: 5, rows: 11, indexes: [] },
+        { name: '2', cols: 21, rows: 21, indexes: [] },
+        { name: '3', cols: 41, rows: 41, indexes: [] }
+    ];
+
+    layers.forEach((layer) => {
+        var tmp = [];
+        const center = {
+            col: Math.floor(layer.cols / 2),
+            row: Math.floor(layer.rows / 2)
+        };
+        for (let i = 0; i < layer.rows; i++) {
+            for (let j = 0; j < layer.cols; j++) {
+                tmp.push({
+                    col: j, row: i,
+                    index: i * layer.cols + j,
+                    dist: Math.pow(j - center.col, 2) + Math.pow(i - center.row, 2)
+                });
+            }
+        }
+        shuffle(tmp);
+        tmp.sort((a, b) => a.dist - b.dist);
+        layer.indexes = tmp.map((item) => item.index);
+    });
+
+    // TODO: https://knesset.gov.il/WebSiteApi/knessetapi/MkLobby/GetMksPrevious?lang=he
+    const items = [
+        'מחשב נייד', 'טלפון חכם', 'מקלדת', 'עכבר', 'מסך',
+        'אוזניות', 'רמקולים', 'מצלמה', 'הדפסן', 'סקנר',
+        'כיסא משרדי', 'שולחן עבודה', 'מנורת שולחן', 'קובץ תיקיות', 'מחברת',
+        'עט', 'עיפרון', 'מחק', 'סרגל', 'דבק',
+        'כוס קפה', 'בקבוק מים', 'צמח עציץ', 'שעון קיר', 'לוח מגנטי',
+        'ארגונית שולחן', 'מטען', 'כבל USB', 'דיסק קשיח', 'זיכרון נייד'
+    ];
+
+    const itemElements = items.map((item, index) => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        li.setAttribute('layer', 2); // Default layer is 2
+        container.appendChild(li);
+        return { item: item, li: li };
+    });
+
+    function calculate_indexes() {
+        layers.forEach((layer) => {
+            const items = [...container.querySelectorAll(`li[layer="${layer.name}"]`)];
+            // indexes = shuffle(layer.indexes.slice(0, items.length * 1.5));
+            indexes = layer.indexes;
+            items.forEach((item, index) => {
+                item.style.setProperty('--index', indexes[index]);
+            });
+        });
+    }
+    calculate_indexes();
+
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        itemElements.forEach(({ item, li }) => {
+            if (searchTerm === '') {
+                li.setAttribute('layer', 2); // Reset to layer 2 when search is empty
+            } else if (item.toLowerCase().includes(searchTerm)) {
+                li.setAttribute('layer', 1); // Set layer to 1 for visible items
+            } else {
+                li.setAttribute('layer', 3); // Set layer to 0 for hidden items
+            }
+        });
+        calculate_indexes();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 10;
+        const y = (e.clientY / window.innerHeight - 0.5) * 10;
+
+        container.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+    });
+
+</script>
 
 </html>
