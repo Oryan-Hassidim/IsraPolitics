@@ -15,7 +15,7 @@
             display: grid;
             place-items: center center;
             height: 100vh;
-            font-size: 12px;
+            font-size: 10px;
 
             --gray-font: #606060;
 
@@ -122,7 +122,6 @@
 
             .header {
                 grid-area: header;
-                font-size: 11px;
 
                 display: grid;
                 grid-template-columns: 1fr auto;
@@ -185,20 +184,20 @@
                 display: grid;
                 grid-template-areas:
                     "text text"
-                    "examples examples";
+                    "examples image";
                 grid-template-columns: 3fr 2fr;
                 grid-template-rows: auto auto;
                 column-gap: 2em;
                 align-items: center;
 
-                /* figure {
+                figure {
                     grid-area: image;
                     margin: 0 0 0 0;
 
                     img {
                         max-width: 100%;
                     }
-                } */
+                }
 
                 .text {
                     grid-area: text;
@@ -508,16 +507,15 @@
                     <table class="names">
                         <tr>
                             <td>Team:</td>
+                            <td>Oryan Hassidim</td>
                             <td>Avi Sommer</td>
                             <td>Betzalel Yanir</td>
-                            <td>Oryan Hassidim</td>
                             <td>HUJI</td>
                         </tr>
                         <tr>
                             <td>Advisors:</td>
                             <td>Mr. Effi Levi</td>
-                            <td>Prof. Shaul Shenhav</td>
-                            <td>Matan Levy</td>
+                            <td colspan="2">Prof. Shaul Shenhav</td>
                             <td>HUJI</td>
                         </tr>
                     </table>
@@ -525,8 +523,8 @@
                 <p class="note">
                     67547 Engineering Project Workshop
                     <br />
-                    The Rachel and Selim Benin School of Computer Science and Engineering,
-                    <!-- <br /> -->
+                    The Rachel and Selim Benin School of Computer Science and Engineering
+                    <br />
                     The Hebrew University of Jerusalem
                 </p>
             </div>
@@ -536,10 +534,10 @@
             </div>
         </div>
         <div class="why">
-            <!-- <figure class="image">
+            <figure class="image">
                 <img src="./screenshot db.png" alt="צילום מסך של בסיס הנתונים המקורי" />
                 <figcaption>row data of IsraParlTweet dataset. Pay attention to the records' count</figcaption>
-            </figure> -->
+            </figure>
             <div class="text">
                 <img src="./why.svg" alt="why icon" class="section-icon">
                 <p style=" letter-spacing: 0.3px; word-spacing: 3px;">
