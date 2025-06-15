@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poster 107</title>
+    <link rel="icon" href="./knessight.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../fonts/fonts.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: 'Berlin Sans FB', sans-serif;
+            color: #333;
+            display: grid;
+            place-items: center center;
+            height: 100vh;
+            font-size: 10px;
+
+            --gray-font: #606060;
+
+            --blue-1: #2D364A;
+            --blue-2: #324C8A;
+            --blue-3: #B0C8FF;
+            --blue-4: #DBE6FF;
+
+            --primary-color: var(--blue-2);
+
+            .heb {
+                font-family: Calibri;
+                font-weight: bold;
+            }
+        }
+
+        .container {
+            width: 841px;
+            height: 1189px;
+            display: grid;
+            grid-template-areas: "header"
+                "why"
+                "what"
+                "how"
+                "and"
+                "notes";
+            grid-template-rows: auto auto;
+            justify-items: stretch;
+            align-items: start;
+            align-content: start;
+
+            @media print {
+                scale: 3.8;
+            }
+
+            background: linear-gradient(to bottom left,
+                #e2ebff 0%,
+                #f1f5ff 100%);
+
+            >* {
+                margin: 1.2em 2em 1.2em 2em;
+                padding: 1em 2em 1em 2em;
+                z-index: 0;
+                background: linear-gradient(to bottom right,
+                        #ffffffFF 0%,
+                        #ffffff55 10%,
+                        #ffffff44 50%,
+                        #ffffff00 80%,
+                        #ffffff00 100%);
+                height: min-content;
+
+                &:nth-child(2n+1) {
+                    filter: blur(.5em) brightness(0);
+                    opacity: 0.3;
+                    transform: translate(.7em, -.7em);
+                }
+
+                &:nth-child(4n+3),
+                &:nth-child(4n+4) {
+                    background: linear-gradient(to bottom left,
+                            #ffffffFF 0%,
+                            #ffffff55 10%,
+                            #ffffff44 50%,
+                            #ffffff00 80%,
+                            #ffffff00 100%);
+                }
+
+                .section-icon {
+                    float: left;
+                    margin-inline-end: 0.7em;
+                    height: 4em;
+                    margin-top: 0.1em;
+                }
+
+                a {
+                    color: inherit;
+                    text-decoration: none;
+                }
+
+                p {
+                    margin: 0 0 .6em 0;
+                    line-height: 1.4em;
+                    text-align: justify;
+
+                    sup {
+                        line-height: 0;
+                    }
+                }
+
+                .note-link {
+                    color: inherit;
+                    font-size: 0.8em;
+                    text-decoration: none;
+                }
+
+                figcaption {
+                    text-align: center;
+                    text-wrap-style: balance;
+                    font-size: 0.9em;
+                    color: var(--gray-font);
+                    font-weight: 100;
+                }
+            }
+
+            .header {
+                grid-area: header;
+
+                display: grid;
+                grid-template-columns: 1fr auto;
+                align-items: center;
+
+                .text {
+                    >* {
+                        margin: 0;
+                    }
+
+                    h1 {
+                        font-size: 3em;
+                        margin-bottom: 0.2em;
+                    }
+
+                    h2 {
+                        font-weight: normal;
+                        font-size: 2em;
+                        margin-bottom: 0.4em;
+                    }
+
+                    h4 {
+                        font-weight: normal;
+                        font-size: 1.2em;
+                        margin-bottom: 0.4em;
+                    }
+
+                    table {
+                        margin-bottom: 0.6em;
+
+                        td {
+                            padding-inline-end: .6em;
+                        }
+
+                        td:not(:first-child)::before {
+                            content: "| ";
+                        }
+
+                        td:last-child::before {
+                            margin-inline-start: 1em;
+                            content: "@ ";
+                        }
+                    }
+
+                    .note {
+                        font-size: 0.8em;
+                        color: var(--gray-font);
+                    }
+                }
+
+                .logos>img {
+                    height: 13.5em;
+                    margin-left: 2em;
+                }
+            }
+
+            .why {
+                grid-area: why;
+
+                display: grid;
+                grid-template-areas:
+                    "text text"
+                    "examples image";
+                grid-template-columns: 3fr 2fr;
+                grid-template-rows: auto auto;
+                column-gap: 2em;
+                align-items: center;
+
+                figure {
+                    grid-area: image;
+                    margin: 0 0 0 0;
+
+                    img {
+                        max-width: 100%;
+                    }
+                }
+
+                .text {
+                    grid-area: text;
+                }
+
+                .examples {
+                    grid-area: examples;
+
+                    .examples-container {
+                        display: grid;
+                        grid-template: auto auto auto auto 1em auto auto auto auto / 3fr 2em 2fr;
+                        grid-auto-flow: row;
+                        align-items: start;
+                        justify-items: center;
+
+                        >div {
+                            display: grid;
+                            grid-template-rows: subgrid;
+
+                            h5 {
+                                margin: 0;
+                                margin-block-end: 0.1em;
+                                margin-block-start: 0.1em;
+                                text-align: center;
+                            }
+
+                            >div:nth-child(1) {
+                                grid-row: span 2;
+                                display: grid;
+                                grid-template-areas: "y-axis charts"
+                                    "none x-axis";
+                                grid-template-columns: auto 1fr;
+                                grid-template-rows: subgrid;
+
+                                >div:nth-child(1) {
+                                    grid-area: charts;
+                                    display: grid;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    grid-auto-flow: column;
+                                }
+                            }
+
+                            .x-axis {
+                                grid-area: x-axis;
+                                color: var(--gray-font);
+                                font-size: 0.6em;
+                                text-align: center;
+                                display: grid;
+                                align-items: center;
+
+                                >* {
+                                    grid-area: 1/-1/1/-1;
+                                }
+                            }
+
+                            .y-axis {
+                                grid-area: y-axis;
+                                color: var(--gray-font);
+                                font-size: 0.6em;
+                                text-align: center;
+                                writing-mode: sideways-lr;
+                                text-orientation: mixed;
+                            }
+                        }
+
+                        >div:nth-child(1) {
+                            grid-area: 1 / 1 / 5 / 2;
+                        }
+
+                        >div:nth-child(3) {
+                            grid-area: 1 / -2 / 5 / -1;
+                        }
+
+                        >div:nth-child(2) {
+                            grid-area: 6 / 1 / -1 / -1;
+                        }
+
+                        img {
+                            height: 5em;
+                        }
+                    }
+                }
+            }
+
+            .what {
+                grid-area: what;
+                display: grid;
+                grid-template-columns: 13em 1fr 1fr 1fr;
+                grid-template-rows: auto auto 1fr;
+                grid-template-areas:
+                    "text caption caption caption"
+                    "text fig1 fig2 fig3"
+                    "text fig1 fig2 fig3";
+                place-items: start center;
+                column-gap: 2em;
+                row-gap: 1em;
+
+                .text {
+                    grid-area: text;
+                }
+
+                .caption {
+                    grid-area: caption;
+                    margin: 0;
+                }
+
+                figure {
+                    display: grid;
+                    grid-row: 2/4;
+                    grid-template-rows: subgrid;
+                    max-width: 100%;
+                    margin: 0 0 0 0;
+
+                    img {
+                        /* place-self: end center; */
+                        max-width: 100%;
+                    }
+                }
+            }
+
+            .how {
+                grid-area: how;
+
+                display: grid;
+                grid-template-columns: 13em 1fr;
+                place-items: start center;
+                justify-content: space-between;
+                column-gap: 1.6em;
+
+                .flow-chart {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    column-gap: 2em;
+                    place-items: start start;
+                    /* margin-inline-end: 1.5em; */
+
+                    >* {
+                        &:nth-child(4n+1) {
+                            --color-1: #2d364a;
+                            --color-2: #222837;
+                        }
+
+                        &:nth-child(4n+2) {
+                            --color-1: #324c8a;
+                            --color-2: #253967;
+                        }
+
+                        &:nth-child(4n+3) {
+                            --color-1: #3e6cd6;
+                            --color-2: #345cba;
+                        }
+
+                        &:nth-child(4n+4) {
+                            --color-1: #82a8ff;
+                            --color-2: #5b8cff;
+                        }
+                    }
+
+                    svg {
+                        height: 120px;
+                        width: auto;
+
+                        path:nth-child(1) {
+                            d: path("M 0 0 h 120 l 40 48 l -40 48 L 28 96 A 14 14 0 0 1 0 96 L 0 72 L 20 48 L 0 24 Z");
+                            fill: var(--color-1);
+                        }
+
+                        path:nth-child(2) {
+                            d: path("M 0 0 h 120 l 40 48 h -10 l -20 24 h -10 l 20 -24 L 20 48 L 0 24 Z");
+                            fill: var(--color-2);
+                        }
+
+                        path:nth-child(3) {
+                            d: path("M 145 48 l -20 -24 h 5 l 20 24 l -20 24 h -5 Z");
+                            fill: white;
+                        }
+
+                        image {
+                            width: 50px;
+                            height: auto;
+                            position: absolute;
+                            x: 45px;
+                            y: 23px;
+                        }
+
+                        text {
+                            font-family: 'Berlin Sans FB', sans-serif;
+                            font-size: 1.5em;
+                            fill: white;
+                            font-weight: bold;
+                            text-anchor: middle;
+                            dominant-baseline: middle;
+                        }
+
+
+                    }
+
+                    strong {
+                        color: var(--color-1);
+                    }
+                }
+            }
+
+            .and {
+                grid-area: and;
+
+                display: grid;
+                grid-template-areas:
+                    "text qr"
+                    "notes qr";
+                grid-template-columns: 5fr 3fr;
+                grid-template-rows: auto auto;
+                place-items: start stretch;
+                column-gap: 2em;
+
+                .text {
+                    grid-area: text;
+
+                    p strong {
+                        &:nth-of-type(1) {
+                            color: #324c8a;
+                        }
+
+                        &:nth-of-type(2) {
+                            color: #3e6cd6;
+                        }
+
+                        &:nth-of-type(3) {
+                            color: #82a8ff;
+                        }
+
+                        &:nth-of-type(4) {
+                            color: #2d364a;
+                        }
+                    }
+                }
+
+                figure {
+                    grid-area: qr;
+                    display: grid;
+                    grid-auto-flow: column;
+                    place-items: center;
+                    margin: 0;
+
+                    img {
+                        height: 10em;
+                        width: auto;
+                    }
+
+                    figcaption a {
+                        color: var(--primary-color);
+                        font-weight: bold;
+                        font-size: 2em;
+                    }
+                }
+
+                .notes {
+                    grid-area: notes;
+                    display: grid;
+                    grid-template-columns: 1fr auto;
+
+                    ol:nth-child(1) {
+                        padding-inline-start: inherit;
+                        font-size: 0.8em;
+
+                        a {
+                            text-decoration: none;
+                            color: inherit;
+                        }
+                    }
+
+                    /* ol:nth-child(2) {
+                        padding-inline-start: inherit;
+                        font-size: 0.8em;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        list-style: none;
+
+                        li {
+                            height: 5em;
+                            vertical-align: middle;
+                            margin: 0;
+                            padding: 0;
+
+                            img {
+                                height: 100%;
+                                width: auto;
+                            }
+                        }
+                    } */
+                }
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="text">
+                <h1>KNESSIGHT</h1>
+                <h2>Trends Analyzer for Israeli Politics</h2>
+                <h4>
+                    <table class="names">
+                        <tr>
+                            <td>Team:</td>
+                            <td>Oryan Hassidim</td>
+                            <td>Avi Sommer</td>
+                            <td>Betzalel Yanir</td>
+                            <td>HUJI</td>
+                        </tr>
+                        <tr>
+                            <td>Advisors:</td>
+                            <td>Mr. Effi Levi</td>
+                            <td colspan="2">Prof. Shaul Shenhav</td>
+                            <td>HUJI</td>
+                        </tr>
+                    </table>
+                </h4>
+                <p class="note">
+                    67547 Engineering Project Workshop
+                    <br />
+                    The Rachel and Selim Benin School of Computer Science and Engineering
+                    <br />
+                    The Hebrew University of Jerusalem
+                </p>
+            </div>
+            <div class="logos">
+                <img src="./knessight.svg" alt="">
+                <img src="./huji.svg" alt="">
+            </div>
+        </div>
+        <div class="why">
+            <figure class="image">
+                <img src="./screenshot db.png" alt="צילום מסך של בסיס הנתונים המקורי" />
+                <figcaption>row data of IsraParlTweet dataset. Pay attention to the records' count</figcaption>
+            </figure>
+            <div class="text">
+                <img src="./why.svg" alt="why icon" class="section-icon">
+                <p style=" letter-spacing: 0.3px; word-spacing: 3px;">
+                    <!-- Knesset’s data used to be a complete mess.
+                    IsraParlTweet<sup><a href="#note1" class="note-link">1</a></sup>
+                    is a vast database of Knesset
+                    quotes and MKs’
+                    tweets from the past ~30 years.
+                    Accessing the data through a database doesn’t necessarily
+                    reveal trends, consistent opinions, or meaningful insights
+                    – you must sift through an enormous amount of textual
+                    information that isn’t easy to analyze. -->
+                    Since the establishment of the State of Israel,
+                    the Knesset has made sure to make plenary debates accessible
+                    to the general public through "Divrei HaKnesset".
+                    However, the format of these records and the lack of
+                    computational tools have made it difficult to extract meaningful insights.
+                    IsraParlTweet<sup><a href="#note1" class="note-link">1</a></sup>
+                    is a vast database of Knesset quotes from the past up to ~30 years
+                    and Members of Knesset (MKs) tweets.
+                    But merely having access to this data doesn't mean we can easily identify
+                    trends, shifts, or consistent opinions in parliamentary discourse.
+                </p>
+            </div>
+            <div class="examples">
+                <p>
+                    Example trends we can uncover include:
+                </p>
+                <div class="examples-container">
+                    <div>
+                        <div>
+                            <div>
+                                <img src="./examples/11.svg" alt="">
+                                <img src="./examples/12.svg" alt="">
+                                <img src="./examples/13.svg" alt="">
+                            </div>
+                            <div class="y-axis"
+                                style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+                                <span style="text-align: start;">&nbsp;&nbsp;strongly<br />&nbsp;&nbsp;con</span>
+                                <span style="text-align: end;">strongly<br />pro</span>
+                            </div>
+                            <span class="x-axis">time</span>
+                        </div>
+                        <h5>Stability or change in an MK's stance</h5>
+                        <p>
+                            Has an individual MK’s stance remained stable,
+                            shifted over time,
+                            or never been consistent to begin with?
+                        </p>
+                    </div>
+                    <div>
+                        <div>
+                            <div>
+                                <img src="./examples/21.svg" alt="">
+                                <img src="./examples/22.svg" alt="">
+                                <img src="./examples/23.svg" alt="">
+                                <img src="./examples/24.svg" alt="">
+                            </div>
+                            <div class="y-axis"
+                                style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+                                <span style="text-align: start;">&nbsp;&nbsp;strongly<br />&nbsp;&nbsp;con</span>
+                                <span style="text-align: end;">strongly<br />pro</span>
+                            </div>
+                            <div class="x-axis">
+                                <span style="place-self: end;">
+                                    <span style="color: #3b7d23;">●</span> Block A
+                                    &ensp;
+                                    <span style="color: #0041d8;">●</span> Block B
+                                </span>
+                                <span>time</span>
+                            </div>
+                        </div>
+                        <h5>Bloc rhetoric and polarization</h5>
+                        <p>
+                            Have political blocs maintained their rhetoric over time?
+                            Have they actually become more extreme, as commonly believed?
+                            Have they all shifted “rightward”?
+                            Or have we simply become more pluralistic?
+                        </p>
+                    </div>
+                    <div>
+                        <div>
+                            <div>
+                                <img src="./examples/31.svg" alt="">
+                                <img src="./examples/32.svg" alt="">
+                            </div>
+                            <span class="y-axis">topic A</span>
+                            <div class="x-axis">
+                                <span style="place-self: end;">
+                                    <span style="color: black;">●</span> single MK's overall score
+                                </span>
+                                <span> topic B</span>
+                            </div>
+                        </div>
+                        <h5>Correlations between topics</h5>
+                        <p>
+                            Do MKs' overall scores on Topic A correlate with their scores on Topic B?
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="what">
+            <div class="text">
+                <img src="./what.svg" alt="what icon" class="section-icon">
+                <p>
+                    Knessight uses advanced AI tools to extract and analyze political positions from speeches and tweets
+                    of Israeli MKs.
+                    It assigns stance scores on key topics and visualizes trends, correlations, and changes over time,
+                    and provides you with
+                    easy access to them.
+                </p>
+            </div>
+            <h4 class="caption">Usage Example - Ariel Sharon</h4>
+            <figure>
+                <img src="./sharon/1.png" alt="Screenshot Of Ariel Sharon Knessight page - brief mode" />
+                <figcaption>
+                    Knessight MK page for Ariel Sharon -
+                    <br />
+                    positions of MKs on key issues — at a glance
+                </figcaption>
+            </figure>
+            <figure>
+                <img src="./sharon/2.png" alt="Screenshot Of Ariel Sharon Knessight page - Settlement expanded" />
+                <figcaption>
+                    Topic Timeline - Dive into a specific topic to track how the MK's stance changed over time
+                </figcaption>
+            </figure>
+            <figure>
+                <img src="./sharon/3.png" alt="Screenshot Of Ariel Sharon Knessight page - expanded mode" />
+                <figcaption>
+                    Statement View - Click any point to read the full statement behind the data
+                </figcaption>
+            </figure>
+        </div>
+        <div class="how">
+            <div class="text">
+                <img src="./how.svg" alt="how icon" class="section-icon">
+                <p>
+                    In order to extract the relevant
+                    data for a specific topic concerning
+                    an individual Member of Knesset from quotations, we follow this
+                    4-stage approach:
+                </p>
+            </div>
+            <div class="flow-chart">
+                <svg viewBox="0 0 160 110">
+                    <path />
+                    <path />
+                    <path />
+                    <image href="./process/1.svg" alt="Raw Text" />
+                    <text class="number" x="14" y="96">1</text>
+                    <text class="label" x="70" y="80">Raw Text</text>
+                </svg>
+                <svg viewBox="0 0 160 110">
+                    <path />
+                    <path />
+                    <path />
+                    <image href="./process/2.svg" alt="Filter" />
+                    <text class="number" x="14" y="96">2</text>
+                    <text class="label" x="70" y="80">Filter</text>
+                </svg>
+                <svg viewBox="0 0 160 110">
+                    <path />
+                    <path />
+                    <path />
+                    <image href="./process/3.svg" alt="Score" />
+                    <text class="number" x="14" y="96">3</text>
+                    <text class="label" x="70" y="80">Score</text>
+                </svg>
+                <svg viewBox="0 0 160 110">
+                    <path />
+                    <path />
+                    <path />
+                    <image href="./process/4.svg" alt="UI" />
+                    <text class="number" x="14" y="96">4</text>
+                    <text class="label" x="70" y="80">UI</text>
+                </svg>
+                <p>
+                    <strong>Raw Text </strong> – Retrieving all records from the
+                    IsraParlTweet database that were
+                    spoken by the MK.
+                </p>
+                <p>
+                    <strong>Filter </strong> – Using a lightweight LLM model that
+                    assigns a score between 1 and 5
+                    based on how relevant
+                    each quote is to
+                    the topic, and filtering out sentences that scored below 4.
+                </p>
+                <p>
+                    <strong>Score </strong> – Applying a more advanced LLM model to
+                    assign a score between 1 and 10,
+                    indicating how
+                    positive each relevant
+                    quote is toward the topic.
+                </p>
+                <p>
+                    <strong>UI </strong> – Storing the results in an
+                    accessible user database and
+                    providing an
+                    inviting and interactive
+                    UI for viewing the analysis.
+                </p>
+            </div>
+        </div>
+        <div class="and">
+            <div class="text">
+                <img src="./and.svg" alt="and icon" class="section-icon">
+                <p>
+                    What's next? There's still a lot of work ahead:
+                    <strong>analyzing</strong> more MKs,
+                    <strong>examining</strong> new topics,
+                    <strong>evaluating</strong> our models,
+                    and <strong>creating</strong> more insightful data-driven graphs.
+                </p>
+                <p>
+                    <strong>Join us</strong> to suggest topics, help tag data, or explore new insights!
+                </p>
+            </div>
+            <figure>
+                <figcaption>
+                    Scan the QR code to visit our website
+                    <br />
+                    <a href="https://did.li/knessight" target="_blank" rel="noopener">did.li/knessight</a>
+                </figcaption>
+                <a href="https://did.li/knessight" target="_blank" rel="noopener">
+                    <img src="./knessight_qr.svg" alt="QR code to Knessight website" class="qr" />
+                </a>
+            </figure>
+            <div class="notes">
+                <ol class="list">
+                    <li id="note1">
+                        <a href="https://huggingface.co/datasets/guymorlan/IsraParlTweet" target="_blank"
+                            rel="noopener">
+                            huggingface.co/datasets/guymorlan/IsraParlTweet
+                        </a>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    // foreach child of container, copy it and add it before that element
+
+    const container = document.querySelector('.container');
+    const children = Array.from(container.children);
+    children.forEach(child => {
+        const clone = child.cloneNode(true);
+        container.insertBefore(clone, child);
+    });
+</script>
+
+</html>
