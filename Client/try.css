@@ -16,6 +16,11 @@
     initial-value: 0px;
 }
 
+:root {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    background-color: rgb(219, 219, 219);
+}
+
 body {
     margin: 0;
     height: 100vh;
@@ -41,6 +46,8 @@ body {
 
     perspective: 1000px;
     perspective-origin: center center;
+
+    transition: transform 0.5s ease-in-out;
 }
 
 #resultsList {
@@ -61,17 +68,17 @@ body {
     backdrop-filter: blur(10px);
     background-color: rgba(255, 255, 255, 0.7);
     display: grid;
-    place-content: center center;
+    place-content: stretch stretch;
     transform-style: preserve-3d;
     transition: all 2s cubic-bezier(0.4, 0.0, 0.2, 1);
     border: 1px solid black;
 
     width: calc(15vw - 2px);
-    height: calc(5vh - 2px);
+    height: calc(10vh - 2px);
     border-radius: 10px;
 
     --col-width: 20vw;
-    --row-height: 8vh;
+    --row-height: 12vh;
     --cols: 5;
     --rows: 10;
 
@@ -89,13 +96,13 @@ body {
     &[layer="2"] {
         --cols: 21;
         --rows: 21;
-        --layer-z: calc(-1000px + sin(var(--index)) * 100px);
+        --layer-z: calc(-1000px + sin(var(--index)) * 500px);
     }
 
     &[layer="3"] {
         --cols: 41;
         --rows: 41;
-        --layer-z: calc(-2000px + sin(var(--index)) * 100px);
+        --layer-z: calc(-2000px + sin(var(--index)) * 1000px);
         filter: blur(1px);
         opacity: 0.8;
     }
@@ -111,6 +118,52 @@ body {
     animation: float-x calc((4 + sin(var(--index) + 4)) * 1s) ease-in-out calc(sin(var(--index) + 0) * 2s) infinite alternate,
     float-y calc((4 + sin(var(--index) + 5)) * 1s) ease-in-out calc(sin(var(--index) + 1) * 2s) infinite alternate,
     float-z calc((4 + sin(var(--index) + 6)) * 1s) ease-in-out calc(sin(var(--index) + 2) * 2s) infinite alternate;
+
+    a {
+        display: grid;
+        place-items: center stretch;
+        text-decoration: none;
+        /* grid-auto-flow: column; */
+        grid-template-columns: auto 1fr;
+        transform-style: preserve-3d;
+
+        >* {
+            /* grid-area: 1/1/-1/-1; */
+        }
+
+        img {
+            height: calc(10vh - 2px);
+            object-fit: contain;
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+            transform: translateZ(0px);
+            transform-origin: center center;
+        }
+
+        span {
+            text-align: center;
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0.1em;
+            transition: transform 0.3s ease-in-out;
+            transform: translateZ(0px);
+            transform-origin: center center;
+        }
+    }
+
+    a:hover {
+        img {
+            transform: translateZ(20px);
+        }
+
+        span {
+            transform: translateZ(20px);
+        }
+    }
 }
 
 @keyframes float-x {
