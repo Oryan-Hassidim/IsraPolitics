@@ -22,6 +22,12 @@
     initial-value: 0px;
 }
 
+@property --layer-2-translate-x-factor {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+}
+
 :root {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     background-color: rgb(219, 219, 219);
@@ -40,10 +46,24 @@ body {
     justify-items: center;
     align-items: center;
     grid-template-rows: auto 1fr;
-    overflow: hidden;
+    overflow-x: hidden;
     background-color: rgb(43, 43, 43);
 
     direction: rtl;
+}
+
+.container {
+    margin: 0;
+    /* height: 100vh; */
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-rows: auto 1fr;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .search-container {
@@ -58,7 +78,7 @@ body {
     width: 100%;
     left: 0;
     right: 0;
-    font-size: 3em;
+    font-size: 2em;
     position: relative;
     text-align: center;
     z-index: 1;
@@ -73,7 +93,6 @@ body {
 
     perspective: 1000px;
     perspective-origin: center center;
-
 }
 
 #resultsList {
@@ -87,11 +106,14 @@ body {
     position: relative;
     display: grid;
     place-content: center center;
-    transition: transform 0.5s ease-in-out;
+    transition: transform 0.6s ease-in-out;
     transform-style: preserve-3d;
+    --layer-2-translate-x: 0vw;
     /* transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)); */
 
-    /* animation: layer-2-translate-x 240s linear infinite; */
+    --layer-2-translate-x-animation-duration: 480s;
+
+    /* animation: layer-2-translate-x var(--layer-2-translate-x-animation-duration) linear infinite; */
 }
 
 #resultsList>li::before {
@@ -108,18 +130,21 @@ body {
     display: grid;
     place-content: stretch stretch;
     transform-style: preserve-3d;
-    --transition-delay: calc(0.5s + sin(var(--index)) * 0.5s);
-    transition: transform 2s ease-in-out var(--transition-delay),
-        filter 2s ease-in-out var(--transition-delay),
-        opacity 2s ease-in-out var(--transition-delay);
+    --transition-delay: calc(1s + sin(var(--index)) * 1s);
+    transition: transform 3s linear var(--transition-delay),
+        filter 3s linear var(--transition-delay),
+        opacity 3s linear var(--transition-delay)
+        /* ,display 2s ease-in-out var(--transition-delay) allow-discrete,
+        --layer-2-translate-x-factor 2s ease-in-out var(--transition-delay) */
+    ;
 
     width: calc(15vw - 2px);
     height: calc(10vh - 2px);
 
     --col-width: 20vw;
     --row-height: 12vh;
-    --cols: 55;
-    --rows: 25;
+    --cols: 85;
+    --rows: 13;
 
     --layer-x: calc(var(--col-width) * (mod(var(--index), var(--cols)) - round(down, var(--cols) / 2)));
     --layer-y: calc(var(--row-height) * (round(down, var(--index) / var(--cols)) - round(down, var(--rows) / 2)));
@@ -135,6 +160,8 @@ body {
 
     transform: translateX(var(--translate-x)) translateY(var(--translate-y)) translateZ(var(--translate-z));
 
+    /* --layer-2-translate-x: inherit;
+    translate: calc(var(--layer-2-translate-x) * var(--layer-2-translate-x-factor)) 0px; */
 
     &[layer="1"] {
         --layer-z: calc(0px + sin(var(--index)) * 100px);
@@ -154,25 +181,50 @@ body {
 
     &[layer="2"] {
         --layer-z: calc(-1000px + sin(var(--index)) * 700px);
+        /* --layer-z: calc(-5000px + sin(var(--index)) * 700px); */
+
+        --col-width: 40vw;
+        --row-height: 22vh;
 
         --translate-x: calc(var(--layer-x) + sin(var(--index)) * 10px);
         --translate-y: calc(var(--layer-y) + sin(var(--index)) * 10px);
         --translate-z: calc(var(--layer-z));
 
-        /* animation: layer-2-translate-x 120s linear infinite; */
+        --layer-2-translate-x-factor: 1;
+
+        /* animation: layer-2-translate-x var(--layer-2-translate-x-animation-duration) linear infinite; */
+        &.hide {
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+            animation: none;
+            transition: none;
+        }
     }
 
     &[layer="3"] {
-        --layer-z: calc(-2000px + sin(var(--index)) * 1000px);
+        --layer-z: calc(-5000px + sin(var(--index)) * 1000px);
+        --col-width: 30vw;
+        --row-height: 35vh;
 
         --translate-x: calc(var(--layer-x) + sin(var(--index)) * 10px);
         --translate-y: calc(var(--layer-y) + sin(var(--index)) * 10px);
         --translate-z: calc(var(--layer-z));
 
+        --layer-2-translate-x-factor: 1;
+
         filter: blur(calc(-2 * var(--layer-z) / 1000));
-        opacity: 0.8;
+        opacity: 0.4;
         animation: none;
         pointer-events: none;
+
+        &.hide {
+            display: none;
+            opacity: 0;
+            pointer-events: none;
+            animation: none;
+            transition: none;
+        }
     }
 
     a {
@@ -228,11 +280,11 @@ body {
     }
 
     25% {
-        --layer-2-translate-x: -140vw;
+        --layer-2-translate-x: -800vw;
     }
 
     75% {
-        --layer-2-translate-x: 140vw;
+        --layer-2-translate-x: 800vw;
     }
 }
 

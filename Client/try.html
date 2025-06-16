@@ -9,12 +9,14 @@
 </head>
 
 <body>
-    <div class="search-container">
-        <input type="text" class="search-box" placeholder="חפש כאן..." id="searchInput">
-    </div>
-    <div class="results-container">
-        <ul id="resultsList">
-        </ul>
+    <div class="container">
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="חפש כאן..." id="searchInput">
+        </div>
+        <div class="results-container">
+            <ul id="resultsList">
+            </ul>
+        </div>
     </div>
 </body>
 
@@ -38,8 +40,8 @@
 
     const container = document.getElementById('resultsList');
     const searchInput = document.getElementById('searchInput');
-    const layer_cols = 55;
-    const layer_rows = 25;
+    const layer_cols = 85;
+    const layer_rows = 13;
     const layer_size = layer_cols * layer_rows;
     const layers = [
         { name: '2', free: Array.from({ length: layer_size }, (_, i) => i).reverse() },
@@ -72,9 +74,9 @@
             .then(response => response.text())
             .then(data => {
                 const lines = data.split('\n').slice(1) // Remove the header line
-                    .slice(0, 500) // Limit to 200 items for performance
+                    // .slice(0, 100) // Limit to 200 items for performance
                     ;
-                items = lines
+                items = shuffle(lines)
                     .map(line => line.split(','))
                     .map(parts => {
                         return {
@@ -95,6 +97,8 @@
                 </a>
             `;
             li.setAttribute('layer', 2); // Default layer is 2
+            // add class hide
+            // li.classList.add('hide');
             li.style.setProperty('--index', indexes[index]);
             container.appendChild(li);
             return { item: item, li: li, layer: 2, index: layers[0].free.pop() };
@@ -125,27 +129,36 @@
             i.li.setAttribute('layer', 3);
             i.li.style.setProperty('--index', indexes[index]);
         }
-        let index = 0;
         for (const i of from3to2) {
             i.layer = 2;
+            const index = layers[0].free.pop();
             i.index = index;
             i.li.setAttribute('layer', 2);
-            i.li.style.setProperty('--index', indexes[index++]);
         }
 
-        // // if there are <= 50 items in layer 2, move them to layer 1
-        // if (layers[0].free.length > layer_size - 50) {
-        //     container.querySelectorAll('li[layer="2"], li[layer="1"]').forEach((li, index) => {
-        //         li.setAttribute('layer', 1);
-        //         li.style.setProperty('--index', indexes[index]);
-        //     });
-        // }
-        // else {
-        //     container.querySelectorAll('li[layer="1"]').forEach((li) => {
-        //         li.setAttribute('layer', 2);
-        //         li.style.setProperty('--index', indexes[layers[1].free.pop()]);
-        //     });
-        // }
+        const relevant = itemsElements.filter(i => i.layer === 2);
+
+        if (layers[0].free.at(-10) < 20) {
+            relevant.forEach(i => {
+                layers[0].free.push(i.index);
+            });
+            layers[0].free.sort((a, b) => b - a);
+            relevant.forEach(i => {
+                i.index = layers[0].free.pop();
+            });
+        }
+
+        if (relevant.length <= 25) {
+            relevant.forEach((i, index) => {
+                i.li.setAttribute('layer', 1);
+                i.li.style.setProperty('--index', indexes[index]);
+            });
+        } else {
+            relevant.forEach(i => {
+                i.li.setAttribute('layer', 2);
+                i.li.style.setProperty('--index', indexes[i.index]);
+            });
+        }
     });
 
     document.addEventListener('mousemove', async (e) => {
@@ -156,6 +169,30 @@
         // container.style.setProperty('--rotate-x', `${x}deg`);
         // container.style.setProperty('--rotate-y', `${-y}deg`);
     });
+
+    function updateVirtualization() {
+        let currentTranslate = undefined;
+        const mid_col = Math.floor(layer_cols / 2);
+        for (const li of container.querySelectorAll('li[layer="2"], li[layer="3"]')) {
+            if (currentTranslate === undefined) {
+                currentTranslate = parseInt(window.getComputedStyle(container).getPropertyValue('--layer-2-translate-x')); // in px
+                // Convert to col
+                const col_width = window.innerWidth / 3; // Assuming 5 cols
+                currentTranslate = currentTranslate / col_width;
+                console.log(currentTranslate);
+            }
+            const col = parseInt(li.style.getPropertyValue('--index')) % layer_cols;
+            if (Math.abs(col - mid_col + currentTranslate) <= 4) {
+                li.classList.remove('hide');
+            } else {
+                li.classList.add('hide');
+            }
+        }
+    }
+
+    // Update virtualization every 1s
+    // updateVirtualization();
+    // setInterval(updateVirtualization, 1000);
 
     getItems();
 
