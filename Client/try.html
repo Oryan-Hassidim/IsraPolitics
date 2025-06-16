@@ -38,33 +38,32 @@
 
     const container = document.getElementById('resultsList');
     const searchInput = document.getElementById('searchInput');
+    const layer_cols = 55;
+    const layer_rows = 25;
+    const layer_size = layer_cols * layer_rows;
     const layers = [
-        { name: '1', cols: 5, rows: 11, indexes: [] },
-        { name: '2', cols: 21, rows: 21, indexes: [] },
-        { name: '3', cols: 41, rows: 41, indexes: [] }
+        { name: '2', free: Array.from({ length: layer_size }, (_, i) => i).reverse() },
+        { name: '3', free: Array.from({ length: layer_size }, (_, i) => i).reverse() }
     ];
 
-    layers.forEach((layer) => {
-        var tmp = [];
-        const center = {
-            col: Math.floor(layer.cols / 2),
-            row: Math.floor(layer.rows / 2)
-        };
-        for (let i = 0; i < layer.rows; i++) {
-            for (let j = 0; j < layer.cols; j++) {
-                tmp.push({
-                    col: j, row: i,
-                    index: i * layer.cols + j,
-                    dist: Math.pow(j - center.col, 2) + Math.pow(i - center.row, 2)
-                });
-            }
+    var tmp = [];
+    const center = {
+        col: Math.floor(layer_cols / 2),
+        row: Math.floor(layer_rows / 2)
+    };
+    for (let i = 0; i < layer_rows; i++) {
+        for (let j = 0; j < layer_cols; j++) {
+            tmp.push({
+                index: i * layer_cols + j,
+                dist: Math.max(Math.abs(j - center.col), Math.abs(i - center.row))
+            });
         }
-        shuffle(tmp);
-        tmp.sort((a, b) => a.dist - b.dist);
-        layer.indexes = tmp.map((item) => item.index);
-    });
+    }
+    shuffle(tmp);
+    tmp.sort((a, b) => a.dist - b.dist);
+    const indexes = tmp.map((item) => item.index);
 
-    const itemsElements = [];
+    let itemsElements = [];
 
     // get items for client_data/mks.csv
     async function getItems() {
@@ -72,14 +71,9 @@
         await fetch('client_data/mks.csv')
             .then(response => response.text())
             .then(data => {
-                const lines = data.split('\n').slice(1, 20);
-                // filter out first line (header)
-                // template:
-                // id,FirstName,LastName,KnesstetSiteId,ImageUrl
-                // -3,משה,פסל,1124,https://fs.knesset.gov.il/globaldocs/MK/1124/1_1124_3_20007.jpeg
-                // -2,ירון,עמוס לוי,1127,https://fs.knesset.gov.il/globaldocs/MK/1127/1_1127_3_20229.png
-                // 405,בנימין,אלון,12,https://fs.knesset.gov.il/globaldocs/MK/12/1_12_3_36.jpeg
-                // 412,צבי,הנדל,46,https://fs.knesset.gov.il/globaldocs/MK/46/1_46_3_126.jpeg
+                const lines = data.split('\n').slice(1) // Remove the header line
+                    .slice(0, 500) // Limit to 200 items for performance
+                    ;
                 items = lines
                     .map(line => line.split(','))
                     .map(parts => {
@@ -92,7 +86,7 @@
                     });
             })
             .catch(error => console.error('Error fetching items:', error));
-        itemElements = items.map((item, index) => {
+        itemsElements = items.map((item, index) => {
             const li = document.createElement('li');
             li.innerHTML = `
                 <a href="/mks/${item.id}">
@@ -101,42 +95,66 @@
                 </a>
             `;
             li.setAttribute('layer', 2); // Default layer is 2
+            li.style.setProperty('--index', indexes[index]);
             container.appendChild(li);
-            return { item: item, li: li };
-        });
-        calculate_indexes();
-    }
-
-    function calculate_indexes() {
-        layers.forEach((layer) => {
-            const items = [...container.querySelectorAll(`li[layer="${layer.name}"]`)];
-            // indexes = shuffle(layer.indexes.slice(0, items.length * 1.5));
-            indexes = layer.indexes;
-            items.forEach((item, index) => {
-                item.style.setProperty('--index', indexes[index]);
-            });
+            return { item: item, li: li, layer: 2, index: layers[0].free.pop() };
         });
     }
 
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        itemElements.forEach(({ item, li }) => {
-            if (searchTerm === '') {
-                li.setAttribute('layer', 2); // Reset to layer 2 when search is empty
-            } else if (item.name.toLowerCase().includes(searchTerm)) {
-                li.setAttribute('layer', 1); // Set layer to 1 for visible items
-            } else {
-                li.setAttribute('layer', 3); // Set layer to 0 for hidden items
+    searchInput.addEventListener('input', async (e) => {
+        const searchTerm = e.target.value;
+        const from2to3 = [];
+        const from3to2 = [];
+        itemsElements.forEach(i => {
+            const layer2 = searchTerm === "" || i.item.name.includes(searchTerm);
+            if (i.layer === 3 && layer2) {
+                from3to2.push(i);
+                layers[1].free.push(i.index);
+            }
+            else if (i.layer != 3 && !layer2) {
+                from2to3.push(i);
+                layers[0].free.push(i.index);
             }
         });
-        calculate_indexes();
+        layers[0].free.sort((a, b) => b - a);
+        layers[1].free.sort((a, b) => b - a);
+        for (const i of from2to3) {
+            i.layer = 3;
+            const index = layers[1].free.pop();
+            i.index = index;
+            i.li.setAttribute('layer', 3);
+            i.li.style.setProperty('--index', indexes[index]);
+        }
+        let index = 0;
+        for (const i of from3to2) {
+            i.layer = 2;
+            i.index = index;
+            i.li.setAttribute('layer', 2);
+            i.li.style.setProperty('--index', indexes[index++]);
+        }
+
+        // // if there are <= 50 items in layer 2, move them to layer 1
+        // if (layers[0].free.length > layer_size - 50) {
+        //     container.querySelectorAll('li[layer="2"], li[layer="1"]').forEach((li, index) => {
+        //         li.setAttribute('layer', 1);
+        //         li.style.setProperty('--index', indexes[index]);
+        //     });
+        // }
+        // else {
+        //     container.querySelectorAll('li[layer="1"]').forEach((li) => {
+        //         li.setAttribute('layer', 2);
+        //         li.style.setProperty('--index', indexes[layers[1].free.pop()]);
+        //     });
+        // }
     });
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', async (e) => {
         const x = (e.clientX / window.innerWidth - 0.5) * 10;
         const y = (e.clientY / window.innerHeight - 0.5) * 10;
 
         container.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+        // container.style.setProperty('--rotate-x', `${x}deg`);
+        // container.style.setProperty('--rotate-y', `${-y}deg`);
     });
 
     getItems();

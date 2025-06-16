@@ -6,346 +6,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>רשימת חיפוש תלת-ממדית</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            display: grid;
+            place-content: center center;
             height: 100vh;
-            overflow: hidden;
+            background-color: #f0f0f0;
+            margin: 0;
             perspective: 1000px;
-            perspective-origin: center center;
         }
 
-        .search-container {
-            position: absolute;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-        }
-
-        .search-box {
-            width: 400px;
-            padding: 15px 20px;
-            font-size: 18px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            outline: none;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .search-box:focus {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-            transform: scale(1.05);
-        }
-
-        .items-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
+        .list {
             transform-style: preserve-3d;
         }
 
-        .floating-item {
-            position: absolute;
-            padding: 15px 25px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        .box {
+            width: 200px;
+            height: 200px;
+            background-color: #4CAF50;
             transform-style: preserve-3d;
-            min-width: 120px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            position: absolute;
-            padding: 15px 25px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            color: white;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
-            transform-style: preserve-3d;
-            min-width: 120px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            /* מוסיף מיקום יחסי לאנימציות */
-            --float-x: 0px;
-            --float-y: 0px;
-            --float-rotation: 0deg;
+            transform: translateX(20px) translateY(12px) translateZ(-200px) rotateY(10deg);
+            transition: transform 0.5s;
+            display: grid;
+            place-content: center center;
+            border-radius: 10px;
 
         }
 
-        .floating-item:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(1.1) translateZ(50px);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+        .child {
+            background-color: aquamarine;
+            padding: 20px;
+            transition: transform 0.5s;
+            transform: translateZ(0px);
         }
 
-        .floating-item.relevant {
-            transform: translateZ(200px) scale(1.2);
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.4);
+        .box:hover {
+            /* transform: translateZ(50px); */
         }
 
-        .floating-item.irrelevant {
-            transform: translateZ(-300px) scale(0.7);
-            opacity: 0.3;
-            filter: blur(2px);
-        }
-
-        .floating-item.hidden {
-            transform: translateZ(-500px) scale(0.3);
-            opacity: 0;
-        }
-
-        .title {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 24px;
-            font-weight: 300;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            z-index: 101;
+        .box:hover .child {
+            transform: translateZ(150px);
         }
     </style>
 </head>
 
 <body>
-    <div class="title">חיפוש תלת-ממדי</div>
 
-    <div class="search-container">
-        <input type="text" class="search-box" placeholder="חפש כאן..." id="searchInput">
+    <div class="container">
+        <ul class="list">
+            <li class="box">
+                <a class="child">
+                    text
+                    <!-- <svg width="200" height="200">
+                        <defs>
+                            <filter id="blurMe">
+                                <feGaussianBlur stdDeviation="5" />
+                            </filter>
+                        </defs>
+                        <circle cx="100" cy="100" r="50" fill="blue" filter="url(#blurMe)" />
+                    </svg> -->
+
+                </a>
+            </li>
+        </ul>
     </div>
 
-    <div class="items-container" id="itemsContainer"></div>
-
 </body>
-
-<script>
-    const items = [
-        'מחשב נייד', 'טלפון חכם', 'מקלדת', 'עכבר', 'מסך',
-        'אוזניות', 'רמקולים', 'מצלמה', 'הדפסן', 'סקנר',
-        'כיסא משרדי', 'שולחן עבודה', 'מנורת שולחן', 'קובץ תיקיות', 'מחברת',
-        'עט', 'עיפרון', 'מחק', 'סרגל', 'דבק',
-        'כוס קפה', 'בקבוק מים', 'צמח עציץ', 'שעון קיר', 'לוח מגנטי',
-        'ארגונית שולחן', 'מטען', 'כבל USB', 'דיסק קשיח', 'זיכרון נייד'
-    ];
-
-    const container = document.getElementById('itemsContainer');
-    const searchInput = document.getElementById('searchInput');
-    const itemElements = [];
-
-    // יצירת הפריטים המרחפים
-    function createFloatingItems() {
-        items.forEach((item, index) => {
-            const div = document.createElement('div');
-            div.className = 'floating-item';
-            div.textContent = item;
-
-            // מיקום אקראי במרחב התלת-ממדי
-            const x = Math.random() * window.innerWidth;
-            const y = Math.random() * window.innerHeight;
-            const z = Math.random() * 400 - 200;
-
-            div.style.left = x + 'px';
-            div.style.top = y + 'px';
-            div.style.transform = `translateZ(${z}px)`;
-            div.style.setProperty('--float-x', '0px');
-            div.style.setProperty('--float-y', '0px');
-
-
-            container.appendChild(div);
-            itemElements.push({
-                element: div,
-                text: item.toLowerCase(),
-                originalX: x,
-                originalY: y,
-                originalZ: z,
-                animationType: index % 3
-            });
-        });
-    }
-
-    // אנימציות רציפות שמשתמשות ב-CSS variables
-    function startFloatingAnimations() {
-        itemElements.forEach((item, index) => {
-            const animateFloat = () => {
-                const time = Date.now() * 0.001; // זמן בשניות
-                const speed = [4, 5, 3.5][item.animationType]; // מהירות שונה לכל סוג
-                const offset = index * 0.3; // עיכוב לכל אלמנט
-
-                let floatX, floatY, rotation;
-
-                // 3 סוגים שונים של אנימציה
-                switch (item.animationType) {
-                    case 0:
-                        floatX = Math.sin(time / speed + offset) * 5;
-                        floatY = Math.cos(time / speed + offset) * 8;
-                        rotation = Math.sin(time / speed + offset) * 2;
-                        break;
-                    case 1:
-                        floatX = Math.cos(time / speed + offset) * 7;
-                        floatY = Math.sin(time / speed + offset) * 6;
-                        rotation = Math.cos(time / speed + offset) * 1.5;
-                        break;
-                    case 2:
-                        floatX = Math.sin(time / speed + offset) * 4;
-                        floatY = Math.sin(time / speed * 2 + offset) * 12;
-                        rotation = Math.sin(time / speed + offset) * 1;
-                        break;
-                }
-
-                item.element.style.setProperty('--float-x', floatX + 'px');
-                item.element.style.setProperty('--float-y', floatY + 'px');
-                item.element.style.setProperty('--float-rotation', rotation + 'deg');
-
-                // עדכון הטרנספורם בהתאם למצב הנוכחי
-                updateItemTransform(item);
-
-                requestAnimationFrame(animateFloat);
-            };
-            animateFloat();
-        });
-    }
-
-    // פונקציה לעדכון הטרנספורם של אלמנט
-    function updateItemTransform(item) {
-        const floatX = parseFloat(item.element.style.getPropertyValue('--float-x') || '0');
-        const floatY = parseFloat(item.element.style.getPropertyValue('--float-y') || '0');
-        const rotation = parseFloat(item.element.style.getPropertyValue('--float-rotation') || '0');
-
-        let baseTransform = `translate3d(${floatX}px, ${floatY}px, ${item.currentZ || item.originalZ}px) rotateY(${rotation}deg)`;
-
-        // הוספת טרנספורמציות נוספות בהתאם למצב
-        if (item.element.classList.contains('relevant')) {
-            baseTransform += ' scale(1.2)';
-        } else if (item.element.classList.contains('irrelevant')) {
-            baseTransform += ' scale(0.7)';
-        } else if (item.element.classList.contains('hidden')) {
-            baseTransform += ' scale(0.3)';
-        }
-
-        item.element.style.transform = baseTransform;
-    }
-
-    // פונקציית חיפוש וסינון
-    function filterItems(searchTerm) {
-        const term = searchTerm.toLowerCase().trim();
-        const relevantItems = [];
-
-        // זיהוי הפריטים הרלוונטיים
-        itemElements.forEach(item => {
-            const element = item.element;
-            const isRelevant = term === '' || item.text.includes(term);
-
-            // איפוס כל הקלאסים
-            element.classList.remove('relevant', 'irrelevant', 'hidden');
-
-            if (term === '') {
-                // אם אין חיפוש, החזר למצב רגיל
-                item.currentZ = item.originalZ;
-            } else if (isRelevant) {
-                relevantItems.push(item);
-            } else {
-                // פריט לא רלוונטי - התרחק מהמצלמה
-                element.classList.add('irrelevant');
-                item.currentZ = -300;
-            }
-        });
-
-        // מיקום הפריטים הרלוונטיים בצורה מסודרת
-        if (relevantItems.length > 0 && term !== '') {
-            arrangeRelevantItems(relevantItems);
-        }
-
-        // עדכון כל הטרנספורמים
-        itemElements.forEach(item => updateItemTransform(item));
-    }
-
-    // פונקציה למיקום הפריטים הרלוונטיים ללא חפיפה
-    function arrangeRelevantItems(relevantItems) {
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-        const itemsPerRow = Math.ceil(Math.sqrt(relevantItems.length));
-        const spacing = 150; // מרחק בין פריטים
-
-        relevantItems.forEach((item, index) => {
-            item.element.classList.add('relevant');
-
-            // חישוב מיקום ברשת
-            const row = Math.floor(index / itemsPerRow);
-            const col = index % itemsPerRow;
-            const totalRows = Math.ceil(relevantItems.length / itemsPerRow);
-            const currentRowItems = Math.min(itemsPerRow, relevantItems.length - row * itemsPerRow);
-
-            // מרכוז הרשת
-            const startX = centerX - (currentRowItems - 1) * spacing / 2;
-            const startY = centerY - (totalRows - 1) * spacing / 2;
-
-            const newX = startX + col * spacing;
-            const newY = startY + row * spacing;
-
-            // עדכון מיקום
-            item.element.style.left = newX + 'px';
-            item.element.style.top = newY + 'px';
-            item.currentZ = 200; // הבאה קדימה
-        });
-    }
-
-    // האזנה לשינויים בתיבת החיפוש
-    searchInput.addEventListener('input', (e) => {
-        filterItems(e.target.value);
-    });
-
-    // יצירת הפריטים בהתחלה
-    createFloatingItems();
-
-    // התחלת האנימציות הרציפות
-    startFloatingAnimations();
-
-    // עדכון מיקומים בשינוי גודל החלון
-    window.addEventListener('resize', () => {
-        itemElements.forEach(item => {
-            if (!item.element.classList.contains('relevant')) {
-                const newX = Math.random() * window.innerWidth;
-                const newY = Math.random() * window.innerHeight;
-                item.originalX = newX;
-                item.originalY = newY;
-                item.element.style.left = newX + 'px';
-                item.element.style.top = newY + 'px';
-            }
-        });
-    });
-
-    // הוספת אפקט עכבר למצלמה
-    document.addEventListener('mousemove', (e) => {
-        const x = (e.clientX / window.innerWidth - 0.5) * 10;
-        const y = (e.clientY / window.innerHeight - 0.5) * 10;
-
-        container.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-    });
-</script>
 
 </html>

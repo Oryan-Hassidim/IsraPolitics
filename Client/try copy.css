@@ -87,8 +87,9 @@ body {
     position: relative;
     display: grid;
     place-content: center center;
-    transition: transform 0.5s ease-in-out;
+    /* transition: transform 2s ease-in-out 0.2s; */
     transform-style: preserve-3d;
+    will-change: transform;
     /* transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)); */
 
     /* animation: layer-2-translate-x 240s linear infinite; */
@@ -97,6 +98,7 @@ body {
 #resultsList>li::before {
     grid-area: 1/1/-1/-1;
     content: '';
+    /* backdrop-filter: blur(5px); */
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 10px;
     transition: backdrop-filter 0.2s ease-in-out;
@@ -109,6 +111,7 @@ body {
     place-content: stretch stretch;
     transform-style: preserve-3d;
     --transition-delay: calc(0.5s + sin(var(--index)) * 0.5s);
+    will-change: transform, filter, opacity;
     transition: transform 2s ease-in-out var(--transition-delay),
         filter 2s ease-in-out var(--transition-delay),
         opacity 2s ease-in-out var(--transition-delay);
@@ -143,9 +146,9 @@ body {
         --translate-y: calc(var(--layer-y) + sin(var(--index)) * 10px + var(--float-y));
         --translate-z: calc(var(--layer-z) + var(--float-z));
 
-        animation: float-x calc((4 + sin(var(--index) + 4)) * 1s) ease-in-out calc(sin(var(--index) + 0) * 2s) infinite alternate,
+        /* animation: float-x calc((4 + sin(var(--index) + 4)) * 1s) ease-in-out calc(sin(var(--index) + 0) * 2s) infinite alternate,
             float-y calc((4 + sin(var(--index) + 5)) * 1s) ease-in-out calc(sin(var(--index) + 1) * 2s) infinite alternate,
-            float-z calc((4 + sin(var(--index) + 6)) * 1s) ease-in-out calc(sin(var(--index) + 2) * 2s) infinite alternate;
+            float-z calc((4 + sin(var(--index) + 6)) * 1s) ease-in-out calc(sin(var(--index) + 2) * 2s) infinite alternate; */
 
         &::before {
             backdrop-filter: blur(5px);
