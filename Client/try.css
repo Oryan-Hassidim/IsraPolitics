@@ -138,7 +138,7 @@ body {
             max-height: 100%;
             display: block;
             border-radius: 10px;
-            transition: transform 0.3s ease-in-out;
+            /* transition: transform 0.3s ease-in-out; */
             transform: translateZ(0px);
             transform-origin: center center;
         }
@@ -149,7 +149,7 @@ body {
             text-decoration: none;
             font-weight: bold;
             margin: 0.1em;
-            transition: transform 0.3s ease-in-out;
+            /* transition: transform 0.3s ease-in-out; */
             transform: translateZ(0px);
             transform-origin: center center;
         }
