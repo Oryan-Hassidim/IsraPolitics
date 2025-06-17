@@ -1,0 +1,270 @@
+@property --float-x {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --float-y {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --float-z {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --layer-2-translate-x {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
+}
+
+:root {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    background-color: rgb(219, 219, 219);
+}
+
+input {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+
+body {
+    margin: 0;
+    height: 100vh;
+    position: relative;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+    background-color: rgb(43, 43, 43);
+
+    direction: rtl;
+}
+
+.search-container {
+    align-self: self-start;
+    justify-self: center;
+    width: 30em;
+    max-width: 90vw;
+    margin-top: 2em;
+}
+
+.search-box {
+    width: 100%;
+    left: 0;
+    right: 0;
+    font-size: 3em;
+    position: relative;
+    text-align: center;
+    z-index: 1;
+
+    border-radius: 1em;
+    border: 3px solid rgba(0, 0, 0, 0.3);
+}
+
+.results-container {
+    width: 100%;
+    height: 100%;
+
+    perspective: 1000px;
+    perspective-origin: center center;
+
+}
+
+#resultsList {
+    --rotate-x: 0deg;
+    --rotate-y: 0deg;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: grid;
+    place-content: center center;
+    /* transition: transform 2s ease-in-out 0.2s; */
+    transform-style: preserve-3d;
+    will-change: transform;
+    /* transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)); */
+
+    /* animation: layer-2-translate-x 240s linear infinite; */
+}
+
+#resultsList>li::before {
+    grid-area: 1/1/-1/-1;
+    content: '';
+    /* backdrop-filter: blur(5px); */
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    transition: backdrop-filter 0.2s ease-in-out;
+}
+
+#resultsList>li {
+    grid-area: 1/1/-1/-1;
+
+    display: grid;
+    place-content: stretch stretch;
+    transform-style: preserve-3d;
+    --transition-delay: calc(0.5s + sin(var(--index)) * 0.5s);
+    will-change: transform, filter, opacity;
+    transition: transform 2s ease-in-out var(--transition-delay),
+        filter 2s ease-in-out var(--transition-delay),
+        opacity 2s ease-in-out var(--transition-delay);
+
+    width: calc(15vw - 2px);
+    height: calc(10vh - 2px);
+
+    --col-width: 20vw;
+    --row-height: 12vh;
+    --cols: 55;
+    --rows: 25;
+
+    --layer-x: calc(var(--col-width) * (mod(var(--index), var(--cols)) - round(down, var(--cols) / 2)));
+    --layer-y: calc(var(--row-height) * (round(down, var(--index) / var(--cols)) - round(down, var(--rows) / 2)));
+    --layer-z: -1000px;
+
+    --float-x: 0;
+    --float-y: 0;
+    --float-z: 0;
+
+    /* --translate-x: calc(var(--layer-x) + sin(var(--index)) * 10px + var(--float-x));
+    --translate-y: calc(var(--layer-y) + sin(var(--index)) * 10px + var(--float-y));
+    --translate-z: calc(var(--layer-z) + sin(var(--index)) * 10px + var(--float-z)); */
+
+    transform: translateX(var(--translate-x)) translateY(var(--translate-y)) translateZ(var(--translate-z));
+
+
+    &[layer="1"] {
+        --layer-z: calc(0px + sin(var(--index)) * 100px);
+
+        --translate-x: calc(var(--layer-x) + sin(var(--index)) * 10px + var(--float-x));
+        --translate-y: calc(var(--layer-y) + sin(var(--index)) * 10px + var(--float-y));
+        --translate-z: calc(var(--layer-z) + var(--float-z));
+
+        /* animation: float-x calc((4 + sin(var(--index) + 4)) * 1s) ease-in-out calc(sin(var(--index) + 0) * 2s) infinite alternate,
+            float-y calc((4 + sin(var(--index) + 5)) * 1s) ease-in-out calc(sin(var(--index) + 1) * 2s) infinite alternate,
+            float-z calc((4 + sin(var(--index) + 6)) * 1s) ease-in-out calc(sin(var(--index) + 2) * 2s) infinite alternate; */
+
+        &::before {
+            backdrop-filter: blur(5px);
+        }
+    }
+
+    &[layer="2"] {
+        --layer-z: calc(-1000px + sin(var(--index)) * 700px);
+
+        --translate-x: calc(var(--layer-x) + sin(var(--index)) * 10px);
+        --translate-y: calc(var(--layer-y) + sin(var(--index)) * 10px);
+        --translate-z: calc(var(--layer-z));
+
+        /* animation: layer-2-translate-x 120s linear infinite; */
+    }
+
+    &[layer="3"] {
+        --layer-z: calc(-2000px + sin(var(--index)) * 1000px);
+
+        --translate-x: calc(var(--layer-x) + sin(var(--index)) * 10px);
+        --translate-y: calc(var(--layer-y) + sin(var(--index)) * 10px);
+        --translate-z: calc(var(--layer-z));
+
+        filter: blur(calc(-2 * var(--layer-z) / 1000));
+        opacity: 0.8;
+        animation: none;
+        pointer-events: none;
+    }
+
+    a {
+        grid-area: 1/1/-1/-1;
+        display: grid;
+        place-items: center stretch;
+        text-decoration: none;
+        grid-template-columns: auto 1fr;
+        transform-style: preserve-3d;
+
+        img {
+            height: calc(10vh - 2px);
+            object-fit: contain;
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+            border-radius: 10px;
+            transition: transform 0.2s ease-in-out 0.1s;
+            transform: translateZ(0px);
+            transform-origin: center center;
+        }
+
+        span {
+            text-align: center;
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0.1em;
+            transition: transform 0.2s ease-in-out 0.15s;
+            transform: translateZ(0px);
+            transform-origin: center center;
+        }
+    }
+
+    a:hover {
+
+        img {
+            transform: translateZ(20px);
+        }
+
+        span {
+            transform: translateZ(20px);
+        }
+    }
+}
+
+@keyframes layer-2-translate-x {
+
+    0%,
+    50%,
+    100% {
+        --layer-2-translate-x: 0vh;
+    }
+
+    25% {
+        --layer-2-translate-x: -140vw;
+    }
+
+    75% {
+        --layer-2-translate-x: 140vw;
+    }
+}
+
+@keyframes float-x {
+    from {
+        --float-x: 0px;
+    }
+
+    to {
+        --float-x: 10px;
+    }
+}
+
+@keyframes float-y {
+    from {
+        --float-y: 0px;
+    }
+
+    to {
+        --float-y: 10px;
+    }
+}
+
+@keyframes float-z {
+    from {
+        --float-z: 0px;
+    }
+
+    to {
+        --float-z: 10px;
+    }
+}
