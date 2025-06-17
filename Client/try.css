@@ -34,7 +34,7 @@
 }
 
 input {
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: inherit;
 }
 
 
@@ -85,6 +85,17 @@ body {
 
     border-radius: 1em;
     border: 3px solid rgba(0, 0, 0, 0.3);
+
+    background-color: rgba(255, 255, 255, 0.6);
+
+    transition:
+        background-color 0.3s,
+        outline 0.3s;
+
+    &:focus {
+        outline: 3px solid rgba(0, 0, 0, 0);
+        background-color: rgba(255, 255, 255, 0.9);
+    }
 }
 
 #resultsContainer {
@@ -94,9 +105,9 @@ body {
     --trans: 0;
     --fac-trans: calc(var(--trans) * 18em);
 
-    transition:
-        transform 2s,
-        perspective-origin 1.8s linear 0.2s;
+    /* transition:
+        transform 2s linear,
+        perspective-origin 2s linear; */
 
     perspective: 1000px;
     perspective-origin: calc(var(--fac-trans) + 50%) center;

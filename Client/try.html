@@ -177,7 +177,8 @@
         const x = (e.clientX / window.innerWidth - 0.5) * 10;
         const y = (e.clientY / window.innerHeight - 0.5) * 10;
 
-        resultsList.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+        // resultsList.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+        resultsList.style.transform = `rotateX(${-y}deg)`;
         // container.style.setProperty('--rotate-x', `${x}deg`);
         // container.style.setProperty('--rotate-y', `${-y}deg`);
     });
