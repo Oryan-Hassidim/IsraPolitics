@@ -185,7 +185,7 @@
     // on scroll, update --trans of resultsContainer
     window.addEventListener('scroll', () => {
         const scrollTop = (window.scrollY + window.innerHeight / 2) / document.body.scrollHeight;
-        resultsContainer.style.setProperty('--trans', `${scrollTop * 100 - 50}%`);
+        resultsContainer.style.setProperty('--trans', `${scrollTop * 100 - 50}`);
     });
 
     // function updateVirtualization() {

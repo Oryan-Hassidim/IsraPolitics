@@ -91,16 +91,16 @@ body {
     width: 100%;
     height: 100%;
 
-    --trans: 0%;
-    --fac-trans: calc(var(--trans) * 20);
+    --trans: 0;
+    --fac-trans: calc(var(--trans) * 18em);
 
     transition:
-        /* transform 2s, */
-        perspective-origin 2s;
+        transform 2s,
+        perspective-origin 1.8s linear 0.2s;
 
     perspective: 1000px;
     perspective-origin: calc(var(--fac-trans) + 50%) center;
-    perspective-origin: 50% center;
+    /* perspective-origin: 50% center; */
 
     transform: translateX(calc(-1 * var(--fac-trans)));
 }
@@ -156,6 +156,10 @@ body {
     --cols: 85;
     --rows: 13;
 
+    width: 10em;
+    height: calc(10vh - 2px);
+    --col-width: 13em;
+
     --layer-x: calc(var(--col-width) * (mod(var(--index), var(--cols)) - round(down, var(--cols) / 2)));
     --layer-y: calc(var(--row-height) * (round(down, var(--index) / var(--cols)) - round(down, var(--rows) / 2)));
     --layer-z: -1000px;
@@ -194,6 +198,7 @@ body {
         /* --layer-z: calc(-5000px + sin(var(--index)) * 700px); */
 
         --col-width: 20vw;
+        --col-width: 20em;
         --row-height: 12vh;
 
         --translate-x: calc(var(--layer-x) + sin(var(--index)) * 10px);
