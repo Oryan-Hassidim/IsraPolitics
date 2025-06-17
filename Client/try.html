@@ -13,7 +13,7 @@
         <div class="search-container">
             <input type="text" class="search-box" placeholder="חפש כאן..." id="searchInput">
         </div>
-        <div class="results-container">
+        <div id="resultsContainer">
             <ul id="resultsList">
             </ul>
         </div>
@@ -38,7 +38,8 @@
         return array;
     }
 
-    const container = document.getElementById('resultsList');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const resultsList = document.getElementById('resultsList');
     const searchInput = document.getElementById('searchInput');
     const layer_cols = 85;
     const layer_rows = 13;
@@ -100,8 +101,16 @@
             // add class hide
             // li.classList.add('hide');
             li.style.setProperty('--index', indexes[index]);
-            container.appendChild(li);
+            resultsList.appendChild(li);
             return { item: item, li: li, layer: 2, index: layers[0].free.pop() };
+        });
+    }
+
+    function scrollToCenter() {
+        // scroll to middle of the page on load
+        window.scrollTo({
+            top: document.body.scrollHeight / 2 - window.innerHeight / 2,
+            behavior: 'smooth'
         });
     }
 
@@ -159,42 +168,52 @@
                 i.li.style.setProperty('--index', indexes[i.index]);
             });
         }
+
+        scrollToCenter();
     });
 
     document.addEventListener('mousemove', async (e) => {
         const x = (e.clientX / window.innerWidth - 0.5) * 10;
         const y = (e.clientY / window.innerHeight - 0.5) * 10;
 
-        container.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+        resultsList.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
         // container.style.setProperty('--rotate-x', `${x}deg`);
         // container.style.setProperty('--rotate-y', `${-y}deg`);
     });
 
-    function updateVirtualization() {
-        let currentTranslate = undefined;
-        const mid_col = Math.floor(layer_cols / 2);
-        for (const li of container.querySelectorAll('li[layer="2"], li[layer="3"]')) {
-            if (currentTranslate === undefined) {
-                currentTranslate = parseInt(window.getComputedStyle(container).getPropertyValue('--layer-2-translate-x')); // in px
-                // Convert to col
-                const col_width = window.innerWidth / 3; // Assuming 5 cols
-                currentTranslate = currentTranslate / col_width;
-                console.log(currentTranslate);
-            }
-            const col = parseInt(li.style.getPropertyValue('--index')) % layer_cols;
-            if (Math.abs(col - mid_col + currentTranslate) <= 4) {
-                li.classList.remove('hide');
-            } else {
-                li.classList.add('hide');
-            }
-        }
-    }
+    // on scroll, update --trans of resultsContainer
+    window.addEventListener('scroll', () => {
+        const scrollTop = (window.scrollY + window.innerHeight / 2) / document.body.scrollHeight;
+        resultsContainer.style.setProperty('--trans', `${scrollTop * 100 - 50}%`);
+    });
+
+    // function updateVirtualization() {
+    //     let currentTranslate = undefined;
+    //     const mid_col = Math.floor(layer_cols / 2);
+    //     for (const li of resultsList.querySelectorAll('li[layer="2"], li[layer="3"]')) {
+    //         if (currentTranslate === undefined) {
+    //             currentTranslate = parseInt(window.getComputedStyle(resultsList).getPropertyValue('--layer-2-translate-x')); // in px
+    //             // Convert to col
+    //             const col_width = window.innerWidth / 3; // Assuming 5 cols
+    //             currentTranslate = currentTranslate / col_width;
+    //             console.log(currentTranslate);
+    //         }
+    //         const col = parseInt(li.style.getPropertyValue('--index')) % layer_cols;
+    //         if (Math.abs(col - mid_col + currentTranslate) <= 4) {
+    //             li.classList.remove('hide');
+    //         } else {
+    //             li.classList.add('hide');
+    //         }
+    //     }
+    // }
 
     // Update virtualization every 1s
     // updateVirtualization();
     // setInterval(updateVirtualization, 1000);
 
     getItems();
+
+    scrollToCenter();
 
 </script>
 

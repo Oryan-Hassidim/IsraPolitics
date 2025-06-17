@@ -40,7 +40,7 @@ input {
 
 body {
     margin: 0;
-    height: 100vh;
+    height: 800vh;
     position: relative;
     display: grid;
     justify-items: center;
@@ -87,12 +87,22 @@ body {
     border: 3px solid rgba(0, 0, 0, 0.3);
 }
 
-.results-container {
+#resultsContainer {
     width: 100%;
     height: 100%;
 
+    --trans: 0%;
+    --fac-trans: calc(var(--trans) * 20);
+
+    transition:
+        transform 2s,
+        perspective-origin 2s;
+
     perspective: 1000px;
-    perspective-origin: center center;
+    perspective-origin: calc(var(--fac-trans) + 50%) center;
+    perspective-origin: 50% center;
+
+    transform: translateX(calc(-1 * var(--fac-trans)));
 }
 
 #resultsList {
@@ -183,8 +193,8 @@ body {
         --layer-z: calc(-1000px + sin(var(--index)) * 700px);
         /* --layer-z: calc(-5000px + sin(var(--index)) * 700px); */
 
-        --col-width: 40vw;
-        --row-height: 22vh;
+        --col-width: 20vw;
+        --row-height: 12vh;
 
         --translate-x: calc(var(--layer-x) + sin(var(--index)) * 10px);
         --translate-y: calc(var(--layer-y) + sin(var(--index)) * 10px);
