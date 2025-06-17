@@ -6,7 +6,6 @@ import os
 import sys
 from db_jobs import run_query
 from gpt_jobs import safe_batch_start, BASE_DIR, JOBS_DIR, PROMPTS_DIR, save_job_id
-import sqlite3
 ####################################################
 #constants
 SENTENCES_PER_MK_DIR = os.path.join(BASE_DIR, "Utils", "Mk_sentences_query.sql")
@@ -28,6 +27,20 @@ def get_mk_sentences_from_db(mk_id: int) -> List[Tuple[int, str]]:
 
 
 def create_filter_job(person_id: str, subject: str) -> None:
+    """
+    Creates a GPT filter job for a specific MK (Member of Knesset) and subject.
+
+    This function prepares the input data for the filtering task by:
+    - Creating an output directory structure for the given MK and subject.
+    - Fetching the MK's sentences from the database if this is the first filter for them.
+    - Writing the sentence IDs and texts to separate files (`ids.txt` and `texts.txt`).
+    - Locating the appropriate filtering prompt.
+    - Starting a GPT batch filtering job using the input texts and saving the batch ID.
+
+    :param person_id: String representation of the MK's ID.
+    :param subject: Subject or topic for which filtering is being applied.
+    :return: None
+    """
     # Check if the output directory exists
     output_dir = os.path.join(JOBS_DIR, person_id)
     if not os.path.exists(output_dir):

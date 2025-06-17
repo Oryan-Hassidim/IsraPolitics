@@ -163,7 +163,10 @@ def retrieve_batch_results(batch_id: str, output_path: str) -> bool:
 
     # Get the batch results
     batch_results = client.batches.retrieve(batch_id)
+
     print(batch_results)
+    if batch_results.status == "failed":
+        delete_job_id([batch_id])
     if not batch_results:
         print("No results found for the given batch ID.")
         return False
@@ -183,10 +186,17 @@ def retrieve_batch_results(batch_id: str, output_path: str) -> bool:
             for line in file_content.iter_lines():
                 data = json.loads(line)
                 custom_id = data["custom_id"]
-                rating = int(
-                    data["response"]["body"]["choices"][0]["message"]["content"]
-                )
+                try:
+                    rating = int(
+                        data["response"]["body"]["choices"][0]["message"][
+                            "content"]
+                    )
+                except:
+                    print(f"Error parsing rating for custom_id {custom_id}: {data}")
                 results[int(custom_id[8:])] = rating
+
+
+
         else:
             print(f"Error retrieving file content: {file_response.status}")
 
@@ -279,7 +289,7 @@ def safe_batch_start(system_prompt_path: str, input_path: str, model:str= "gpt-4
     # send_job(system_prompt_path, input_path, output_path, model)
     batch_id = start_batch_job(system_prompt_path, input_path, model)
     print(f"[GPT JOB STARTED] Batch ID: {batch_id}")
-
+    "'batch_6847f0b304c88190abb34f3f3858e37b'"
     return batch_id
 
 

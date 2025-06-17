@@ -11,6 +11,16 @@ from gpt_jobs import JOBS_DIR, PROMPTS_DIR,save_job_id
 
 
 def find_completed_filter_jobs(jobs_dict: dict) -> list[tuple]:
+    """
+       Identifies completed GPT filter jobs based on existing job entries and available results.
+
+       This function iterates over the jobs dictionary and checks for jobs of type "filter".
+       For each such job, it verifies whether the filter output file exists and is retrievable
+       via `retrieve_batch_results`. If so, it adds the job and its filter output path to the result.
+
+       :param jobs_dict: Dictionary of job metadata indexed by job ID.
+       :return: List of tuples where each tuple contains a job entry (dict) and the path to its filter output file.
+       """
     completed_jobs = []
     for job_id, job_entry in jobs_dict.items():
         if job_entry["type"] == "filter":
@@ -21,16 +31,37 @@ def find_completed_filter_jobs(jobs_dict: dict) -> list[tuple]:
 
 
 def create_rank_job(person_id: str, subject: str) -> None:
+    """
+     Creates and starts a GPT ranking job for a given MK and subject.
+
+     This function constructs the appropriate prompt and input paths for the ranking task,
+     then starts a GPT batch job and registers the job with a unique ID.
+
+     :param person_id: String ID of the MK (Member of Knesset).
+     :param subject: Subject/topic for which to perform the ranking.
+     :return: None
+     """
     # get prompt path
-    prompt_path = os.path.join(PROMPTS_DIR, subject, "Rank.txt")
+    prompt_path = os.path.join(PROMPTS_DIR, subject, "rank.txt")
     # activate one gpt job
-    input_path = os.path.join(JOBS_DIR,person_id, "texts.txt")
+    input_path = os.path.join(JOBS_DIR,person_id, subject, "texts.txt")
     batch_id = safe_batch_start(prompt_path, input_path, "gpt-4.1")
     save_job_id(batch_id, person_id, subject, "rank")
 
 
 
-def filter_to_rank():
+def filter_to_rank()-> None:
+    """
+       Transitions completed filter jobs into rank jobs by applying filters and submitting ranking jobs.
+
+       This function:
+       - Loads all jobs and finds those with completed filter results.
+       - Applies the filter results to both `texts.txt` and `ids.txt`.
+       - Starts a GPT ranking job using the filtered data.
+       - Deletes the completed filter job entries.
+
+       :return: None
+       """
     jobs_dict = load_jobs()
     completed_filtered_jobs = find_completed_filter_jobs(jobs_dict)
     for job_entry, filter_results_path in completed_filtered_jobs:

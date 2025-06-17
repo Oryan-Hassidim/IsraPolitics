@@ -6,6 +6,8 @@ import os
 from gpt_jobs import BASE_DIR, JOBS_DIR
 from db_jobs import run_query
 import subprocess
+from typing import List, Tuple
+
 
 ###########################################################################
 #constants
@@ -15,7 +17,18 @@ MK_NAMES_TO_IDS_DIR = os.path.join(BASE_DIR,"Utils", "names_to_ids.sql")
 ###########################################################################
 
 
-def read_subjects_and_mks():
+def read_subjects_and_mks() -> Tuple[List[str], List[Tuple[str, str]]]:
+    """
+    Reads subjects and MK names from predefined text files.
+
+    - `SUBJECT_DIR` is expected to contain one subject per line.
+    - `MK_DIR` is expected to contain MK names (at least two words per line).
+    - For each MK name, all possible (first_name, last_name) splits are generated.
+
+    :return: A tuple:
+        - List of subject strings.
+        - List of tuples representing possible (first_name, last_name) combinations.
+    """
     print(f"reading path {SUBJECT_DIR} for subjects")
     with open(SUBJECT_DIR, "r", encoding="utf-8") as file:
         subjects = [line.strip() for line in file if line.strip()]
@@ -40,7 +53,15 @@ def read_subjects_and_mks():
 
 
 
-def get_mk_ids(mk_names: list[tuple[str, str]]) -> list[int]:
+def get_mk_ids(mk_names: list[tuple[str, str]]) -> list[str]:
+    """
+    Retrieves MK IDs from the database based on their first and last names.
+
+    Executes a query for each name tuple. If a match is found, the MK's ID is added to the result.
+
+    :param mk_names: List of (first_name, last_name) tuples.
+    :return: List of MK IDs as strings.
+    """
     print("getting mk ids by names from db:")
     ids = []
     for first_name, surname in mk_names:
@@ -54,6 +75,13 @@ def get_mk_ids(mk_names: list[tuple[str, str]]) -> list[int]:
 
 
 def check_if_pair_exist(mk_id:str, subject:str)->bool:
+    """
+    Checks whether both 'ids.txt' and 'texts.txt' exist for the given MK-subject pair.
+
+    :param mk_id: MK's ID.
+    :param subject: Subject name.
+    :return: True if both files exist, False otherwise.
+    """
     pair_dir = os.path.join(JOBS_DIR, mk_id, subject)
     ids_path = os.path.join(pair_dir, "ids.txt")
     texts_path = os.path.join(pair_dir, "texts.txt")
@@ -61,8 +89,19 @@ def check_if_pair_exist(mk_id:str, subject:str)->bool:
 
 
 def check_and_confirm_pairs(mk_ids, subjects) -> list[tuple[str, str]]:
-    """Check for existing mk-subject pairs and ask user whether to replace or ignore them.
-    Returns a list of (mk_id, subject) pairs to process.
+    """
+    Checks for existing MK-subject pairs and asks the user how to handle them.
+
+    Options:
+    - [r] Replace all existing pairs.
+    - [i] Ignore all existing pairs.
+    - [a] Ask per pair.
+
+    If a pair does not exist, it is automatically added to the result.
+
+    :param mk_ids: List of MK IDs.
+    :param subjects: List of subject names.
+    :return: List of confirmed (mk_id, subject) pairs to process.
     """
     confirmed_pairs = []
     # Ask user up front how to handle existing pairs
@@ -103,7 +142,16 @@ def check_and_confirm_pairs(mk_ids, subjects) -> list[tuple[str, str]]:
     return confirmed_pairs
 
 
-def check_for_prompt(subjects:list[str]):
+def check_for_prompt(subjects: List[str]) -> List[str]:
+    """
+    Verifies that prompt files exist for each subject.
+
+    Each subject is expected to have:
+    - `filter.txt` and `rank.txt` files located in its prompt directory.
+
+    :param subjects: List of subject names.
+    :return: List of subjects that have both required prompt files.
+    """
     prompts_exist = []
     for subject in subjects:
         directory = os.path.join(BASE_DIR, "Prompts", subject)
@@ -127,6 +175,7 @@ def main():
     subjects_with_prompts = check_for_prompt(subjects)
     pairs_for_jobs = check_and_confirm_pairs(mk_ids, subjects_with_prompts)
     for mk_id, subject in pairs_for_jobs:
+        print(f"Creating filter job for MK {mk_id} and subject '{subject}'")
         subprocess.run(["python", "create_filter_job.py", mk_id, subject])
 
 

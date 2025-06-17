@@ -1,7 +1,7 @@
 import sqlite3
 from gpt_jobs import BASE_DIR
 import os
-from typing import Any, Tuple, List, Optional
+from typing import Any, Tuple, Optional
 
 ###########################################################################
 #conctants
@@ -10,6 +10,15 @@ DB_DIR = os.path.join(BASE_DIR, "Data", "IsraParlTweet.db")
 
 
 def load_query(query_path: str) -> str:
+    """
+    Loads an SQL query from a file.
+
+    This function reads the contents of a file containing an SQL query
+    and returns it as a single stripped string.
+
+    :param query_path: Path to the file containing the SQL query.
+    :return: The SQL query as a string with leading and trailing whitespace removed.
+    """
     with open(query_path, "r", encoding="utf-8") as f:
         return f.read().strip()
 

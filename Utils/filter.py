@@ -3,7 +3,24 @@ from typing import Generator
 
 
 def apply_filter(filter_output_path: str, file_to_filter: str, output_path: str) -> None:
-    """ """
+    """
+    Applies a filter to a text file based on scores from a GPT filter output.
+
+    This function reads two files in parallel:
+    - `filter_output_path`: contains integer scores (one per line).
+    - `file_to_filter`: contains text lines corresponding to the same indices.
+
+    For each pair of lines, if the score is 4 or higher, the corresponding line
+    from `file_to_filter` is written to `output_path`.
+
+    The function also checks for the existence of input and output files and
+    creates the output directory if it does not exist.
+
+    :param filter_output_path: Path to the file containing filter scores (one integer per line).
+    :param file_to_filter: Path to the input text file to be filtered line by line.
+    :param output_path: Path to the output file where accepted lines will be written.
+    :return: None
+    """
 
     # Check if the input file exists
     if not os.path.isfile(file_to_filter):
