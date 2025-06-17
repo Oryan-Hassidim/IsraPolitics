@@ -76,7 +76,7 @@
             .then(response => response.text())
             .then(data => {
                 const lines = data.split('\n').slice(1) // Remove the header line
-                    // .slice(0, 100) // Limit to 200 items for performance
+                    // .slice(0, 630) // Limit to 200 items for performance
                     ;
                 items = shuffle(lines)
                     .map(line => line.split(','))
