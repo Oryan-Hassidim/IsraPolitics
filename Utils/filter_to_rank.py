@@ -80,6 +80,7 @@ def filter_to_rank()-> None:
 if __name__ == "__main__":
     # usage: python filter_to_rank.py
     filter_to_rank()
+    # create_rank_job("1055", "התיישבות")
 
 
 
