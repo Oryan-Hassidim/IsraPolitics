@@ -296,7 +296,7 @@ def safe_batch_start(system_prompt_path: str, input_path: str, model:str= "gpt-4
         print(
             f"Too many tokens enqueued: {estimated_tokens + enqueued_tokens} > 800000. Please wait for some jobs to finish."
         )
-        sys.exit(1)
+        # sys.exit(1)
 
 
     # send_job(system_prompt_path, input_path, output_path, model)

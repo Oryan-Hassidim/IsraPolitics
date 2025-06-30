@@ -24,7 +24,7 @@ def find_completed_filter_jobs(jobs_dict: dict) -> list[tuple]:
     completed_jobs = []
     for job_id, job_entry in jobs_dict.items():
         if job_entry["type"] == "filter":
-            filter_results_path = os.path.join(JOBS_DIR, job_entry["subject"],"filter_output.txt")
+            filter_results_path = os.path.join(JOBS_DIR, job_entry["subject"],job_entry["person_id"],"filter_output.txt")
             if retrieve_batch_results(job_id, str(filter_results_path)):
                 completed_jobs.append((job_entry,str(filter_results_path)))
     return completed_jobs
