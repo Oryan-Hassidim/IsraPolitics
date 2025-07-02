@@ -117,7 +117,7 @@ public static class CsvToSqLite
         return new DateOnly(dateTime.Year, dateTime.Month, dateTime.Day);
     }
 
-    public static void ConvertKnessetSpeeches(string csvInput, string? sqLiteOutput = null)
+    public static void ConvertKnessetSpeeches(string csvInput)
     {
         var flag = true;
 

@@ -2,30 +2,236 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <title>selected Mk</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script type="module">
-        import '/src/mk-view.ts';
-        import '/src/my-element.ts';
-    </script>
-    <style>
-        @property --gradient-angle {
-            syntax: '<angle>';
-            inherits: false;
-            initial-value: 90deg;
-        }
-
-        :root {
-            font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-            background-color: rgb(219, 219, 219);
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knessight</title>
+    <link rel="icon" href="./poster/knessight.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./try.css">
 </head>
 
 <body>
-    <my-element></my-element>
+    <div class="container">
+        <a class="logo" href="./">
+            <img src="./poster/knessight.svg" alt="Knessight Logo">
+        </a>
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="חפש כאן..." id="searchInput" autocomplete="off">
+        </div>
+        <div id="resultsContainer">
+            <ul id="resultsList">
+            </ul>
+        </div>
+    </div>
 </body>
+
+<script>
+    function shuffle(array) {
+        let currentIndex = array.length;
+
+        // While there remain elements to shuffle...
+        while (currentIndex != 0) {
+
+            // Pick a remaining element...
+            let randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+
+            // And swap it with the current element.
+            [array[currentIndex], array[randomIndex]] =
+                [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    const resultsContainer = document.getElementById('resultsContainer');
+    const resultsList = document.getElementById('resultsList');
+    const searchInput = document.getElementById('searchInput');
+    const layer_cols = 85;
+    const layer_rows = 13;
+    const layer_size = layer_cols * layer_rows;
+    const layers = [
+        { name: '2', free: Array.from({ length: layer_size }, (_, i) => i).reverse() },
+        { name: '3', free: Array.from({ length: layer_size }, (_, i) => i).reverse() }
+    ];
+
+    var tmp = [];
+    const center = {
+        col: Math.floor(layer_cols / 2),
+        row: Math.floor(layer_rows / 2)
+    };
+    for (let i = 0; i < layer_rows; i++) {
+        for (let j = 0; j < layer_cols; j++) {
+            tmp.push({
+                index: i * layer_cols + j,
+                dist: Math.max(Math.abs(j - center.col), Math.abs(i - center.row))
+            });
+        }
+    }
+    shuffle(tmp);
+    tmp.sort((a, b) => a.dist - b.dist);
+    const indexes = tmp.map((item) => item.index);
+
+    let itemsElements = [];
+
+    // get items for client_data/mks.csv
+    async function getItems() {
+        let items = [];
+        await fetch('client_data/mks.csv')
+            .then(response => response.text())
+            .then(data => {
+                const lines = data.split('\n').slice(1) // Remove the header line
+                    // .slice(0, 630) // Limit to 200 items for performance
+                    ;
+                items = shuffle(lines)
+                    .map(line => line.split(','))
+                    .map(parts => {
+                        return {
+                            id: parseInt(parts[0]),
+                            knessetSiteId: parseInt(parts[3]),
+                            name: parts[1] + " " + parts[2],
+                            imageUrl: parts[4]
+                        }
+                    });
+            })
+            .catch(error => console.error('Error fetching items:', error));
+        itemsElements = items.map((item, index) => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            const img = document.createElement('img');
+            const span = document.createElement('span');
+            a.href = `/mk?id=${item.id}`;
+            img.src = item.imageUrl;
+            img.alt = item.name;
+            a.appendChild(img);
+            span.className = 'name';
+            span.textContent = item.name;
+            a.appendChild(span);
+            a.onclick = (e) => {
+                img.style.viewTransitionName = "sharon";
+            };
+            li.appendChild(a);
+            li.setAttribute('layer', 2); // Default layer is 2
+            // add class hide
+            // li.classList.add('hide');
+            li.style.setProperty('--index', indexes[index]);
+            resultsList.appendChild(li);
+            return { item: item, li: li, layer: 2, index: layers[0].free.pop() };
+        });
+    }
+
+    function scrollToCenter() {
+        // scroll to middle of the page on load
+        window.scrollTo({
+            top: document.body.scrollHeight / 2 - window.innerHeight / 2,
+            behavior: 'smooth'
+        });
+    }
+
+    searchInput.addEventListener('input', async (e) => {
+        const searchTerm = e.target.value;
+        const from2to3 = [];
+        const from3to2 = [];
+        itemsElements.forEach(i => {
+            const layer2 = searchTerm === "" || i.item.name.includes(searchTerm);
+            if (i.layer === 3 && layer2) {
+                from3to2.push(i);
+                layers[1].free.push(i.index);
+            }
+            else if (i.layer != 3 && !layer2) {
+                from2to3.push(i);
+                layers[0].free.push(i.index);
+            }
+        });
+        layers[0].free.sort((a, b) => b - a);
+        layers[1].free.sort((a, b) => b - a);
+        for (const i of from2to3) {
+            i.layer = 3;
+            const index = layers[1].free.pop();
+            i.index = index;
+            i.li.setAttribute('layer', 3);
+            i.li.style.setProperty('--index', indexes[index]);
+        }
+        for (const i of from3to2) {
+            i.layer = 2;
+            const index = layers[0].free.pop();
+            i.index = index;
+            i.li.setAttribute('layer', 2);
+        }
+
+        const relevant = itemsElements.filter(i => i.layer === 2);
+
+        if (layers[0].free.at(-10) < 20) {
+            relevant.forEach(i => {
+                layers[0].free.push(i.index);
+            });
+            layers[0].free.sort((a, b) => b - a);
+            relevant.forEach(i => {
+                i.index = layers[0].free.pop();
+            });
+        }
+
+        if (relevant.length <= 25) {
+            relevant.forEach((i, index) => {
+                i.li.setAttribute('layer', 1);
+                i.li.style.setProperty('--index', indexes[index]);
+            });
+        } else {
+            relevant.forEach(i => {
+                i.li.setAttribute('layer', 2);
+                i.li.style.setProperty('--index', indexes[i.index]);
+            });
+        }
+
+        scrollToCenter();
+    });
+
+    document.addEventListener('mousemove', async (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 10;
+        const y = (e.clientY / window.innerHeight - 0.5) * 10;
+
+        // resultsList.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+        resultsList.style.transform = `rotateX(${-y}deg)`;
+        // container.style.setProperty('--rotate-x', `${x}deg`);
+        // container.style.setProperty('--rotate-y', `${-y}deg`);
+    });
+
+    // on scroll, update --trans of resultsContainer
+    window.addEventListener('scroll', () => {
+        const scrollTop = (window.scrollY + window.innerHeight / 2) / document.body.scrollHeight;
+        resultsContainer.style.setProperty('--trans', `${scrollTop * 100 - 50}`);
+    });
+
+    // function updateVirtualization() {
+    //     let currentTranslate = undefined;
+    //     const mid_col = Math.floor(layer_cols / 2);
+    //     for (const li of resultsList.querySelectorAll('li[layer="2"], li[layer="3"]')) {
+    //         if (currentTranslate === undefined) {
+    //             currentTranslate = parseInt(window.getComputedStyle(resultsList).getPropertyValue('--layer-2-translate-x')); // in px
+    //             // Convert to col
+    //             const col_width = window.innerWidth / 3; // Assuming 5 cols
+    //             currentTranslate = currentTranslate / col_width;
+    //             console.log(currentTranslate);
+    //         }
+    //         const col = parseInt(li.style.getPropertyValue('--index')) % layer_cols;
+    //         if (Math.abs(col - mid_col + currentTranslate) <= 4) {
+    //             li.classList.remove('hide');
+    //         } else {
+    //             li.classList.add('hide');
+    //         }
+    //     }
+    // }
+
+    // Update virtualization every 1s
+    // updateVirtualization();
+    // setInterval(updateVirtualization, 1000);
+
+    getItems();
+
+    // if there is content in the search input, clear it
+    searchInput.value = '';
+    // searchInput.dispatchEvent(new Event('input'));
+
+    scrollToCenter();
+
+</script>
 
 </html>
