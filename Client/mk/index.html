@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Knessight | אריאל שרון</title>
+    <link rel="icon" href="../poster/knessight.svg" type="image/svg+xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script type="module">
+        import '../src/mk-view.ts';
+        // import '../src/my-element.ts';
+    </script>
+    <style>
+        @property --gradient-angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 90deg;
+        }
+
+        @view-transition {
+            navigation: auto;
+        }
+
+        ::view-transition-group(root) {
+            animation-duration: 1s;
+        }
+
+        html {
+            background: linear-gradient(to bottom left,
+                    #e2ebff 0%,
+                    #f1f5ff 100%);
+        }
+
+        :root {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            scrollbar-gutter: stable;
+        }
+
+        .logo {
+            position: fixed;
+            top: 1em;
+            right: 1em;
+            z-index: 0;
+            width: 5em;
+
+            img {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="logo" href="./">
+        <img src="./poster/knessight.svg" alt="Knessight Logo">
+    </a>
+</body>
+
+<script>
+    // take the mkId from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const mkId = urlParams.get('id');
+    if (mkId) {
+        // create the mk-view element with the mkId
+        const mkView = document.createElement('mk-view');
+        mkView.setAttribute('mkId', mkId);
+        document.body.appendChild(mkView);
+    } else {
+        // if no mkId is provided, show an error message
+        const errorMessage = document.createElement('div');
+        errorMessage.textContent = 'No MK ID provided in the URL.';
+        document.body.appendChild(errorMessage);
+    }
+</script>
+
+</html>

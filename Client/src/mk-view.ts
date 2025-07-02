@@ -51,6 +51,7 @@ export class MkView extends LitElement {
                 width: 100%;
                 height: auto;
                 box-shadow: 6px -6px 6px rgba(0, 0, 0, 0.5);
+                view-transition-name: sharon;
             }
             a {
                 grid-area: knesset-site;
@@ -124,7 +125,7 @@ export class MkView extends LitElement {
 
     private async fetchData(): Promise<void> {
         const response = await fetch(
-            `client_data/mk_data/${this.mkId}/main.json`
+            `./client_data/mk_data/${this.mkId}/main.json`
         );
         if (response.ok) {
             const data = await response.json();

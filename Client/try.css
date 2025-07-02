@@ -28,6 +28,14 @@
     initial-value: 0;
 }
 
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-group(root) {
+    animation-duration: 1s;
+}
+
 :root {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     background-color: rgb(219, 219, 219);
@@ -36,7 +44,6 @@
 input {
     font-family: inherit;
 }
-
 
 body {
     margin: 0;
@@ -47,9 +54,21 @@ body {
     align-items: center;
     grid-template-rows: auto 1fr;
     overflow-x: hidden;
-    background-color: rgb(43, 43, 43);
 
     direction: rtl;
+}
+
+.logo {
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    z-index: 0;
+    width: 5em;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
 }
 
 .container {
@@ -142,8 +161,23 @@ body {
     grid-area: 1/1/-1/-1;
     content: '';
     background-color: rgba(255, 255, 255, 0.5);
+    background: linear-gradient(to bottom right,
+            #ffffffFF 0%,
+            #ffffff77 10%,
+            #ffffff66 50%,
+            #ffffff00 80%,
+            #ffffff00 100%);
     border-radius: 10px;
     transition: backdrop-filter 0.2s ease-in-out;
+}
+
+#resultsList>li:nth-child(2n)::before {
+    background: linear-gradient(to top right,
+            #ffffffFF 0%,
+            #ffffff55 10%,
+            #ffffff44 50%,
+            #ffffff00 80%,
+            #ffffff00 100%);
 }
 
 #resultsList>li {

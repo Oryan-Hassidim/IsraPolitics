@@ -30,18 +30,20 @@ static class TransformDb
         return histogram;
     }
 
-    static bool AlmostEqualString(string? str1, string? str2)
+    public static bool AlmostEqualString(string? str1, string? str2)
     {
         if (IsNullOrEmpty(str1) && IsNullOrEmpty(str2)) return true;
         if (IsNullOrEmpty(str1) || IsNullOrEmpty(str2)) return false;
-        if (str1.Length != str2.Length) return false;
-        if (str1 == str2) return true;
-        if (Math.Abs(str1.Length - str2.Length) > 4) return false;
-        if (str1.AsSpan().AsValueEnumerable().Where(c => 'א' <= c && c <= 'ת').Take(100).SequenceEqual(
-            str2.AsSpan().AsValueEnumerable().Where(c => 'א' <= c && c <= 'ת').Take(100)))
+        var s1 = str1.AsSpan().Trim();
+        var s2 = str2.AsSpan().Trim();
+        if (Math.Abs(s1.Length - s2.Length) > 3) return false;
+        if (s1 == s2) return true;
+        if (s1.AsValueEnumerable().Where(c => 'א' <= c && c <= 'ת').Take(400).SequenceEqual(
+            s2.AsValueEnumerable().Where(c => 'א' <= c && c <= 'ת').Take(400)))
             return true;
-        var hist1 = Histogram(str1.AsSpan()[..Math.Min(150, str1.Length)]);
-        var hist2 = Histogram(str2.AsSpan()[..Math.Min(150, str1.Length)]);
+        var len = Math.Min(400, Math.Min(s1.Length, s2.Length));
+        var hist1 = Histogram(s1[..len]);
+        var hist2 = Histogram(s2[..len]);
         var keys = hist1.Keys.Union(hist2.Keys);
         var dotProduct = 0;
         var norm1 = 0;
@@ -55,7 +57,7 @@ static class TransformDb
             norm2 += count2 * count2;
         }
         var similarity = dotProduct / Math.Sqrt(norm1 * norm2);
-        if (similarity > 0.85)
+        if (similarity > 0.9)
             return true;
         return false;
     }
@@ -127,145 +129,97 @@ static class TransformDb
 
     public static void Run()
     {
-        var old_model = new Context(@"C:\Projects\Oryan-Hassidim\IsraPolitics\Data\OldIsraParlTweet.db");
+        var old_model = new Context(@"C:\Projects\Oryan-Hassidim\IsraPolitics\Data\IsraParlTweet.v2.db", readOnly: true);
         var model = new Context();// @"C:\Projects\Oryan-Hassidim\IsraPolitics\Data\IsraParlTweet2.db");
-
-        WriteLine("Deleting old database...");
-        model.Database.EnsureDeleted();
-        WriteLine("Creating new database...");
-        model.Database.EnsureCreated();
-
-        #region Topics
-        WriteLine("Transforming Topics...");
-        var sortedTopics = old_model.KnessetSpeechesEntries
-                                    .Where(s => s.Topic != null)
-                                    .Select(s => new { Topic = s.Topic!, Date = s.Date })
-                                    .Distinct()
-                                    .OrderBy(s => s.Date)
-                                    .Select(s => s.Topic)
-                                    .ToList()
-                                    .Distinct(s => s.Id)
-                                    .GroupBy(s => s.String!.AsValueEnumerable()
-                                                   .Where(c => c is >= 'א' and <= 'ת')
-                                                   .JoinToString(""))
-                                    .Select((g, i) => new { g, Max = new Topic() { Id = i + 1, String = g.MaxBy(s => s.String!.Length)!.String } })
-                                    .ToList();
-        var topicsDict = sortedTopics
-                         .SelectMany(g => g.g.Select(s => (s.Id, g.Max.Id)))
-                         .ToDictionary();
-
-        model.Topics.AddRange(sortedTopics.Select(s => s.Max));
-        model.SaveChanges();
-        model.Dispose();
-        model = new Context();
-        #endregion
-
-        #region TopicExtras
-        WriteLine("Transforming TopicExtras...");
-        var sortedTopicsExtra = old_model.KnessetSpeechesEntries
-                                     .Where(s => s.TopicExtra != null)
-                                     .Select(s => new { TopicExtra = s.TopicExtra!, Date = s.Date })
-                                     .Distinct()
-                                     .OrderBy(s => s.Date)
-                                     .Select(s => s.TopicExtra)
-                                     .ToList()
-                                     .Distinct(s => s.Id)
-                                     .GroupBy(s => s.String!.AsValueEnumerable()
-                                                    .Where(c => c is >= 'א' and <= 'ת')
-                                                    .JoinToString(""))
-                                     .Select((g, i) => new { g, Max = new TopicExtra() { Id = i + 1, String = g.MaxBy(s => s.String!.Length)!.String } })
-                                     .ToList();
-
-        var topicsExtraDict = sortedTopicsExtra
-                              .SelectMany((g, i) => g.g.Select(s => (s.Id, g.Max.Id)))
-                              .ToDictionary();
-
-        model.TopicExtras.AddRange(sortedTopicsExtra.Select(s => s.Max));
-        model.SaveChanges();
-        model.Dispose();
-        model = new Context();
-        #endregion
-
-        #region Pepole, Names
-        WriteLine("Transforming People and Names...");
-        model.People.AddRange(old_model.People);
-        model.Names.AddRange(old_model.Names);
-        model.SaveChanges();
-        model.Dispose();
-        model = new Context();
-        #endregion
-
-        #region speeches
-        WriteLine("Transforming Speeches...");
-        var total = (double)4484726;
-        var speeches = old_model.KnessetSpeechesEntries
-                                .OrderBy(x => x.Date)
-                                .ThenBy(x => x.Knesset)
-                                .ThenBy(x => x.SessionNumber)
-                                .ThenBy(x => x.Id)
-                                .Include(x => x.Topic)
-                                .Include(x => x.TopicExtra);
-
-        var speechComparer = new SpeechesComparer();
-        var sets = new Dictionary<int, Dictionary<int, HashSet<KnessetSpeech>>>();
-        var empty = new HashSet<KnessetSpeech>();
-        int newId = 0, counter = 0;
-        DateOnly lastDate = default;
-        foreach (var speech in speeches)
+        try
         {
-            counter++;
-            if (speech.PersonId == null || speech.Text!.Length < 25) continue;
-            if (lastDate != speech.Date)
+            WriteLine("Deleting old database...");
+            model.Database.EnsureDeleted();
+            WriteLine("Creating new database...");
+            model.Database.EnsureCreated();
+
+            #region Topics, TopicExtras, People, Names
+            WriteLine("Transforming Topics...");
+            model.Topics.AddRange(old_model.Topics);
+            WriteLine("Transforming TopicExtras...");
+            model.TopicExtras.AddRange(old_model.TopicExtras);
+            WriteLine("Transforming People...");
+            model.People.AddRange(old_model.People);
+            WriteLine("Transforming Names...");
+            model.Names.AddRange(old_model.Names);
+            model.SaveChanges();
+            model.Dispose();
+            WriteLine("Completed");
+            model = new Context();
+            #endregion
+
+            #region speeches
+            WriteLine("Transforming Speeches...");
+            var total = (double)2380777;
+            var speeches = old_model.KnessetSpeechesEntries
+                                    .AsNoTracking()
+                                    .OrderBy(x => x.Id)
+                                    .IgnoreAutoIncludes();
+
+            var speechComparer = new SpeechesComparer();
+            var sets = new Dictionary<int, Dictionary<int, HashSet<KnessetSpeech>>>();
+            var empty = new HashSet<KnessetSpeech>();
+            int newId = 0, counter = 0;
+            DateOnly lastDate = default;
+            foreach (var speech in speeches)
             {
-                sets.Clear();
-                lastDate = speech.Date;
+                counter++;
+                if (lastDate != speech.Date)
+                {
+                    sets.Clear();
+                    lastDate = speech.Date;
+                }
+                speech.Text = speech.Text!.ReplaceLineEndings(" ").Trim();
+
+                int key = speech.PersonId is null ? -1 : speech.PersonId.Value;
+                if (!sets.TryGetValue(key, out var set))
+                    sets.Add(key, set = []);
+                int len = speech.Text!.Length;
+                KnessetSpeech? copy = null;
+                if (Enumerable.Range(len - 3, 7)
+                              .Select(l => set.GetValueOrDefault(l, empty))
+                              .Any(s => s.TryGetValue(speech, out copy)))
+                {
+                    continue;
+                }
+
+                if (!set.TryGetValue(len, out var speechesSet))
+                    set.Add(len, speechesSet = new HashSet<KnessetSpeech>(speechComparer));
+
+                speechesSet.Add(speech);
+                speech.Id = ++newId;
+                speech.Name = null;
+                speech.Topic = null;
+                speech.TopicExtra = null;
+
+                model.KnessetSpeechesEntries.Add(speech);
+                if (newId % 10_000 == 0)
+                {
+                    model.SaveChanges();
+                    model.Dispose();
+                    //GC.Collect();
+                    //GC.WaitForPendingFinalizers();
+                    //GC.Collect();
+                    model = new Context();
+                    SetCursorPosition(0, CursorTop - 1);
+                    WriteLine($"Saved {newId} speeches ({counter / total:P3})");
+                }
             }
-            speech.Text = speech.Text.ReplaceLineEndings(" ");
-
-            if (speech.Topic != null)
-                speech.TopicId = topicsDict[speech.TopicId!.Value];
-            if (speech.TopicExtra != null)
-                speech.TopicExtraId = topicsExtraDict[speech.TopicExtraId!.Value];
-            speech.Topic = null;
-            speech.TopicExtra = null;
-            speech.Name = null;
-
-            int key = speech.PersonId is null ? -1 : speech.PersonId.Value;
-            if (!sets.TryGetValue(key, out var set))
-                sets.Add(key, set = []);
-            int len = speech.Text!.Length;
-            KnessetSpeech? copy = null;
-            if (Enumerable.Range(len - 3, 7)
-                          .Select(l => set.GetValueOrDefault(l, empty))
-                          .Any(s => s.TryGetValue(speech, out copy)))
-            {
-                //if (Random.Shared.Next(5000) == 0)
-                //{
-                //    WriteLine($"Duplicate speech (counter={counter})");
-                //    WriteLine($"{speech.Id,10} {Concat(speech.Text.Take(70).Reverse())}");
-                //    WriteLine($"{copy!.Id,10} {Concat(copy!.Text!.Take(70).Reverse())}");
-                //}
-                continue;
-            }
-
-            if (!set.TryGetValue(len, out var speechesSet))
-                set.Add(len, speechesSet = new HashSet<KnessetSpeech>(speechComparer));
-
-            speechesSet.Add(speech);
-            speech.Id = ++newId;
-            model.KnessetSpeechesEntries.Add(speech);
-            //model.SaveChanges();
-            if (newId % 10000 == 0)
-            {
-                model.SaveChanges();
-                model.Dispose();
-                model = new Context();
-                // SetCursorPosition(0, CursorTop);
-                WriteLine($"Saved {newId} speeches ({counter / total:P3})");
-            }
+            model.SaveChanges();
+            model.Dispose();
+            SetCursorPosition(0, CursorTop - 1);
+            WriteLine($"Saved {newId} speeches ({counter / total:P3})");
+            #endregion
         }
-        model.SaveChanges();
-        model.Dispose();
-        #endregion
+        finally
+        {
+            old_model.Dispose();
+            model.Dispose();
+        }
     }
 }

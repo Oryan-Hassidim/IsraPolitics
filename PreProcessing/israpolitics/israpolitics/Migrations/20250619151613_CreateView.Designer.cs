@@ -11,8 +11,8 @@ using israpolitics.Model;
 namespace israpolitics.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250521151040_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250619151613_CreateView")]
+    partial class CreateView
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
