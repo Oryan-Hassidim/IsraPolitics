@@ -23,47 +23,49 @@ export class MkView extends LitElement {
     @state()
     private _mkData: MkData = new MkData(0, 0, '', '', '', []);
 
-    public static styles = css`
-        .mk-view {
-            direction: rtl;
-            display: grid;
-            grid-template-areas:
-                'image topics'
-                'name topics'
-                'description topics'
-                'knesset-site topics';
-            grid-template-columns: 1fr 2fr;
-            grid-template-rows: auto auto auto auto;
-            column-gap: 40px;
-            padding: 40px 20px;
+    // public static styles = css`
+    //     .mk-view {
+    //         direction: rtl;
+    //         display: grid;
+    //         grid-template-areas:
+    //             'image topics'
+    //             'name topics'
+    //             'description topics'
+    //             'knesset-site topics';
+    //         grid-template-columns: 1fr 2fr;
+    //         grid-template-rows: auto auto auto auto;
+    //         column-gap: 40px;
+    //         padding: 40px 20px;
 
-            h1 {
-                grid-area: name;
-                margin: 0;
-            }
-            h2 {
-                grid-area: description;
-                font-size: 1.2em;
-                font-weight: 100;
-            }
-            img {
-                grid-area: image;
-                width: 100%;
-                height: auto;
-                box-shadow: 6px -6px 6px rgba(0, 0, 0, 0.5);
-                view-transition-name: sharon;
-            }
-            a {
-                grid-area: knesset-site;
-            }
-            .topics {
-                grid-area: topics;
-                display: flex;
-                flex-direction: column;
-                gap: 30px;
-            }
-        }
-    `;
+    //         h1 {
+    //             grid-area: name;
+    //             margin: 0;
+    //         }
+    //         h2 {
+    //             grid-area: description;
+    //             font-size: 1.2em;
+    //             font-weight: 100;
+    //         }
+    //         img {
+    //             grid-area: image;
+    //             width: 100%;
+    //             height: auto;
+    //             box-shadow: 6px -6px 6px rgba(0, 0, 0, 0.5);
+    //             view-transition-name: sharon;
+    //         }
+    //         a {
+    //             grid-area: knesset-site;
+    //         }
+    //         .topics {
+    //             grid-area: topics;
+    //             display: flex;
+    //             flex-direction: column;
+    //             gap: 30px;
+    //         }
+    //     }
+    // `;
+
+    // public state styles = css``;
 
     override render() {
         return html`
@@ -119,8 +121,12 @@ export class MkView extends LitElement {
     }
 
     public override async connectedCallback(): Promise<void> {
-        super.connectedCallback();
         await this.fetchData();
+        super.connectedCallback();
+    }
+
+    protected createRenderRoot() {
+        return this;
     }
 
     private async fetchData(): Promise<void> {

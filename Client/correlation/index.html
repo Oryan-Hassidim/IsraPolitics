@@ -8,7 +8,7 @@
     <link rel="icon" href="../poster/knessight.svg" type="image/svg+xml">
     <script type="module">
         import '../src/correlation-bar.ts';
-        // import '../src/my-element.ts';
+        import '../src/mk-tooltip.ts'
     </script>
     <style>
         :root {
@@ -19,14 +19,16 @@
             background: linear-gradient(to bottom left,
                     #e2ebff 0%,
                     #f1f5ff 100%);
-            min-height: 100dvh;
+            height: 100dvh;
             margin: 0;
         }
     </style>
 </head>
 
 <body>
-    <correlation-bar></correlation-bar>
+    <correlation-bar topicA="התיישבות" topicB="נישואים_אזרחיים">
+
+    </correlation-bar>
 </body>
 
 </html>
