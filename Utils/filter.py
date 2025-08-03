@@ -2,7 +2,7 @@ import os
 from typing import Generator
 
 
-def apply_filter(filter_output_path: str, file_to_filter: str, output_path: str) -> None:
+def apply_filter(filter_output_path: str, file_to_filter: str, output_path: str) -> bool:
     """
     Applies a filter to a text file based on scores from a GPT filter output.
 
@@ -25,15 +25,15 @@ def apply_filter(filter_output_path: str, file_to_filter: str, output_path: str)
     # Check if the input file exists
     if not os.path.isfile(file_to_filter):
         print(f"Input file '{file_to_filter}' does not exist.")
-        return
+        return False
     # Check if the filter output file exists
     if not os.path.isfile(filter_output_path):
         print(f"Filter output file '{filter_output_path}' does not exist.")
-        return
+        return False
     # Check if the output file already exists
     if os.path.isfile(output_path):
         print(f"Output file '{output_path}' already exists. exitsing.")
-        return
+        return False
     # Check if the output directory exists
     output_dir = os.path.dirname(output_path)
     if output_dir and not os.path.exists(output_dir):
@@ -57,6 +57,7 @@ def apply_filter(filter_output_path: str, file_to_filter: str, output_path: str)
         ):
             if filter_output_line >= 4:
                 output_file.write(f"{file_to_filter_line}\n")
+    return True
 
 if __name__ == "__main__":
     import sys

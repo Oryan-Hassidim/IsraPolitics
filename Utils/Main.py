@@ -3,7 +3,7 @@ runs the whole flow. get file with names of Mks and subjects.
 make sure them all ran or run them
 """
 import os
-from gpt_jobs import BASE_DIR, JOBS_DIR
+from gpt_jobs import BASE_DIR, JOBS_DIR, load_jobs
 from db_jobs import run_query
 import subprocess
 from typing import List, Tuple
@@ -164,6 +164,13 @@ def check_for_prompt(subjects: List[str]) -> List[str]:
     return prompts_exist
 
 
+def more_than_2_jobs():
+    jobs = load_jobs()
+    if len(jobs) >= 2:
+        print("There are more than 2 jobs in the queue. Please wait until they finish.")
+        return True
+
+
 def main():
     print("running filter_to_rank.py")
     subprocess.run(["python", "filter_to_rank.py"])
@@ -174,9 +181,19 @@ def main():
     mk_ids = get_mk_ids(mks)
     subjects_with_prompts = check_for_prompt(subjects)
     pairs_for_jobs = check_and_confirm_pairs(mk_ids, subjects_with_prompts)
-    for mk_id, subject in pairs_for_jobs:
-        print(f"Creating filter job for MK {mk_id} and subject '{subject}'")
-        subprocess.run(["python", "create_filter_job.py", mk_id, subject])
+    pairs = [job for job in pairs_for_jobs]
+    while pairs != []:
+        print("running filter_to_rank.py")
+        subprocess.run(["python", "filter_to_rank.py"])
+        print("rank_to_client_data.py")
+        subprocess.run(["python", "rank_to_client_data.py"])
+
+        for mk_id, subject in pairs:
+            if more_than_2_jobs():
+                continue
+            print(f"Creating filter job for MK {mk_id} and subject '{subject}'")
+            subprocess.run(["python", "create_filter_job.py", mk_id, subject])
+            pairs.remove((mk_id, subject))
 
 
 if __name__ == "__main__":

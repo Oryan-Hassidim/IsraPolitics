@@ -71,7 +71,7 @@ def find_completed_rank_jobs(jobs_dict: dict) -> list[tuple]:
     completed_jobs = []
     for job_id, job_entry in jobs_dict.items():
         if job_entry["type"] == "rank":
-            filter_results_path = os.path.join(JOBS_DIR, job_entry["subject"],job_entry["person_id"], "filter_output.txt")
+            filter_results_path = os.path.join(JOBS_DIR, job_entry["person_id"], job_entry["subject"], "rank_output.txt")
             if retrieve_batch_results(job_id, str(filter_results_path)):
                 completed_jobs.append((job_entry,str(filter_results_path)))
     return completed_jobs
@@ -112,7 +112,7 @@ def create_client_data_csv(person_id: str, subject: str) -> None:
         rows = load_ranked_data_with_metadata(
             os.path.join(output_dir, "ids.txt"),
             os.path.join(output_dir, "texts.txt"),
-            os.path.join(JOBS_DIR,subject, person_id, "filter_output.txt"),
+            os.path.join(JOBS_DIR, person_id, subject,  "rank_output.txt"),
             os.path.join(BASE_DIR,"Utils", "date_topic_per_sentence_id.sql")
         )
         for speech_id, date, topic, text, rank in rows:
