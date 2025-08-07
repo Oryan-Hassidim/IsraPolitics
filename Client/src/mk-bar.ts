@@ -230,7 +230,6 @@ export class MkBar extends LitElement {
                 transition: top var(--animation-time) ease,
                     left var(--animation-time) ease;
                 anchor-name: --tooltip-anchor;
-                position: absolute;
             }
             .tooltip {
                 display: none;
