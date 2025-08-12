@@ -2,7 +2,22 @@ import json
 import os
 from openai import Client, File
 from tqdm import tqdm
+import sys
 from datetime import datetime
+import tiktoken
+
+
+##########################################################
+# Constants
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+JOBS_DICT_DIR = os.path.join(BASE_DIR, "Jobs", "Jobs_dict.json")
+PROMPTS_DIR = os.path.join(BASE_DIR, "Prompts")
+# Constants for the database
+# Constants for the output directory
+JOBS_DIR = os.path.join(BASE_DIR, "Jobs")
+
+##########################################################
+
 
 
 def send_job(
@@ -149,7 +164,10 @@ def retrieve_batch_results(batch_id: str, output_path: str) -> bool:
 
     # Get the batch results
     batch_results = client.batches.retrieve(batch_id)
+
     print(batch_results)
+    if batch_results.status == "failed":
+        delete_job_id([batch_id])
     if not batch_results:
         print("No results found for the given batch ID.")
         return False
@@ -169,10 +187,17 @@ def retrieve_batch_results(batch_id: str, output_path: str) -> bool:
             for line in file_content.iter_lines():
                 data = json.loads(line)
                 custom_id = data["custom_id"]
-                rating = int(
-                    data["response"]["body"]["choices"][0]["message"]["content"]
-                )
+                try:
+                    rating = int(
+                        data["response"]["body"]["choices"][0]["message"][
+                            "content"]
+                    )
+                except:
+                    print(f"Error parsing rating for custom_id {custom_id}: {data}")
                 results[int(custom_id[8:])] = rating
+
+
+
         else:
             print(f"Error retrieving file content: {file_response.status}")
 
@@ -207,3 +232,167 @@ def retrieve_batch_results(batch_id: str, output_path: str) -> bool:
     print(f"Batch results written to {output_path}.")
 
     return True
+
+
+def save_job_id(job_id: str, person_id: str, subject: str, type:str) -> None:
+    """
+    Saves the job ID to a JSON file.
+
+    :param job_id: The job ID to save.
+    :param person_id: The person ID associated with the job.
+    :param subject: The subject associated with the job.
+    """
+    if os.path.exists(JOBS_DICT_DIR):
+        with open(JOBS_DICT_DIR, "r", encoding="utf-8") as f:
+            jobs_dict = json.load(f)
+    else:
+        jobs_dict = {}
+    job_entry = {
+        "job_id": job_id,
+        "person_id": person_id,
+        "subject": subject,
+        "type": type,
+    }
+    jobs_dict[job_id] = job_entry
+    with open(JOBS_DICT_DIR, "w", encoding="utf-8") as f:
+        json.dump(jobs_dict, f, ensure_ascii=False, indent=4)
+
+
+def delete_job_id(job_ids: list[str]) -> None:
+    """
+    Deletes the job ID from the JSON file.
+
+    :param job_ids: The job IDs to delete.
+    """
+    if os.path.exists(JOBS_DICT_DIR):
+        with open(JOBS_DICT_DIR, "r", encoding="utf-8") as f:
+            jobs_dict = json.load(f)
+        for job_id in job_ids:
+            if job_id in jobs_dict:
+                del jobs_dict[job_id]
+        with open(JOBS_DICT_DIR, "w", encoding="utf-8") as f:
+            json.dump(jobs_dict, f, ensure_ascii=False, indent=4)
+    else:
+        print("No jobs found to delete.")
+
+
+
+def safe_batch_start(system_prompt_path: str, input_path: str, model:str= "gpt-4.1-mini")-> str:
+    # Check if the input file exists
+    if not os.path.isfile(input_path):
+        print(f"Input file '{input_path}' does not exist.")
+        sys.exit(1)
+    # Check if the system prompt file exists
+    if not os.path.isfile(system_prompt_path):
+        print(f"System prompt file '{system_prompt_path}' does not exist.")
+        sys.exit(1)
+    # check if there are enough tokens
+    estimated_tokens = estimate_tokens_from_file(input_path, model=model)
+    print(f"Estimated tokens in input file: {estimated_tokens}")
+
+    enqueued_tokens = estimate_enqueued_tokens(model=model)
+    print(f"Estimated enqueued tokens: {enqueued_tokens}")
+    if estimated_tokens + enqueued_tokens > 800000:
+        print(
+            f"Too many tokens enqueued: {estimated_tokens + enqueued_tokens} > 800000. Please wait for some jobs to finish."
+        )
+        # sys.exit(1)
+
+
+    # send_job(system_prompt_path, input_path, output_path, model)
+    batch_id = start_batch_job(system_prompt_path, input_path, model)
+    print(f"[GPT JOB STARTED] Batch ID: {batch_id}")
+    "'batch_6847f0b304c88190abb34f3f3858e37b'"
+    return batch_id
+
+
+def load_jobs() -> dict:
+    if os.path.exists(JOBS_DICT_DIR):
+        with open(JOBS_DICT_DIR, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
+def estimate_enqueued_tokens(model="gpt-4") -> int:
+    """
+    Estimates the number of tokens currently enqueued in in-progress batches.
+
+    :param model: The model name for token encoding.
+    :return: Estimated total number of enqueued tokens.
+    """
+    with open("secrets/OpenAI_key.txt", "r") as file:
+        api_key = file.read().strip()
+    client = Client(api_key=api_key)
+
+    batches = get_all_batches_from_openAi(client)
+    try:
+        encoding = tiktoken.encoding_for_model(model)
+    except KeyError:
+        # fallback encoding for GPT-4 variants
+        encoding = tiktoken.get_encoding("cl100k_base")
+
+    total_tokens = 0
+
+    for batch in batches:
+        input_file_id = batch.input_file_id
+        if input_file_id:
+            try:
+                content = client.files.retrieve_content(input_file_id)
+                lines = content.decode("utf-8").splitlines()
+                total_tokens += sum(len(encoding.encode(line)) for line in lines)
+            except:
+                continue
+
+    return total_tokens
+
+
+def estimate_tokens_from_file(file_path: str, model: str = "gpt-4") -> int:
+    """
+    Estimates the number of tokens required for a file, assuming one request per line.
+
+    :param file_path: Path to the input file.
+    :param model: OpenAI model name (e.g., "gpt-4", "gpt-3.5-turbo").
+    :return: Total token count.
+    """
+    try:
+        encoding = tiktoken.encoding_for_model(model)
+    except KeyError:
+        # fallback encoding for GPT-4 variants
+        encoding = tiktoken.get_encoding("cl100k_base")
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    total_tokens = sum(len(encoding.encode(line)) for line in lines)
+    return total_tokens
+
+
+def get_all_batches_from_openAi(client) -> list:
+    """
+    Retrieves all batch jobs from OpenAI.
+
+    :return: List of batch jobs.
+    """
+    # Load api key from the file secrets/OpenAI_key.txt
+    batches = client.batches.list(limit=40).data
+    in_progress = [b for b in batches if b.status == "in_progress"]
+    return in_progress
+
+if __name__ == "__main__":
+    # usage: python gpt_jobs.py system_prompt.txt input.txt [model]
+    # prints output to output-YYYY-MM-DD-HH-MM-SS.txt
+    if len(sys.argv) not in [3, 4]:
+        print("Usage: python gpt_jobs.py system_prompt.txt input.txt [model]")
+        sys.exit(1)
+    system_prompt_path = sys.argv[1]
+    input_path = sys.argv[2]
+    # Optional parameter to choose model
+    model = "gpt-4.1-mini"  # Default model
+    if len(sys.argv) == 4:
+        model = sys.argv[3]
+
+
+    safe_batch_start(system_prompt_path, input_path, model)
+
+
+
