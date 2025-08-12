@@ -2,21 +2,38 @@ import os
 from typing import Generator
 
 
-def filter(filter_output_path: str, file_to_filter: str, output_path: str) -> None:
-    """ """
+def apply_filter(filter_output_path: str, file_to_filter: str, output_path: str) -> bool:
+    """
+    Applies a filter to a text file based on scores from a GPT filter output.
+
+    This function reads two files in parallel:
+    - `filter_output_path`: contains integer scores (one per line).
+    - `file_to_filter`: contains text lines corresponding to the same indices.
+
+    For each pair of lines, if the score is 4 or higher, the corresponding line
+    from `file_to_filter` is written to `output_path`.
+
+    The function also checks for the existence of input and output files and
+    creates the output directory if it does not exist.
+
+    :param filter_output_path: Path to the file containing filter scores (one integer per line).
+    :param file_to_filter: Path to the input text file to be filtered line by line.
+    :param output_path: Path to the output file where accepted lines will be written.
+    :return: None
+    """
 
     # Check if the input file exists
     if not os.path.isfile(file_to_filter):
         print(f"Input file '{file_to_filter}' does not exist.")
-        return
+        return False
     # Check if the filter output file exists
     if not os.path.isfile(filter_output_path):
         print(f"Filter output file '{filter_output_path}' does not exist.")
-        return
+        return False
     # Check if the output file already exists
     if os.path.isfile(output_path):
         print(f"Output file '{output_path}' already exists. exitsing.")
-        return
+        return False
     # Check if the output directory exists
     output_dir = os.path.dirname(output_path)
     if output_dir and not os.path.exists(output_dir):
@@ -40,6 +57,7 @@ def filter(filter_output_path: str, file_to_filter: str, output_path: str) -> No
         ):
             if filter_output_line >= 4:
                 output_file.write(f"{file_to_filter_line}\n")
+    return True
 
 if __name__ == "__main__":
     import sys
@@ -51,4 +69,4 @@ if __name__ == "__main__":
     file_to_filter = sys.argv[2]
     output_path = sys.argv[3]
 
-    filter(filter_output_path, file_to_filter, output_path)
+    apply_filter(filter_output_path, file_to_filter, output_path)
