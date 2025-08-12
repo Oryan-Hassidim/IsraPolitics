@@ -1,9 +1,10 @@
 [project]
-name = "subjectfilter"
+name = "IsraPolitics.Utils"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "openai>=1.76.0",
+    "typer>=0.16.0",
 ]

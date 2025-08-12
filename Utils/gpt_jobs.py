@@ -4,7 +4,6 @@ from openai import Client, File
 from tqdm import tqdm
 import sys
 from datetime import datetime
-import tiktoken
 
 
 ##########################################################
@@ -17,7 +16,6 @@ PROMPTS_DIR = os.path.join(BASE_DIR, "Prompts")
 JOBS_DIR = os.path.join(BASE_DIR, "Jobs")
 
 ##########################################################
-
 
 
 def send_job(
@@ -189,14 +187,11 @@ def retrieve_batch_results(batch_id: str, output_path: str) -> bool:
                 custom_id = data["custom_id"]
                 try:
                     rating = int(
-                        data["response"]["body"]["choices"][0]["message"][
-                            "content"]
+                        data["response"]["body"]["choices"][0]["message"]["content"]
                     )
                 except:
                     print(f"Error parsing rating for custom_id {custom_id}: {data}")
                 results[int(custom_id[8:])] = rating
-
-
 
         else:
             print(f"Error retrieving file content: {file_response.status}")
@@ -234,7 +229,7 @@ def retrieve_batch_results(batch_id: str, output_path: str) -> bool:
     return True
 
 
-def save_job_id(job_id: str, person_id: str, subject: str, type:str) -> None:
+def save_job_id(job_id: str, person_id: str, subject: str, type: str) -> None:
     """
     Saves the job ID to a JSON file.
 
@@ -276,8 +271,9 @@ def delete_job_id(job_ids: list[str]) -> None:
         print("No jobs found to delete.")
 
 
-
-def safe_batch_start(system_prompt_path: str, input_path: str, model:str= "gpt-4.1-mini")-> str:
+def safe_batch_start(
+    system_prompt_path: str, input_path: str, model: str = "gpt-4.1-mini"
+) -> str:
     # Check if the input file exists
     if not os.path.isfile(input_path):
         print(f"Input file '{input_path}' does not exist.")
@@ -297,7 +293,6 @@ def safe_batch_start(system_prompt_path: str, input_path: str, model:str= "gpt-4
             f"Too many tokens enqueued: {estimated_tokens + enqueued_tokens} > 800000. Please wait for some jobs to finish."
         )
         # sys.exit(1)
-
 
     # send_job(system_prompt_path, input_path, output_path, model)
     batch_id = start_batch_job(system_prompt_path, input_path, model)
@@ -378,6 +373,7 @@ def get_all_batches_from_openAi(client) -> list:
     in_progress = [b for b in batches if b.status == "in_progress"]
     return in_progress
 
+
 if __name__ == "__main__":
     # usage: python gpt_jobs.py system_prompt.txt input.txt [model]
     # prints output to output-YYYY-MM-DD-HH-MM-SS.txt
@@ -391,8 +387,4 @@ if __name__ == "__main__":
     if len(sys.argv) == 4:
         model = sys.argv[3]
 
-
     safe_batch_start(system_prompt_path, input_path, model)
-
-
-

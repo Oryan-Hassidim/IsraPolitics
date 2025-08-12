@@ -24,7 +24,8 @@ def load_query(query_path: str) -> str:
 
 
 
-def run_query(query_path: str, params: Tuple[Any, ...] = (),
+def run_query(query_path: str, 
+              params: Tuple[Any, ...] = (),
               fetchone: bool = False) -> Optional[Any]:
     """
     Executes a SQL query and returns results.
