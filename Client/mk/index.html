@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Knessight | אריאל שרון</title>
+    <link rel="icon" href="../poster/knessight.svg" type="image/svg+xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script type="module">
+        import '../src/mk-view.ts';
+        // import '../src/my-element.ts';
+    </script>
+    <style>
+        @property --gradient-angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 90deg;
+        }
+
+        @view-transition {
+            navigation: auto;
+        }
+
+        ::view-transition-group(root) {
+            animation-duration: 1s;
+        }
+
+        html {
+            background: linear-gradient(to bottom left,
+                    #e2ebff 0%,
+                    #f1f5ff 100%);
+        }
+
+        :root {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            scrollbar-gutter: stable;
+        }
+
+        .logo {
+            position: absolute;
+            top: 1em;
+            right: 1em;
+            z-index: 0;
+            width: 5em;
+
+            img {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        body {
+            container-type: inline-size;
+        }
+
+        .mk-view {
+            direction: rtl;
+            display: grid;
+            grid-template-areas:
+                'image topics'
+                'name topics'
+                'description topics'
+                'knesset-site topics';
+            grid-template-columns: 300px 2fr;
+            grid-template-rows: auto auto auto auto;
+
+            @container (max-width: 900px) {
+                grid-template-areas:
+                    'image'
+                    'name'
+                    'description'
+                    'knesset-site'
+                    'topics';
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto auto auto;
+            }
+
+            column-gap: 40px;
+            padding: 40px 20px;
+
+            h1 {
+                grid-area: name;
+                margin: 0;
+            }
+
+            h2 {
+                grid-area: description;
+                font-size: 1.2em;
+                font-weight: 100;
+            }
+
+            img {
+                grid-area: image;
+                width: 100%;
+                max-width: 400px;
+                height: auto;
+                box-shadow: 6px -6px 6px rgba(0, 0, 0, 0.5);
+                view-transition-name: sharon;
+                place-self: center;
+            }
+
+            a {
+                grid-area: knesset-site;
+            }
+
+            .topics {
+                grid-area: topics;
+                display: flex;
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="logo" href="./">
+        <img src="./poster/knessight.svg" alt="Knessight Logo">
+    </a>
+</body>
+
+<script>
+    // take the mkId from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const mkId = urlParams.get('id');
+    if (mkId) {
+        // create the mk-view element with the mkId
+        const mkView = document.createElement('mk-view');
+        mkView.setAttribute('mkId', mkId);
+        document.body.appendChild(mkView);
+    } else {
+        // if no mkId is provided, show an error message
+        const errorMessage = document.createElement('div');
+        errorMessage.textContent = 'No MK ID provided in the URL.';
+        document.body.appendChild(errorMessage);
+    }
+</script>
+
+</html>

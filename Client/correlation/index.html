@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Knessight | קורלציה</title>
+    <link rel="icon" href="../poster/knessight.svg" type="image/svg+xml">
+    <script type="module">
+        import '../src/correlation-bar.ts';
+        import '../src/mk-tooltip.ts'
+    </script>
+    <style>
+        :root {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+
+        input,
+        input *,
+        select,
+        select * {
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        body {
+            background: linear-gradient(to bottom left,
+                    #e2ebff 0%,
+                    #f1f5ff 100%);
+            height: 100dvh;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <correlation-bar topicA="התיישבות" topicB="נישואים_אזרחיים">
+
+    </correlation-bar>
+</body>
+
+</html>

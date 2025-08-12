@@ -1,4 +1,4 @@
-import { LitElement, TemplateResult, css, html, svg, unsafeCSS } from 'lit';
+import { LitElement, TemplateResult, css, html, svg } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Lazy } from './helpers/Lazy';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
@@ -230,7 +230,6 @@ export class MkBar extends LitElement {
                 transition: top var(--animation-time) ease,
                     left var(--animation-time) ease;
                 anchor-name: --tooltip-anchor;
-                position: absolute;
             }
             .tooltip {
                 display: none;
@@ -240,17 +239,18 @@ export class MkBar extends LitElement {
                 border: 1px solid black;
                 padding: 5px;
                 border-radius: 5px;
-                font-size: 12px;
                 pointer-events: visible;
                 opacity: 0;
                 transition: display var(--animation-time) ease allow-discrete,
-                    opacity var(--animation-time) ease;
+                    opacity var(--animation-time) ease,
+                    max-height var(--animation-time) ease;
                 position: absolute;
                 position-area: bottom;
                 width: 200px;
-                max-height: 400px;
+                max-height: 0px;
                 overflow: auto;
                 font-size: 0.7em;
+                z-index: 3;
             }
         }
 
@@ -259,6 +259,7 @@ export class MkBar extends LitElement {
         .my-bar-chart:has(circle:focus-within) .tooltip {
             display: block;
             opacity: 1;
+            max-height: 400px;
         }
     `;
 
@@ -271,7 +272,7 @@ export class MkBar extends LitElement {
     }
 
     override render(): TemplateResult<1> {
-        const avg_percent = (100.0 * this.average - 1) / 9;
+        const avg_percent = (100.0 * (this.average - 1)) / 9;
         const tri1_size = Math.floor(this._points_list.length / 3);
         const tri3_size = tri1_size;
         const tri2_size = Math.floor(

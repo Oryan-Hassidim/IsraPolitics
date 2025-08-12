@@ -3,7 +3,6 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { MkData, MkTopicData, SpeechDay } from './helpers/MkData';
 import './mk-bar';
 import groupBy from './helpers/GroupBy';
-// import Papa from 'papaparse';
 
 // TODO: https://knesset.gov.il/WebSiteApi/knessetapi/MKs/GetMkdetailsHeader?mkId=125&languageKey=he
 // TODO: https://knesset.gov.il/WebSiteApi/knessetapi/MKs/GetGovrnmentActivity?mkId=125&lnaguageKey=he
@@ -24,46 +23,49 @@ export class MkView extends LitElement {
     @state()
     private _mkData: MkData = new MkData(0, 0, '', '', '', []);
 
-    public static styles = css`
-        .mk-view {
-            direction: rtl;
-            display: grid;
-            grid-template-areas:
-                'image topics'
-                'name topics'
-                'description topics'
-                'knesset-site topics';
-            grid-template-columns: 1fr 2fr;
-            grid-template-rows: auto auto auto auto;
-            column-gap: 40px;
-            padding: 40px 20px;
+    // public static styles = css`
+    //     .mk-view {
+    //         direction: rtl;
+    //         display: grid;
+    //         grid-template-areas:
+    //             'image topics'
+    //             'name topics'
+    //             'description topics'
+    //             'knesset-site topics';
+    //         grid-template-columns: 1fr 2fr;
+    //         grid-template-rows: auto auto auto auto;
+    //         column-gap: 40px;
+    //         padding: 40px 20px;
 
-            h1 {
-                grid-area: name;
-                margin: 0;
-            }
-            h2 {
-                grid-area: description;
-                font-size: 1.2em;
-                font-weight: 100;
-            }
-            img {
-                grid-area: image;
-                width: 100%;
-                height: auto;
-                box-shadow: 6px -6px 6px rgba(0, 0, 0, 0.5);
-            }
-            a {
-                grid-area: knesset-site;
-            }
-            .topics {
-                grid-area: topics;
-                display: flex;
-                flex-direction: column;
-                gap: 30px;
-            }
-        }
-    `;
+    //         h1 {
+    //             grid-area: name;
+    //             margin: 0;
+    //         }
+    //         h2 {
+    //             grid-area: description;
+    //             font-size: 1.2em;
+    //             font-weight: 100;
+    //         }
+    //         img {
+    //             grid-area: image;
+    //             width: 100%;
+    //             height: auto;
+    //             box-shadow: 6px -6px 6px rgba(0, 0, 0, 0.5);
+    //             view-transition-name: sharon;
+    //         }
+    //         a {
+    //             grid-area: knesset-site;
+    //         }
+    //         .topics {
+    //             grid-area: topics;
+    //             display: flex;
+    //             flex-direction: column;
+    //             gap: 30px;
+    //         }
+    //     }
+    // `;
+
+    // public state styles = css``;
 
     override render() {
         return html`
@@ -90,6 +92,27 @@ export class MkView extends LitElement {
                                         .list=${topic.records}
                                     ></mk-bar>
                                 </div>
+                                <div class="topic">
+                                    <h3>פתרון שתי המדינות</h3>
+                                    <mk-bar
+                                        average="6.5"
+                                        .list=${topic.records}
+                                    ></mk-bar>
+                                </div>
+                                <div class="topic">
+                                    <h3>הפרדת דת ממדינה</h3>
+                                    <mk-bar
+                                        average="5.5"
+                                        .list=${topic.records}
+                                    ></mk-bar>
+                                </div>
+                                <div class="topic">
+                                    <h3>הגבלות על ייבוא</h3>
+                                    <mk-bar
+                                        average="7"
+                                        .list=${topic.records}
+                                    ></mk-bar>
+                                </div>
                             `
                     )}
                 </div>
@@ -98,13 +121,17 @@ export class MkView extends LitElement {
     }
 
     public override async connectedCallback(): Promise<void> {
-        super.connectedCallback();
         await this.fetchData();
+        super.connectedCallback();
+    }
+
+    protected createRenderRoot() {
+        return this;
     }
 
     private async fetchData(): Promise<void> {
         const response = await fetch(
-            `client_data/mk_data/${this.mkId}/main.json`
+            `./client_data/mk_data/${this.mkId}/main.json`
         );
         if (response.ok) {
             const data = await response.json();
@@ -136,18 +163,23 @@ export class MkView extends LitElement {
                     const records: Array<CsvRecord> = Papa.parse(text, {
                         header: true,
                         skipEmptyLines: true,
-                        dynamicTyping: true
+                        dynamicTyping: true,
                     }).data;
                     topic.records = groupBy(records, (r) => r.Date).map(
                         (group) => {
                             const date = new Date(group.key);
                             const ranks = group.items.map((item) => item.Rank);
                             const average =
-                            ranks.reduce((a, b) => a + b, 0) / ranks.length;
+                                ranks.reduce((a, b) => a + b, 0) / ranks.length;
                             return new SpeechDay(
                                 date,
                                 average,
-                                group.items.map((item) => `${item.Topic}: ${item.Text} (${item.Rank})`).join('\n')
+                                group.items
+                                    .map(
+                                        (item) =>
+                                            `${item.Topic}: ${item.Text} (${item.Rank})`
+                                    )
+                                    .join('\n')
                             );
                         }
                     );

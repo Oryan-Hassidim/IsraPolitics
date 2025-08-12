@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'Berlin Sans FB';
+    src: url('./BRLNSR.TTF') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Berlin Sans FB';
+    src: url('./BRLNSB.TTF') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Berlin Sans FB';
+    src: url('./BRLNSDB.TTF') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}

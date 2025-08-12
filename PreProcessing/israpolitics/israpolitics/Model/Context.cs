@@ -1,11 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using israpolitics.Model.KnessetSpeeches;
+﻿using israpolitics.Model.KnessetSpeeches;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace israpolitics.Model;
 
 public class Context : DbContext
 {
+    private readonly string _sqlitePath;
+    private readonly bool _readOnly = false;
+
     // private readonly string _sqlitePath;
 
     public DbSet<Person> People { get; set; }
@@ -14,20 +17,29 @@ public class Context : DbContext
     public DbSet<Topic> Topics { get; set; }
     public DbSet<TopicExtra> TopicExtras { get; set; }
 
-    public Context() : base()
+    public Context(string sqlitePath, bool readOnly = false) : base()
+    {
+        _sqlitePath = sqlitePath;
+        _readOnly = readOnly;
+    }
+
+    public Context() : this(@"C:\Projects\Oryan-Hassidim\IsraPolitics\Data\IsraParlTweet.db", false)
     {
     }
 
-    public Context(DbContextOptions<Context> options) : base(options)
+    public Context(string sqlitePath, DbContextOptions<Context> options) : base(options)
     {
+        _sqlitePath = sqlitePath;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlite("Data Source=\"C:\\Projects\\Oryan-Hassidim\\IsraPolitics\\Data\\IsraParlTweet.db\"");
-            optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder.UseSqlite($"Data Source=\"{_sqlitePath}\"{(_readOnly ? ";Mode=ReadOnly" : "")}")
+                //.EnableSensitiveDataLogging()
+                //.LogTo(WriteLine, LogLevel.Information)
+                ;
         }
     }
 
