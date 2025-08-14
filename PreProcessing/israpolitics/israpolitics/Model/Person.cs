@@ -10,9 +10,9 @@ public class Person
     {
     }
 
-    public Person(int id, int? personId, 
-        DateOnly? startDate, DateOnly? endDate, 
-        int? knesset, 
+    public Person(int id, int? personId,
+        DateOnly? startDate, DateOnly? endDate,
+        int? knesset,
         string firstName, string surname,
         bool gender,
         int? factionId, string? faction, string? partyName,
@@ -52,9 +52,9 @@ public class Person
     [Column("knesset")]
     public int? Knesset { get; set; }
     [Column("first_name")]
-    public string FirstName { get; set; }
+    public string FirstName { get; set; } = string.Empty;
     [Column("surname")]
-    public string Surname { get; set; }
+    public string Surname { get; set; } = string.Empty;
     [Column("gender")]
     public bool Gender { get; set; }
     [Column("faction_id")]

@@ -30,40 +30,6 @@ public static class AddEnititiesForTaggingToTable
         TableClient tableClient = new(connectionString, tableName);
         await tableClient.CreateIfNotExistsAsync();
 
-        var indexes = tableClient.QueryAsync<UnlabeledEntry>().ToBlockingEnumerable().Select(x => x.RowId).ToHashSet();
-
-        //HashSet<int> indexes = [];
-        Random rand = new(1234);
-        var N = 4_484_726;
-        using var context = new Context();
-
-        for (int i = 0; i < 1_000; i++)
-        {
-            var id = rand.Next(1, N + 1);
-            if (indexes.Contains(id))
-            {
-                i--;
-                continue;
-            }
-            var entry = context.KnessetSpeechesEntries.Find(id);
-            if (entry is null)
-            {
-                i--;
-                continue;
-            }
-            indexes.Add(id);
-            if (entry.Text?.Length < 50)
-            {
-                i--;
-                continue;
-            }
-            var unlabeledEntry = new UnlabeledEntry()
-            {
-                RowId = id,
-                Text = entry.Text,
-                RowKey = Guid.NewGuid().ToString()
-            };
-            await tableClient.AddEntityAsync(unlabeledEntry);
-        }
+        
     }
 }

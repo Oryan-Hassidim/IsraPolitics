@@ -1,9 +1,11 @@
 import json
 import os
-from openai import Client, File
+from openai import Client
+from openai.types import Batch
 from tqdm import tqdm
 import sys
 from datetime import datetime
+import tiktoken
 
 
 ##########################################################
@@ -14,6 +16,7 @@ PROMPTS_DIR = os.path.join(BASE_DIR, "Prompts")
 # Constants for the database
 # Constants for the output directory
 JOBS_DIR = os.path.join(BASE_DIR, "Jobs")
+DEFAULT_MODEL = "gpt-4.1-mini"
 
 ##########################################################
 
@@ -272,16 +275,16 @@ def delete_job_id(job_ids: list[str]) -> None:
 
 
 def safe_batch_start(
-    system_prompt_path: str, input_path: str, model: str = "gpt-4.1-mini"
+    system_prompt_path: str, input_path: str, model: str = DEFAULT_MODEL
 ) -> str:
     # Check if the input file exists
     if not os.path.isfile(input_path):
         print(f"Input file '{input_path}' does not exist.")
-        sys.exit(1)
+        raise IOError("Input file not found")
     # Check if the system prompt file exists
     if not os.path.isfile(system_prompt_path):
         print(f"System prompt file '{system_prompt_path}' does not exist.")
-        sys.exit(1)
+        raise IOError("System prompt file not found")
     # check if there are enough tokens
     estimated_tokens = estimate_tokens_from_file(input_path, model=model)
     print(f"Estimated tokens in input file: {estimated_tokens}")
@@ -308,7 +311,7 @@ def load_jobs() -> dict:
     return {}
 
 
-def estimate_enqueued_tokens(model="gpt-4") -> int:
+def estimate_enqueued_tokens(model: str = DEFAULT_MODEL) -> int:
     """
     Estimates the number of tokens currently enqueued in in-progress batches.
 
@@ -341,7 +344,7 @@ def estimate_enqueued_tokens(model="gpt-4") -> int:
     return total_tokens
 
 
-def estimate_tokens_from_file(file_path: str, model: str = "gpt-4") -> int:
+def estimate_tokens_from_file(file_path: str, model: str = DEFAULT_MODEL) -> int:
     """
     Estimates the number of tokens required for a file, assuming one request per line.
 
@@ -362,7 +365,7 @@ def estimate_tokens_from_file(file_path: str, model: str = "gpt-4") -> int:
     return total_tokens
 
 
-def get_all_batches_from_openAi(client) -> list:
+def get_all_batches_from_openAi(client: Client) -> list[Batch]:
     """
     Retrieves all batch jobs from OpenAI.
 
