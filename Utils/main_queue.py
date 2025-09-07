@@ -2,6 +2,7 @@
 runs the whole flow. get file with names of Mks and subjects.
 make sure them all ran or run them
 """
+
 import os
 from gpt_jobs import BASE_DIR, JOBS_DIR
 from db_jobs import run_query
@@ -10,10 +11,10 @@ from typing import List, Tuple
 
 
 ###########################################################################
-#constants
+# constants
 SUBJECT_DIR = os.path.join(BASE_DIR, "subjects.txt")
 MK_DIR = os.path.join(BASE_DIR, "mks.txt")
-MK_NAMES_TO_IDS_DIR = os.path.join(BASE_DIR,"Utils", "names_to_ids.sql")
+MK_NAMES_TO_IDS_DIR = os.path.join(BASE_DIR, "Utils", "names_to_ids.sql")
 ###########################################################################
 
 
@@ -52,7 +53,6 @@ def read_subjects_and_mks() -> Tuple[List[str], List[Tuple[str, str]]]:
     return subjects, mk_splits
 
 
-
 def get_mk_ids(mk_names: list[tuple[str, str]]) -> list[str]:
     """
     Retrieves MK IDs from the database based on their first and last names.
@@ -74,7 +74,7 @@ def get_mk_ids(mk_names: list[tuple[str, str]]) -> list[str]:
     return ids
 
 
-def check_if_pair_exist(mk_id:str, subject:str)->bool:
+def check_if_pair_exist(mk_id: str, subject: str) -> bool:
     """
     Checks whether both 'ids.txt' and 'texts.txt' exist for the given MK-subject pair.
 
@@ -89,8 +89,7 @@ def check_if_pair_exist(mk_id:str, subject:str)->bool:
 
 
 def check_and_confirm_pairs(mk_ids, subjects) -> list[tuple[str, str]]:
-    """
-
+    """ """
 
 
 def check_for_prompt(subjects: List[str]) -> List[str]:
@@ -132,7 +131,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-

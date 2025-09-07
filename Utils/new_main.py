@@ -42,16 +42,19 @@ def add_jobs(jobs_file: Annotated[typer.FileText, typer.Argument()] = None) -> N
 
 
 @app.command()
-def get_person_id(query: Annotated[str, typer.Argument()] = None) -> None:
+def get_people(query: Annotated[list[str], typer.Argument()] = None) -> None:
     """
     Prints a list of person IDs based on a query.
 
     :param query: The query string to search for.
     """
-    while query is None:
-        query = typer.prompt("Query", type=str)
-    print(f"Getting person IDs for query: {query}")
-    raise NotImplementedError("This function is not implemented yet.")
+    if query is None:
+        query = typer.prompt("Query", type=list[str])
+        query = str.join("", query).split()
+    print(f"Getting person IDs for query: {str.join(' ', query)}")
+    from db_jobs import get_people as db_get_people
+
+    db_get_people(query)
 
 
 @app.command()
