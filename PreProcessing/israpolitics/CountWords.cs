@@ -1,6 +1,6 @@
-﻿using israpolitics.Model;
+﻿using IsraPolitics.Model;
 
-namespace israpolitics;
+namespace IsraPolitics;
 
 public static class CountWords
 {

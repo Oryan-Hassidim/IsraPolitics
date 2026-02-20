@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace israpolitics.Migrations;
+namespace IsraPolitics.Migrations;
 
 /// <inheritdoc />
 public partial class CreateView : Migration

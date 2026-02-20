@@ -1,6 +1,6 @@
 ﻿using CsvHelper;
-using israpolitics.Model;
-using israpolitics.Model.KnessetSpeeches;
+using IsraPolitics.Model;
+using IsraPolitics.Model.KnessetSpeeches;
 using System.Text;
 using System.Text.RegularExpressions;
 

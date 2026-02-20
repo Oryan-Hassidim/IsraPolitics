@@ -1,4 +1,4 @@
-﻿namespace israpolitics;
+﻿namespace IsraPolitics;
 
 public class Paths
 {

@@ -38,7 +38,7 @@ public sealed class CliGenerator : IIncrementalGenerator
         return string.Join("-", parts);
     }
 
-    private static string Format(object? value, ITypeSymbol type)
+    private static string? Format(object? value, ITypeSymbol type)
     {
         if (value is null) return "null";
         return type.SpecialType switch

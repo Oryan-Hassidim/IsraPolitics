@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using israpolitics.Model;
+using IsraPolitics.Model;
 
 #nullable disable
 
-namespace israpolitics.Migrations
+namespace IsraPolitics.Migrations
 {
     [DbContext(typeof(Context))]
     [Migration("20250619151613_CreateView")]
@@ -20,7 +20,7 @@ namespace israpolitics.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
-            modelBuilder.Entity("israpolitics.Model.KnessetSpeeches.KnessetSpeech", b =>
+            modelBuilder.Entity("IsraPolitics.Model.KnessetSpeeches.KnessetSpeech", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER")
@@ -89,7 +89,7 @@ namespace israpolitics.Migrations
                     b.ToTable("knesset_speeches", (string)null);
                 });
 
-            modelBuilder.Entity("israpolitics.Model.KnessetSpeeches.Name", b =>
+            modelBuilder.Entity("IsraPolitics.Model.KnessetSpeeches.Name", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -108,7 +108,7 @@ namespace israpolitics.Migrations
                     b.ToTable("names", (string)null);
                 });
 
-            modelBuilder.Entity("israpolitics.Model.KnessetSpeeches.Topic", b =>
+            modelBuilder.Entity("IsraPolitics.Model.KnessetSpeeches.Topic", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -127,7 +127,7 @@ namespace israpolitics.Migrations
                     b.ToTable("topics", (string)null);
                 });
 
-            modelBuilder.Entity("israpolitics.Model.KnessetSpeeches.TopicExtra", b =>
+            modelBuilder.Entity("IsraPolitics.Model.KnessetSpeeches.TopicExtra", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -146,7 +146,7 @@ namespace israpolitics.Migrations
                     b.ToTable("topic_extras", (string)null);
                 });
 
-            modelBuilder.Entity("israpolitics.Model.Person", b =>
+            modelBuilder.Entity("IsraPolitics.Model.Person", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER")
@@ -223,17 +223,17 @@ namespace israpolitics.Migrations
                     b.ToTable("people", (string)null);
                 });
 
-            modelBuilder.Entity("israpolitics.Model.KnessetSpeeches.KnessetSpeech", b =>
+            modelBuilder.Entity("IsraPolitics.Model.KnessetSpeeches.KnessetSpeech", b =>
                 {
-                    b.HasOne("israpolitics.Model.KnessetSpeeches.Name", "Name")
+                    b.HasOne("IsraPolitics.Model.KnessetSpeeches.Name", "Name")
                         .WithMany()
                         .HasForeignKey("NameId");
 
-                    b.HasOne("israpolitics.Model.KnessetSpeeches.TopicExtra", "TopicExtra")
+                    b.HasOne("IsraPolitics.Model.KnessetSpeeches.TopicExtra", "TopicExtra")
                         .WithMany()
                         .HasForeignKey("TopicExtraId");
 
-                    b.HasOne("israpolitics.Model.KnessetSpeeches.Topic", "Topic")
+                    b.HasOne("IsraPolitics.Model.KnessetSpeeches.Topic", "Topic")
                         .WithMany()
                         .HasForeignKey("TopicId");
 

@@ -1,4 +1,4 @@
-﻿using israpolitics.Model.KnessetSpeeches;
+﻿using IsraPolitics.Model.KnessetSpeeches;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.Buffers;
@@ -8,15 +8,15 @@ using ZLinq;
 
 using static System.String;
 
-namespace israpolitics;
+namespace IsraPolitics;
 
 static class TransformDb
 {
-    static IEnumerable<T> Distinct<T, T1>(this IEnumerable<T> source, Func<T, T1> map)
-    {
-        var comparer = new EqualityComparer<T, T1>(map);
-        return source.Distinct(comparer);
-    }
+    //static IEnumerable<T> Distinct<T, T1>(this IEnumerable<T> source, Func<T, T1> map)
+    //{
+    //    var comparer = new EqualityComparer<T, T1>(map);
+    //    return source.Distinct(comparer);
+    //}
 
     static Dictionary<string, int> Histogram(ReadOnlySpan<char> text)
     {

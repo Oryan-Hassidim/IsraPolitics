@@ -1,8 +1,8 @@
-﻿using israpolitics.Model.KnessetSpeeches;
+﻿using IsraPolitics.Model.KnessetSpeeches;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-namespace israpolitics;
+namespace IsraPolitics;
 
 public static class DbAccess
 {

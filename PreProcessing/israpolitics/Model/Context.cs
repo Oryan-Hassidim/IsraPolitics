@@ -1,8 +1,8 @@
-﻿using israpolitics.Model.KnessetSpeeches;
+﻿using IsraPolitics.Model.KnessetSpeeches;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace israpolitics.Model;
+namespace IsraPolitics.Model;
 
 public class Context : DbContext
 {

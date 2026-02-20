@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11512.155 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "israpolitics", "israpolitics\israpolitics.csproj", "{5CC53F6A-8C3C-416F-8187-237C894AFFC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsraPolitics", "israpolitics\IsraPolitics.csproj", "{5CC53F6A-8C3C-416F-8187-237C894AFFC9}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "IsraPoliticsFSharp", "IsraPoliticsFSharp\IsraPoliticsFSharp.fsproj", "{4F547762-CEF7-47F3-AED4-8D64D4272B42}"
 EndProject

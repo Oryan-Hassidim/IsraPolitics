@@ -2,10 +2,10 @@
 
 using Azure;
 using Azure.Data.Tables;
-using israpolitics.Model;
+using IsraPolitics.Model;
 using System.Linq;
 
-namespace israpolitics;
+namespace IsraPolitics;
 
 public class UnlabeledEntry : ITableEntity
 {

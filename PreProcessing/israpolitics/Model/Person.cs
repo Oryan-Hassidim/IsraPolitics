@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-namespace israpolitics.Model;
+namespace IsraPolitics.Model;
 
 public class Person
 {

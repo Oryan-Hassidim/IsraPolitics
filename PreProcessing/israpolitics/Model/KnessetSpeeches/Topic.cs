@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace israpolitics.Model.KnessetSpeeches;
+namespace IsraPolitics.Model.KnessetSpeeches;
 
 public class Topic
 {
