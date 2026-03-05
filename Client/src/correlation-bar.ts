@@ -9,7 +9,11 @@ class Topic {
 }
 
 class MkData {
-    constructor(public name: string, public image: string, public id: number) {}
+    constructor(
+        public name: string,
+        public image: string,
+        public id: number
+    ) {}
 }
 
 class MkPoint extends MkData {
@@ -44,6 +48,12 @@ export class CorrelationBar extends LitElement {
     ];
     private _mkData: Map<number, MkData> = new Map();
     private _correlation: number = 0;
+    private _linearFitLine: {
+        x1: number;
+        y1: number;
+        x2: number;
+        y2: number;
+    } | null = null;
 
     private _mksTask = new Task(this, {
         task: async ([], { signal }) => {
@@ -106,6 +116,7 @@ export class CorrelationBar extends LitElement {
                 })
             );
             this._correlation = this._calculateCorrelation();
+            this._linearFitLine = this._calculateLinearFitLine();
         },
         args: () => [],
     });
@@ -117,7 +128,7 @@ export class CorrelationBar extends LitElement {
             height: 100%;
             padding: 3em;
             box-sizing: border-box;
-            place-content: stretch stretch;
+            /* place-content: stretch stretch; */
             --animation-time: 0.4s;
         }
 
@@ -161,11 +172,21 @@ export class CorrelationBar extends LitElement {
             height: 100%;
             background: linear-gradient(to top, red 0%, yellow 50%, green 100%);
         }
-        .bar {
+        .bar,
+        .linear-line {
             grid-area: bar;
             width: 100%;
-            height: 100%;
+            height: calc(100dvh - 10em);
             position: relative;
+
+            line {
+                stroke: #00000050;
+            }
+        }
+        .linear-line svg {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
         .point {
             position: absolute;
@@ -213,7 +234,8 @@ export class CorrelationBar extends LitElement {
             height: 2px;
             opacity: 1;
             background-color: transparent;
-            transition: top var(--animation-time) ease,
+            transition:
+                top var(--animation-time) ease,
                 left var(--animation-time) ease;
             anchor-name: --tooltip-anchor;
             z-index: -1;
@@ -227,7 +249,8 @@ export class CorrelationBar extends LitElement {
             padding: 5px;
             pointer-events: visible;
             opacity: 0;
-            transition: display var(--animation-time) ease allow-discrete,
+            transition:
+                display var(--animation-time) ease allow-discrete,
                 opacity var(--animation-time) ease,
                 max-height var(--animation-time) ease,
                 max-width var(--animation-time) ease;
@@ -280,66 +303,92 @@ export class CorrelationBar extends LitElement {
         `;
     }
 
+    private _renderLinearLine(): TemplateResult {
+        if (!this._linearFitLine) {
+            return svg``;
+        }
+
+        const { x1, y1, x2, y2 } = this._linearFitLine;
+        return svg`<line
+            x1="${x1}"
+            y1="${y1}"
+            x2="${x2}"
+            y2="${y2}"
+            stroke="black"
+            stroke-width="0.8"
+        ></line>`;
+    }
+
     override render() {
-        // return html`hi`;
         return this._mksTask.render({
             pending: () => html`<div>Loading...</div>`,
-            complete: () => html` <div class="container">
-                <div class="scale scale-x"></div>
-                <div class="scale scale-y"></div>
-                <div class="bar">
-                    ${this._renderPoints()}
-                    <div
-                        id="tooltip-anchor"
-                        ${ref(this.tooltipAnchorRef)}
-                    ></div>
-                    <mk-tooltip
-                        class="tooltip"
-                        ${ref(this.tooltipRef)}
-                    ></mk-tooltip>
-                </div>
-                <!-- <span class="label label-x">${this.topicA}</span> -->
-                <select
-                    class="label label-x"
-                    name="topicA"
-                    title="Select Topic A"
-                    @change="${this._onTopicAChange}"
-                >
-                    ${this._topics.map((topic) => {
-                        return html`<option
-                            value="${topic.name}"
-                            ?selected="${topic.name === this.topicA}"
+            complete: () =>
+                html`<div class="container">
+                    <div class="scale scale-x"></div>
+                    <div class="scale scale-y"></div>
+                    <div class="linear-line">
+                        <svg
+                            viewBox="0 0 100 100"
+                            width="100%"
+                            height="100%"
+                            preserveAspectRatio="none"
                         >
-                            ${topic.name}
-                        </option>`;
-                    })}
-                </select>
-                <!-- <span class="label label-y">${this.topicB}</span> -->
-                <select
-                    class="label label-y"
-                    name="topicB"
-                    title="Select Topic B"
-                    @change="${this._onTopicBChange}"
-                >
-                    ${this._topics.map((topic) => {
-                        return html`<option
-                            value="${topic.name}"
-                            ?selected="${topic.name === this.topicB}"
-                        >
-                            ${topic.name}
-                        </option>`;
-                    })}
-                </select>
-                <div class="text">
-                    <h2>
-                        הקורלציה בין
-                        <b>${this.topicA}</b>
-                        ל<b>${this.topicB}</b>
-                        היא
-                        <b>${this._correlation.toFixed(2)}</b>
-                    </h2>
-                </div>
-            </div>`,
+                            ${this._renderLinearLine()}
+                        </svg>
+                    </div>
+                    <div class="bar">
+                        ${this._renderPoints()}
+                        <div
+                            id="tooltip-anchor"
+                            ${ref(this.tooltipAnchorRef)}
+                        ></div>
+                        <mk-tooltip
+                            class="tooltip"
+                            ${ref(this.tooltipRef)}
+                        ></mk-tooltip>
+                    </div>
+                    <!-- <span class="label label-x">${this.topicA}</span> -->
+                    <select
+                        class="label label-x"
+                        name="topicA"
+                        title="Select Topic A"
+                        @change="${this._onTopicAChange}"
+                    >
+                        ${this._topics.map((topic) => {
+                            return html`<option
+                                value="${topic.name}"
+                                ?selected="${topic.name === this.topicA}"
+                            >
+                                ${topic.name}
+                            </option>`;
+                        })}
+                    </select>
+                    <!-- <span class="label label-y">${this.topicB}</span> -->
+                    <select
+                        class="label label-y"
+                        name="topicB"
+                        title="Select Topic B"
+                        @change="${this._onTopicBChange}"
+                    >
+                        ${this._topics.map((topic) => {
+                            return html`<option
+                                value="${topic.name}"
+                                ?selected="${topic.name === this.topicB}"
+                            >
+                                ${topic.name}
+                            </option>`;
+                        })}
+                    </select>
+                    <div class="text">
+                        <h2>
+                            הקורלציה בין
+                            <b>${this.topicA}</b>
+                            ל<b>${this.topicB}</b>
+                            היא
+                            <b>${this._correlation.toFixed(2)}</b>
+                        </h2>
+                    </div>
+                </div>`,
             error: (error) => html`<div>Error: ${error}</div>`,
         });
     }
@@ -440,6 +489,48 @@ export class CorrelationBar extends LitElement {
         );
 
         return denominator === 0 ? 0 : numerator / denominator;
+    }
+
+    private _calculateLinearFitLine(): {
+        x1: number;
+        y1: number;
+        x2: number;
+        y2: number;
+    } | null {
+        const points = Array.from(this._points.values());
+        if (points.length < 2) return null;
+
+        const n = points.length;
+        const [sumX, sumY, sumXY, sumX2] = points.reduce(
+            ([sumX, sumY, sumXY, sumX2], p) => [
+                sumX + p.topicA,
+                sumY + p.topicB,
+                sumXY + p.topicA * p.topicB,
+                sumX2 + p.topicA ** 2,
+            ],
+            [0, 0, 0, 0]
+        );
+
+        const denominator = n * sumX2 - sumX ** 2;
+        if (denominator === 0) return null;
+
+        const slope = (n * sumXY - sumX * sumY) / denominator;
+        const intercept = (sumY - slope * sumX) / n;
+
+        const xValues = points.map((point) => point.topicA);
+        const xMin = Math.min(...xValues);
+        const xMax = Math.max(...xValues);
+        if (xMin === xMax) return null;
+
+        const yAtMinX = slope * xMin + intercept;
+        const yAtMaxX = slope * xMax + intercept;
+
+        return {
+            x1: xMin * 10,
+            y1: 100 - yAtMinX * 10,
+            x2: xMax * 10,
+            y2: 100 - yAtMaxX * 10,
+        };
     }
 }
 
